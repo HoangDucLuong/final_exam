@@ -3,111 +3,110 @@ package shop.model;
 import java.time.LocalDateTime;
 
 public class User {
-    private int id;
-    private String name;
-    private String uid;
-    private String email;
-    private String password;
-    private int userType;  // 0: User, 1: Admin
-    private String phone;
-    private String address;
-    private LocalDateTime createdAt;
-    private int status;  // 0: Inactive, 1: Active
+    private int _id;
+    private String _name;
+    private String _uid;
+    private String _email;
+    private String _pwd;
+    private int _usr_type;  // 0: User, 1: Admin
+    private String _phone;
+    private String _address;
+    private LocalDateTime _created_at;
+    private int _status;  // 0: Inactive, 1: Active
 
     public User() {}
 
-    public User(int id, String name, String uid, String email, String password, int userType, String phone, String address, LocalDateTime createdAt, int status) {
-        this.id = id;
-        this.name = name;
-        this.uid = uid;
-        this.email = email;
-        this.password = password;
-        this.userType = userType;
-        this.phone = phone;
-        this.address = address;
-        this.createdAt = createdAt;
-        this.status = status;
+    public User(int _id, String _name, String _uid, String _email, String _pwd, int _usr_type, String _phone, String _address, LocalDateTime _created_at, int _status) {
+        this._id = _id;
+        this._name = _name;
+        this._uid = _uid;
+        this._email = _email;
+        this._pwd = _pwd;
+        this._usr_type = _usr_type;
+        this._phone = _phone;
+        this._address = _address;
+        this._created_at = _created_at;
+        this._status = _status;
     }
 
     // Getters and Setters
-
     public int getId() {
-        return id;
+        return _id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(int _id) {
+        this._id = _id;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String _name) {
+        this._name = _name;
     }
 
     public String getUid() {
-        return uid;
+        return _uid;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setUid(String _uid) {
+        this._uid = _uid;
     }
 
     public String getEmail() {
-        return email;
+        return _email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmail(String _email) {
+        this._email = _email;
     }
 
     public String getPassword() {
-        return password;
+        return _pwd;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPassword(String _pwd) {
+        this._pwd = _pwd;
     }
 
     public int getUserType() {
-        return userType;
+        return _usr_type;
     }
 
-    public void setUserType(int userType) {
-        this.userType = userType;
+    public void setUserType(int _usr_type) {
+        this._usr_type = _usr_type;
     }
 
     public String getPhone() {
-        return phone;
+        return _phone;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPhone(String _phone) {
+        this._phone = _phone;
     }
 
     public String getAddress() {
-        return address;
+        return _address;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setAddress(String _address) {
+        this._address = _address;
     }
 
     public LocalDateTime getCreatedAt() {
-        return createdAt;
+        return _created_at;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedAt(LocalDateTime _created_at) {
+        this._created_at = _created_at;
     }
 
     public int getStatus() {
-        return status;
+        return _status;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setStatus(int _status) {
+        this._status = _status;
     }
 }

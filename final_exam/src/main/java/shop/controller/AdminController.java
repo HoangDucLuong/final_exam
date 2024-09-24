@@ -36,35 +36,35 @@ public class AdminController {
 
     // Handle login using UID and password
     @PostMapping("/chklogin")
-    public String checkLogin(@RequestParam("uid") String username,
-                             @RequestParam("pwd") String password,
-                             HttpServletRequest request,
+    public String checkLogin(@RequestParam("_uid") String username,
+                             @RequestParam("_pwd") String password, 
+                             HttpServletRequest request, 
                              HttpServletResponse response) {
-        User user = userService.findByUid(username); // Find user by UID
+        User user = userService.findByUid(username);
 
         if (user != null) {
+           
             if (userService.checkPassword(password, user.getPassword())) {
-                // Save user info in session
-                HttpSession session = request.getSession();
+            	HttpSession session = request.getSession();
                 session.setAttribute("user", user);
 
                 logger.info("User authenticated: " + username + ", UserType: " + user.getUserType());
 
-                // Redirect based on user type
-                switch (user.getUserType()) {
-                    case 1: // Admin
-                        return "redirect:/admin/dashboard";          
-                    default:
-                        logger.warn("Unknown userType: " + user.getUserType());
-                        return "redirect:/admin/login?error=true";
-                }
+                if (user.getUserType() == 1) {
+                    return "redirect:/admin/dashboard";
+                } else if (user.getUserType() == 1) {
+                    return "redirect:/manager/login";
+                } else if (user.getUserType() == 0) {
+                    return "redirect:/employee/login";
+                    }
             } else {
                 logger.error("Password check failed for user: " + username);
             }
         } else {
             logger.error("User not found: " + username);
         }
-
         return "redirect:/admin/login?error=true";
-    }
+    
+}
+
 }

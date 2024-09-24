@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Admin Login</title>
-    <link rel="stylesheet" href="/css/styles.css">
+<meta charset="UTF-8">
+<title>Admin Login</title>
+<link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-    <h2>Admin Login</h2>
-    <form action="/admin/chklogin" method="post">
-        <label for="uid">User ID:</label>
-        <input type="text" name="uid" id="username" required>
-        <label for="pwd">Password:</label>
-        <input type="password" name="pwd" id="password" required>
-        <button type="submit">Login</button>
-    </form>
+	<h2>Admin Login</h2>
+	<form method="POST" action="/admin/chklogin">
+    <input type="text" name="_uid" placeholder="Username" required> <!-- Thay "uid" thành "_uid" -->
+    <input type="password" name="_pwd" placeholder="Password" required> <!-- Thay "pwd" thành "_pwd" -->
+    <button type="submit">Login</button>
+</form>
+
+
 </body>
 </html>

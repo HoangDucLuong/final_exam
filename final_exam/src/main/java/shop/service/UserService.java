@@ -41,8 +41,12 @@ public class UserService {
 
     // Kiểm tra mật khẩu (so sánh mật khẩu đã mã hóa)
     public boolean checkPassword(String rawPassword, String encodedPassword) {
+        if (encodedPassword == null) {
+            throw new IllegalArgumentException("Encoded password cannot be null");
+        }
         return BCrypt.checkpw(rawPassword, encodedPassword);
     }
+
 
 
     // Lưu user mới
@@ -86,4 +90,4 @@ public class UserService {
     public boolean deleteById(int id) {
         return userRepository.deleteById(id) > 0;
     }
-}
+} 

@@ -40,7 +40,7 @@ public class UserRepository {
     // Tìm user theo uid
     public Optional<User> findByUid(String uid) {
         System.out.println("Finding user with uid: " + uid); // In ra uid
-        String sql = "SELECT * FROM tbl_user WHERE _uid = ?";
+        String sql = "SELECT _id, _name, _uid, _email, _pwd, _usr_type, _phone, _address, _created_at, _status FROM tbl_user WHERE _uid = ?";
         try {
             User user = jdbcTemplate.queryForObject(
                 sql,
@@ -53,6 +53,7 @@ public class UserRepository {
             return Optional.empty();
         }
     }
+
 
 
     // Tìm user theo loại người dùng (userType)
