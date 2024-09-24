@@ -11,4 +11,8 @@ public class HomeController {
     public String home() {
         return "home/index"; // Đường dẫn đến template trang chính
     }
+    @GetMapping("/")
+    public String about() {
+        return "home/index"; // Đường dẫn đến template trang chính
+    }
 }
