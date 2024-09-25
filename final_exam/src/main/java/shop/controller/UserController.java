@@ -32,29 +32,35 @@ public class UserController {
     }
 
     // Kiểm tra đăng nhập
-	    @PostMapping("/chklogins")
-	    public String chklogins(@RequestParam("email") String email, @RequestParam("pwd") String password,
-	                            HttpServletRequest request) {
-	        Logger log = Logger.getGlobal();
-	        log.info("Attempted login by user: " + email);
-	
-	        // Lấy mật khẩu đã mã hóa và quyền user từ repository
-	        String encryptedPassword = repAuth.findPasswordByUid(email);
-	        Integer role = repAuth.findUserTypeByUid(email);
-	        String fullName = repUser.findNameByUid(email); // Lấy tên người dùng dựa trên email
-	
-	        // Kiểm tra mật khẩu
-	        if (encryptedPassword != null && SecurityUtility.compareBcrypt(encryptedPassword, password)) {
-	            request.getSession().setAttribute("user", email); // Lưu email vào phiên
-	            request.getSession().setAttribute("name", fullName); // Lưu tên người dùng
-	            request.getSession().setAttribute("usr_type", role); // Lưu quyền của người dùng
-	
-	            return "redirect:/"; // Điều hướng đến trang chính của người dùng
-	        } else {
-	            request.setAttribute("error", "Invalid email or password");
-	            return "user/login"; // Trả về trang đăng nhập nếu thông tin sai
-	        }
-	    }
+    @PostMapping("/chklogins")
+    public String chklogins(@RequestParam("email") String email, @RequestParam("pwd") String password,
+                            HttpServletRequest request) {
+        Logger log = Logger.getGlobal();
+        log.info("Attempted login by user: " + email);
+
+        // Lấy mật khẩu đã mã hóa và quyền user từ repository
+        String encryptedPassword = repAuth.findPasswordByUid(email);
+        Integer role = repAuth.findUserTypeByUid(email);
+        String fullName = repUser.findNameByUid(email); // Lấy tên người dùng dựa trên email
+
+        // Kiểm tra mật khẩu
+        if (encryptedPassword != null && SecurityUtility.compareBcrypt(encryptedPassword, password)) {
+            // Kiểm tra quyền người dùng
+            if (role == 0) { // Chỉ cho phép người dùng có quyền 0 đăng nhập
+                request.getSession().setAttribute("user", email); // Lưu email vào phiên
+                request.getSession().setAttribute("name", fullName); // Lưu tên người dùng
+                request.getSession().setAttribute("usr_type", role); // Lưu quyền của người dùng
+
+                return "redirect:/"; // Điều hướng đến trang chính của người dùng
+            } else {
+                request.setAttribute("error", "You do not have permission to log in as a user.");
+                return "user/login"; // Trả về trang đăng nhập nếu người dùng không có quyền
+            }
+        } else {
+            request.setAttribute("error", "Invalid email or password");
+            return "user/login"; // Trả về trang đăng nhập nếu thông tin sai
+        }
+    }
 
     // Trang đăng ký
     @GetMapping("/register")
