@@ -1,70 +1,107 @@
 package shop.controller;
 
-import shop.model.User;
-import shop.service.UserService;
+import java.time.LocalDateTime;
+import java.util.logging.Logger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import shop.model.User;
+import shop.repository.AuthRepository;
+import shop.repository.UserRepository; 
+import shop.utils.SecurityUtility;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
-
     @Autowired
-    private UserService userService;
+    AuthRepository repAuth;
+    @Autowired
+    UserRepository repUser; 
 
-    // Display the admin dashboard
-    @GetMapping("/dashboard")
-    public String dashboard() {
-        return "admin/ad_index";
+    // Trang chính của admin
+    @GetMapping("/index")
+    public String index() {
+        return "admin/index"; // Trả về trang admin index
     }
 
-    // Display the login form
+    // Trang đăng nhập
     @GetMapping("/login")
-    public String loginForm() {
-        return "admin/ad_login";
+    public String login() {
+        return "admin/login"; // Trả về trang đăng nhập admin
     }
 
-    // Handle login using UID and password
-    @PostMapping("/chklogin")
-    public String checkLogin(@RequestParam("_uid") String username,
-                             @RequestParam("_pwd") String password, 
-                             HttpServletRequest request, 
-                             HttpServletResponse response) {
-        User user = userService.findByUid(username);
+    // Kiểm tra đăng nhập
+    @PostMapping("/chklogins")
+    public String chklogins(@RequestParam("email") String email, @RequestParam("pwd") String password,
+                            HttpServletRequest request) {
+        Logger log = Logger.getGlobal();
+        log.info("Attempted login by user: " + email);
 
-        if (user != null) {
-           
-            if (userService.checkPassword(password, user.getPassword())) {
-            	HttpSession session = request.getSession();
-                session.setAttribute("user", user);
+        // Lấy mật khẩu đã mã hóa và quyền user từ repository
+        String encryptedPassword = repAuth.findPasswordByUid(email); // Thay đổi để dùng UID
+        Integer role = repAuth.findUserTypeByUid(email);
 
-                logger.info("User authenticated: " + username + ", UserType: " + user.getUserType());
+        // Kiểm tra mật khẩu
+        if (encryptedPassword != null && SecurityUtility.compareBcrypt(encryptedPassword, password)) {
+            request.getSession().setAttribute("usr_type", role);
 
-                if (user.getUserType() == 1) {
-                    return "redirect:/admin/dashboard";
-                } else if (user.getUserType() == 1) {
-                    return "redirect:/manager/login";
-                } else if (user.getUserType() == 0) {
-                    return "redirect:/employee/login";
-                    }
+            if (role == 1) {
+                return "redirect:/admin/index"; // Điều hướng đến trang chính của admin
             } else {
-                logger.error("Password check failed for user: " + username);
+                return "redirect:/user/index"; // Điều hướng đến trang chính của user
             }
         } else {
-            logger.error("User not found: " + username);
+            request.setAttribute("error", "Invalid username or password");
+            return "admin/login"; // Trả về trang đăng nhập nếu thông tin sai
         }
-        return "redirect:/admin/login?error=true";
-    
-}
+    }
+
+    // Trang đăng ký
+    @GetMapping("/register")
+    public String register() {
+        return "admin/register"; // Trả về trang đăng ký admin
+    }
+
+    // Xử lý đăng ký
+    @PostMapping("/add")
+    public String addUser(@RequestParam String email, 
+                          @RequestParam String pwd, 
+                          @RequestParam String name,
+                          @RequestParam String phone,
+                          @RequestParam String address) {
+        // Kiểm tra giá trị address
+        if (address == null || address.isEmpty()) {
+            // Có thể ném ra một thông báo lỗi hoặc xử lý khác nếu cần
+            return "redirect:/admin/addUser?error=Address is required";
+        }
+
+        // Tạo đối tượng User mới
+        User user = new User();
+        user.setEmail(email); // Đặt email là username
+
+        // Hash mật khẩu
+        String hashedPassword = SecurityUtility.encryptBcrypt(pwd);
+        user.setPwd(hashedPassword); // Lưu mật khẩu đã hash
+
+        user.setName(name); // Lưu tên đầy đủ
+        user.setCreatedAt(LocalDateTime.now()); // Thời gian tạo tài khoản
+        user.setPhone(phone); // Lưu số điện thoại
+        user.setAddress(address); // Lưu địa chỉ
+        user.setStatus(1); // Đặt trạng thái mặc định là active (1)
+        user.setUsrType(0); // Đặt quyền mặc định là user (0)
+
+        // Thêm người dùng vào cơ sở dữ liệu
+        repUser.addUser(user);
+
+        // Điều hướng lại trang admin sau khi thêm user thành công
+        return "redirect:/admin/index";
+    }
 
 }
