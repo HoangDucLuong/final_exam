@@ -38,6 +38,7 @@ public class AdminController {
     }
 
     // Kiểm tra đăng nhập
+ // Kiểm tra đăng nhập
     @PostMapping("/chklogins")
     public String chklogins(@RequestParam("email") String email, @RequestParam("pwd") String password,
                             HttpServletRequest request) {
@@ -45,23 +46,33 @@ public class AdminController {
         log.info("Attempted login by user: " + email);
 
         // Lấy mật khẩu đã mã hóa và quyền user từ repository
-        String encryptedPassword = repAuth.findPasswordByUid(email); // Thay đổi để dùng UID
+        String encryptedPassword = repAuth.findPasswordByUid(email);
         Integer role = repAuth.findUserTypeByUid(email);
 
         // Kiểm tra mật khẩu
-        if (encryptedPassword != null && SecurityUtility.compareBcrypt(encryptedPassword, password)) {
-            request.getSession().setAttribute("usr_type", role);
+        if (encryptedPassword == null) {
+            // Nếu email không tồn tại
+            request.setAttribute("error", "Invalid email or password");
+            return "admin/login"; // Trả về trang đăng nhập với thông báo lỗi
+        }
 
-            if (role == 1) {
-                return "redirect:/admin/index"; // Điều hướng đến trang chính của admin
-            } else {
-                return "redirect:/user/index"; // Điều hướng đến trang chính của user
-            }
+        if (!SecurityUtility.compareBcrypt(encryptedPassword, password)) {
+            // Nếu mật khẩu không đúng
+            request.setAttribute("error", "Invalid email or password");
+            return "admin/login"; // Trả về trang đăng nhập với thông báo lỗi
+        }
+
+        // Kiểm tra quyền người dùng
+        if (role == 1) { // Nếu là admin
+            request.getSession().setAttribute("usr_type", role);
+            return "redirect:/admin/index"; // Điều hướng đến trang chính của admin
         } else {
-            request.setAttribute("error", "Invalid username or password");
-            return "admin/login"; // Trả về trang đăng nhập nếu thông tin sai
+            request.setAttribute("error", "You do not have permission to access the admin area.");
+            return "admin/login"; // Trả về trang đăng nhập với thông báo lỗi
         }
     }
+
+
 
     // Trang đăng ký
     @GetMapping("/register")
