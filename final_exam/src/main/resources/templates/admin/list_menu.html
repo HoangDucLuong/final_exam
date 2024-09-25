@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu List</title>
+    <link rel="stylesheet" href="/static/css/style.css"> <!-- Đường dẫn tới file CSS -->
+</head>
+<body>
+    <div class="container">
+        <h2>Menu List</h2>
+        <a href="/admin/menu/create" class="btn btn-primary">Create New Menu</a> <!-- Nút tạo menu mới -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Menu Name</th>
+                    <th>Menu Type</th>
+                    <th>Created At</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Hiển thị các menu từ model -->
+                <tr th:each="menu : ${menus}">
+                    <td th:text="${menu.id}"></td>
+                    <td th:text="${menu.menuName}"></td>
+                    <td th:text="${menu.menuType == 0 ? 'User-created' : 'Admin-created'}"></td>
+                    <td th:text="${#dates.format(menu.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

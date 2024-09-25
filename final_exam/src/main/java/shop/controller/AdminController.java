@@ -5,14 +5,17 @@ import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
+import shop.model.Menu;
 import shop.model.User;
 import shop.repository.AuthRepository;
+import shop.repository.MenuRepository;
 import shop.repository.UserRepository; 
 import shop.utils.SecurityUtility;
 
@@ -24,6 +27,8 @@ public class AdminController {
     AuthRepository repAuth;
     @Autowired
     UserRepository repUser; 
+    @Autowired
+    private MenuRepository menuRepo;
 
     // Trang chính của admin
     @GetMapping("/index")
@@ -114,5 +119,31 @@ public class AdminController {
         // Điều hướng lại trang admin sau khi thêm user thành công
         return "redirect:/admin/index";
     }
+    
+ // Trang tạo menu
+    @GetMapping("/menu/create")
+    public String createMenuPage() {
+        return "admin/add_menu"; // Trả về trang tạo menu
+    }
 
+    // Xử lý việc tạo menu
+    @PostMapping("/menu/create")
+    public String createMenu(@RequestParam("menu_name") String menuName, 
+                             @RequestParam("menu_type") int menuType, Model model) {
+        Menu menu = new Menu();
+        menu.setMenuName(menuName);
+        menu.setMenuType(menuType);
+        
+        menuRepo.save(menu); // Lưu menu vào cơ sở dữ liệu
+
+        model.addAttribute("message", "Menu created successfully!");
+        return "redirect:/admin/menu/list"; // Chuyển hướng đến trang danh sách menu
+    }
+
+    // Trang danh sách các menu
+    @GetMapping("/menu/list")
+    public String listMenu(Model model) {
+        model.addAttribute("menus", menuRepo.findAll()); // Lấy tất cả các menu từ cơ sở dữ liệu
+        return "admin/list_menu"; // Trả về trang danh sách menu
+    }
 }

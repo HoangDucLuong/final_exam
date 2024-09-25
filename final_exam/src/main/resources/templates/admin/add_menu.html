@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Menu</title>
+<link rel="stylesheet" href="/static/css/style.css">
+<!-- Đường dẫn tới file CSS -->
+</head>
+<body>
+	<div class="container">
+		<h2>Add New Menu</h2>
+		<form action="/admin/menu/create" method="post">
+			<div class="form-group">
+				<label for="menuName">Menu Name:</label> <input type="text"
+					id="menuName" name="menu_name" class="form-control" required>
+				<!-- Chỉnh sửa ở đây -->
+			</div>
+			<div class="form-group">
+				<label for="menuType">Menu Type:</label> <select id="menuType"
+					name="menu_type" class="form-control">
+					<option value="0">User-created</option>
+					<option value="1">Admin-created</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<button type="submit" class="btn btn-primary">Add Menu</button>
+			</div>
+		</form>
+
+	</div>
+</body>
+</html>
