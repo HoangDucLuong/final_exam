@@ -37,6 +37,12 @@ public class UserRepository {
         String sql = "SELECT * FROM tbl_user WHERE email = ?";
         return db.queryForObject(sql, new Object[]{email}, new UserRowMapper());
     }
+    public void updateUser(User user) {
+        String sql = "UPDATE tbl_user SET name = ?, phone = ?, address = ?, pwd = ? WHERE email = ?";
+
+        db.update(sql, user.getName(), user.getPhone(), user.getAddress(), user.getPwd(), user.getEmail());
+    }
+
 
     // RowMapper để ánh xạ kết quả truy vấn thành đối tượng User
     private static class UserRowMapper implements RowMapper<User> {
