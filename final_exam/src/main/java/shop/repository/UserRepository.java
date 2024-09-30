@@ -10,7 +10,7 @@ import shop.model.User;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-
+import java.util.List;
 
 @Repository
 public class UserRepository {
@@ -37,12 +37,26 @@ public class UserRepository {
         String sql = "SELECT * FROM tbl_user WHERE email = ?";
         return db.queryForObject(sql, new Object[]{email}, new UserRowMapper());
     }
+
+    // Phương thức cập nhật thông tin người dùng
     public void updateUser(User user) {
         String sql = "UPDATE tbl_user SET name = ?, phone = ?, address = ?, pwd = ? WHERE email = ?";
 
         db.update(sql, user.getName(), user.getPhone(), user.getAddress(), user.getPwd(), user.getEmail());
     }
 
+    // Phương thức tìm kiếm người dùng theo từ khóa và phân trang
+    public List<User> findAllUsers(int page, String search) {
+        int pageSize = 10; // Số lượng người dùng mỗi trang
+        int offset = (page - 1) * pageSize;
+
+        // Tạo câu lệnh SQL với điều kiện tìm kiếm
+        String sql = "SELECT * FROM tbl_user WHERE name LIKE ? OR email LIKE ? ORDER BY id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        // Sử dụng JdbcTemplate để thực hiện truy vấn
+        return db.query(sql, new Object[]{"%" + search + "%", "%" + search + "%", offset, pageSize},
+                new UserRowMapper());
+    }
 
     // RowMapper để ánh xạ kết quả truy vấn thành đối tượng User
     private static class UserRowMapper implements RowMapper<User> {

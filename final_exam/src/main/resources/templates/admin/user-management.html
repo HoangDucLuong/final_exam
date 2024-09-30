@@ -1,0 +1,48 @@
+<!-- src/main/resources/templates/admin/user-management.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>User Management</title>
+<!-- Thêm CSS, JS cần thiết -->
+</head>
+<body>
+	<h1>Quản Lý Người Dùng</h1>
+	<form method="get" action="/admin/user-management">
+		<input type="text" name="search" placeholder="Tìm kiếm người dùng..."
+			th:value="${search}" />
+		<button type="submit">Tìm Kiếm</button>
+	</form>
+
+	<table>
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Email</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="user : ${users}">
+				<td th:text="${user.id}"></td>
+				<td th:text="${user.name}"></td>
+				<td th:text="${user.email}"></td>
+				<td><a th:href="@{/admin/contracts/add(userId=${user.id})}">Tạo
+						hợp đồng</a></td>
+
+			</tr>
+		</tbody>
+	</table>
+
+	<!-- Phân trang -->
+	<div>
+		<a th:if="${currentPage > 1}"
+			th:href="@{/admin/user-management(page=${currentPage - 1}, search=${search})}">Trang
+			Trước</a> <span th:text="'Trang ' + ${currentPage}"></span> <a
+			th:if="${users.size() == 10}"
+			th:href="@{/admin/user-management(page=${currentPage + 1}, search=${search})}">Trang
+			Sau</a>
+	</div>
+</body>
+</html>
