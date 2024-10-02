@@ -17,3 +17,4 @@ public class ContractDetailMapper implements RowMapper<ContractDetail> {
         return contractDetail;
     }
 }
+	
