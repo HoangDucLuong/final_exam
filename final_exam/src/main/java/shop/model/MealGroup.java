@@ -4,6 +4,7 @@ public class MealGroup {
     private int id;
     private String groupName;
     private String description;
+    
 	public int getId() {
 		return id;
 	}

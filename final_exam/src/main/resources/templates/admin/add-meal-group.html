@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thêm Nhóm Món Ăn</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body>
+    <h1>Thêm Nhóm Món Ăn</h1>
+    <form action="#" th:action="@{/admin/meal-groups/add}" method="post">
+        <label for="groupName">Tên Nhóm Món Ăn:</label>
+        <input type="text" id="groupName" name="groupName" required>
+
+        <label for="description">Mô Tả:</label>
+        <textarea id="description" name="description"></textarea>
+
+        <button type="submit">Thêm</button>
+        <a href="/admin/meal-groups">Trở Về</a>
+    </form>
+</body>
+</html>

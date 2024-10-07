@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Quản Lý Nhóm Món Ăn</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+<body>
+    <h1>Quản Lý Nhóm Món Ăn</h1>
+    <a href="/admin/meal-groups/add">Thêm Nhóm Món Ăn</a>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên Nhóm Món Ăn</th>
+                <th>Mô Tả</th>
+                <th>Thao Tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="group : ${mealGroups}">
+                <td th:text="${group.id}"></td>
+                <td th:text="${group.groupName}"></td>
+                <td th:text="${group.description}"></td>
+                <td>
+                    <a th:href="@{/admin/meal-groups/edit/{id}(id=${group.id})}">Chỉnh Sửa</a>
+                    <a th:href="@{/admin/meal-groups/delete/{id}(id=${group.id})}" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">Xóa</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
