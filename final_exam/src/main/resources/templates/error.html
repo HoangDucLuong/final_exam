@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error Page</title>
+</head>
+<body>
+    <h1>Something went wrong!</h1>
+    <p>We are experiencing some technical issues. Please try again later.</p>
+    <p th:text="${message}"></p> <!-- Dòng này sẽ hiển thị thông báo lỗi nếu có -->
+</body>
+</html>
