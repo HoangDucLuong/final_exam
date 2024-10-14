@@ -17,6 +17,18 @@ public class UserRepository {
     @Autowired
     JdbcTemplate db;
 
+ // Phương thức tìm kiếm người dùng theo từ khóa và phân trang
+    public List<User> findAllUsers(int page, String search) {
+        int pageSize = 10; // Số lượng người dùng mỗi trang
+        int offset = (page - 1) * pageSize;
+
+        // Sử dụng OFFSET và FETCH NEXT để phân trang trên SQL Server
+        String sql = "SELECT * FROM tbl_user WHERE name LIKE ? OR email LIKE ? ORDER BY id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        return db.query(sql, new Object[]{"%" + search + "%", "%" + search + "%", offset, pageSize},
+                new UserRowMapper());
+    }
+
     // Phương thức thêm người dùng
     public void addUser(User user) {
         String sql = "INSERT INTO tbl_user (name, email, pwd, usr_type, phone, address, created_at, status) "
@@ -25,7 +37,11 @@ public class UserRepository {
         db.update(sql, user.getName(), user.getEmail(), user.getPwd(),
                 user.getUsrType(), user.getPhone(), user.getAddress(), user.getCreatedAt(), user.getStatus());
     }
-
+    // Phương thức tìm kiếm người dùng theo ID
+    public User findById(int id) {
+        String sql = "SELECT * FROM tbl_user WHERE id = ?";
+        return db.queryForObject(sql, new Object[]{id}, new UserRowMapper());
+    }
     // Phương thức lấy tên người dùng theo email
     public String findNameByUid(String email) {
         String sql = "SELECT name FROM tbl_user WHERE email = ?";
@@ -40,24 +56,15 @@ public class UserRepository {
 
     // Phương thức cập nhật thông tin người dùng
     public void updateUser(User user) {
-        String sql = "UPDATE tbl_user SET name = ?, phone = ?, address = ?, pwd = ? WHERE email = ?";
+        String sql = "UPDATE tbl_user SET name = ?, email = ?, phone = ?, address = ?, pwd = ?, status = ? WHERE id = ?";
 
-        db.update(sql, user.getName(), user.getPhone(), user.getAddress(), user.getPwd(), user.getEmail());
+        db.update(sql, user.getName(), user.getEmail(), user.getPhone(), user.getAddress(), user.getPwd(), user.getStatus(), user.getId());
     }
 
-    // Phương thức tìm kiếm người dùng theo từ khóa và phân trang
-    public List<User> findAllUsers(int page, String search) {
-        int pageSize = 10; // Số lượng người dùng mỗi trang
-        int offset = (page - 1) * pageSize;
-
-        // Tạo câu lệnh SQL với điều kiện tìm kiếm
-        String sql = "SELECT * FROM tbl_user WHERE name LIKE ? OR email LIKE ? ORDER BY id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-
-        // Sử dụng JdbcTemplate để thực hiện truy vấn
-        return db.query(sql, new Object[]{"%" + search + "%", "%" + search + "%", offset, pageSize},
-                new UserRowMapper());
+    public void deleteUser(int id) {
+        String sql = "DELETE FROM tbl_user WHERE id = ?";
+        db.update(sql, id);
     }
-
     // RowMapper để ánh xạ kết quả truy vấn thành đối tượng User
     private static class UserRowMapper implements RowMapper<User> {
         @Override

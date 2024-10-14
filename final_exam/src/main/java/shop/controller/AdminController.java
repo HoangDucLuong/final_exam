@@ -41,9 +41,14 @@ public class AdminController {
     public String login() {
         return "admin/login"; // Trả về trang đăng nhập admin
     }
-
-    // Kiểm tra đăng nhập
- // Kiểm tra đăng nhập
+    
+    // Renamed the mapping for user management
+    @GetMapping("/admin/user-management") 
+    public String usermanagement(){
+        return "admin/index";
+    }
+    
+  // Kiểm tra đăng nhập
     @PostMapping("/chklogins")
     public String chklogins(@RequestParam("email") String email, @RequestParam("pwd") String password,
                             HttpServletRequest request) {
@@ -76,8 +81,6 @@ public class AdminController {
             return "admin/login"; // Trả về trang đăng nhập với thông báo lỗi
         }
     }
-
-
 
     // Trang đăng ký
     @GetMapping("/register")
@@ -120,7 +123,7 @@ public class AdminController {
         return "redirect:/admin/index";
     }
     
- // Trang tạo menu
+    // Trang tạo menu
     @GetMapping("/menu/create")
     public String createMenuPage() {
         return "admin/add_menu"; // Trả về trang tạo menu
