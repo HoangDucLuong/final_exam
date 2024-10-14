@@ -10,17 +10,20 @@ public class Contract {
     private BigDecimal totalAmount;
     private BigDecimal depositAmount;
     private int status;
+    private int paymentStatus; // Thêm trường payment_status
     private int usrId;
 
     public Contract() {}
 
-    public Contract(int id, LocalDate startDate, LocalDate endDate, BigDecimal totalAmount, BigDecimal depositAmount, int status, int usrId) {
+    public Contract(int id, LocalDate startDate, LocalDate endDate, BigDecimal totalAmount, 
+                    BigDecimal depositAmount, int status, int paymentStatus, int usrId) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
         this.totalAmount = totalAmount;
         this.depositAmount = depositAmount;
         this.status = status;
+        this.paymentStatus = paymentStatus; // Khởi tạo payment_status
         this.usrId = usrId;
     }
 
@@ -71,6 +74,14 @@ public class Contract {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getPaymentStatus() { // Getter cho payment_status
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(int paymentStatus) { // Setter cho payment_status
+        this.paymentStatus = paymentStatus;
     }
 
     public int getUsrId() {

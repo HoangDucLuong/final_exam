@@ -43,4 +43,22 @@ public class MealRepositoryImpl implements MealRepository {
         String sql = "DELETE FROM tbl_meal WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
+    @Override
+    public List<Meal> findMealsByIds(List<Integer> ids) {
+        String sql = "SELECT * FROM tbl_meal WHERE id IN (" + String.join(",", ids.stream().map(String::valueOf).toArray(String[]::new)) + ")";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Meal meal = new Meal();
+            meal.setId(rs.getInt("id"));
+            meal.setMealName(rs.getString("meal_name"));
+            meal.setPrice(rs.getBigDecimal("price"));
+            meal.setDescription(rs.getString("description"));
+            return meal;
+        });
+    }
+    @Override
+    public Meal findById(int id) {
+        String sql = "SELECT * FROM tbl_meal WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new MealMapper(), id);
+    }
+
 }

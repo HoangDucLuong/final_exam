@@ -9,4 +9,6 @@ public interface MealRepository {
     void addMeal(Meal meal);
     void updateMeal(Meal meal);
     void deleteMeal(int id);
+    List<Meal> findMealsByIds(List<Integer> ids); // Thêm phương thức này
+    Meal findById(int id);
 }

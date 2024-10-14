@@ -1,5 +1,6 @@
 package shop.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +12,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpServletRequest;
+import shop.model.Contract;
+import shop.model.ContractDetail;
 import shop.model.Meal;
 import shop.model.User;
+import shop.repository.ContractDetailRepository;
+import shop.repository.ContractRepository;
 import shop.repository.MealRepository;
 import shop.repository.UserRepository;
 import shop.utils.SecurityUtility;
@@ -24,6 +29,12 @@ public class HomeController {
 	UserRepository repUser;
 	@Autowired
 	private MealRepository mealRepository;
+
+	@Autowired
+	private ContractRepository contractRepository;
+
+	@Autowired
+	private ContractDetailRepository contractDetailRepository;
 
 	@GetMapping("/")
 	public ModelAndView showHomePage() {
@@ -46,10 +57,23 @@ public class HomeController {
 	}
 
 	@GetMapping("/menu")
-	public String showMenuPage(Model model) {
+	public String showMenuPage(Model model, HttpServletRequest request) {
+		String email = (String) request.getSession().getAttribute("user");
+		if (email != null) {
+			User user = repUser.findUserByEmail(email);
+			model.addAttribute("userId", user.getId()); // Đưa userId vào model
+		}
+
 		List<Meal> meals = mealRepository.getAllMeals(); // Lấy danh sách món ăn
 		model.addAttribute("meals", meals); // Đưa danh sách món ăn vào model
 		return "home/menu"; // Trả về view hiển thị danh sách món ăn
+	}
+
+	// Thêm một phương thức mới để điều hướng tới trang tạo hợp đồng
+	@GetMapping("/contracts/create-contract")
+	public String showCreateContractPage(@RequestParam("mealId") Long mealId, Model model) {
+		model.addAttribute("mealId", mealId); // Thêm mealId vào model để sử dụng trong form
+		return "user/create-contract"; // Trả về view tạo hợp đồng
 	}
 
 	@GetMapping("/service")
@@ -73,6 +97,10 @@ public class HomeController {
 		if (email != null) {
 			User user = repUser.findUserByEmail(email); // Lấy thông tin người dùng từ CSDL
 			model.addAttribute("user", user); // Đưa thông tin người dùng vào Model
+
+			// Lấy danh sách hợp đồng của user
+			List<Contract> contracts = contractRepository.getContractsByUserId(user.getId());
+			model.addAttribute("contracts", contracts); // Đưa danh sách hợp đồng vào model
 
 			// Thêm thông báo nếu có
 			if (request.getAttribute("success") != null) {

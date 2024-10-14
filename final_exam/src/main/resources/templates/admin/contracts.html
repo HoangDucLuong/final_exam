@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi">
 <head>
-    <title>Danh sách hợp đồng</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách hợp đồng - Admin</title>
 </head>
 <body>
     <h1>Danh sách hợp đồng</h1>
@@ -10,31 +11,28 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>User ID</th>
+                <th>Người dùng</th>
                 <th>Ngày bắt đầu</th>
-                <th>Ngày kết thúc</th>
-                <th>Tổng số tiền</th>
-                <th>Số tiền đặt cọc</th>
                 <th>Trạng thái</th>
-                <th>Thao tác</th>
+                <th>Tổng số tiền</th>
+                <th>Hành động</th>
             </tr>
         </thead>
         <tbody>
             <tr th:each="contract : ${contracts}">
                 <td th:text="${contract.id}"></td>
-                <td th:text="${contract.usrId}"></td>
+                <td th:text="${contract.user.fullName}"></td>
                 <td th:text="${contract.startDate}"></td>
-                <td th:text="${contract.endDate}"></td>
-                <td th:text="${contract.totalAmount}"></td>
-                <td th:text="${contract.depositAmount}"></td>
                 <td th:text="${contract.status}"></td>
+                <td th:text="${contract.totalAmount}"></td>
                 <td>
-                    <a th:href="@{/admin/contracts/edit/{id}(id=${contract.id})}">Chỉnh sửa</a>
-                    <a th:href="@{/admin/contracts/delete/{id}(id=${contract.id})}">Xóa</a>
+                    <a th:href="@{/contracts/admin/update/{id}(id=${contract.id})}">Cập nhật</a>
+                    <a th:href="@{/contracts/admin/delete/{id}(id=${contract.id})}">Xóa</a>
+                    <a th:href="@{/contracts/{id}(id=${contract.id})}">Chi tiết</a>
                 </td>
             </tr>
         </tbody>
     </table>
-    <a href="/admin/contracts/add">Thêm hợp đồng mới</a>
+    <a href="/admin">Quay lại trang admin</a>
 </body>
 </html>

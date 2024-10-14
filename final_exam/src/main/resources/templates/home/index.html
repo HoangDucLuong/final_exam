@@ -88,10 +88,10 @@
 								<a href="/user/login" class="dropdown-item"
 									th:if="${session.name == null}">Sign In</a> <a
 									href="/user/register" class="dropdown-item"
-									th:if="${session.name == null}">Sign Up</a> <a
-									href="/profile" class="dropdown-item"
-									th:if="${session.name != null}">Profile</a> <a href="/user/logout"
-									class="dropdown-item" th:if="${session.name != null}">Logout</a>
+									th:if="${session.name == null}">Sign Up</a> <a href="/profile"
+									class="dropdown-item" th:if="${session.name != null}">Profile</a>
+								<a href="/user/logout" class="dropdown-item"
+									th:if="${session.name != null}">Logout</a>
 							</div>
 						</div>
 
@@ -289,17 +289,27 @@
 						<div id="tab-1" class="tab-pane fade show p-0 active">
 							<div class="row g-4">
 								<div class="col-lg-6">
-									<div class="d-flex align-items-center">
-										<img class="flex-shrink-0 img-fluid rounded"
-											src="img/menu-1.jpg" alt="" style="width: 80px;">
-										<div class="w-100 d-flex flex-column text-start ps-4">
-											<h5 class="d-flex justify-content-between border-bottom pb-2">
-												<span>Chicken Burger</span> <span class="text-primary">$115</span>
-											</h5>
-											<small class="fst-italic">Ipsum ipsum clita erat amet
-												dolor justo diam</small>
-										</div>
-									</div>
+									<table>
+										<tbody>
+											<tr th:each="meal : ${meals}">
+												<td>
+													<div class="d-flex align-items-center">
+														<img class="flex-shrink-0 img-fluid rounded"
+															th:src="@{${meal.image}}" alt="" style="width: 80px;">
+														<div class="w-100 d-flex flex-column text-start ps-4">
+															<h5
+																class="d-flex justify-content-between border-bottom pb-2">
+																<span th:text="${meal.mealName}"></span> <span
+																	class="text-primary" th:text="${meal.price}"></span>
+															</h5>
+															<small class="fst-italic" th:text="${meal.description}"></small>
+														</div>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+
 								</div>
 								<div class="col-lg-6">
 									<div class="d-flex align-items-center">

@@ -83,6 +83,22 @@
 						</div>
 						<a href="/contact" class="nav-item nav-link">Contact</a>
 					</div>
+					<div class="nav-item dropdown">
+						<a href="#" class="nav-link dropdown-toggle"
+							data-bs-toggle="dropdown"> <span
+							th:if="${session.name != null}" th:text="${session.name}">Auth</span>
+							<span th:if="${session.name == null}">Auth</span>
+						</a>
+						<div class="dropdown-menu dropdown-menu-end">
+							<a href="/user/login" class="dropdown-item"
+								th:if="${session.name == null}">Sign In</a> <a
+								href="/user/register" class="dropdown-item"
+								th:if="${session.name == null}">Sign Up</a> <a href="/profile"
+								class="dropdown-item" th:if="${session.name != null}">Profile</a>
+							<a href="/user/logout" class="dropdown-item"
+								th:if="${session.name != null}">Logout</a>
+						</div>
+					</div>
 					<a href="" class="btn btn-primary py-2 px-4">Book A Table</a>
 				</div>
 			</nav>
@@ -111,72 +127,45 @@
 					<h5
 						class="section-title ff-secondary text-center text-primary fw-normal">Food
 						Menu</h5>
-					<h1 class="mb-5">Most Popular Items</h1>
 				</div>
 				<div class="tab-class text-center wow fadeInUp"
 					data-wow-delay="0.1s">
 					<ul
 						class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
-						<li class="nav-item"><a
-							class="d-flex align-items-center text-start mx-3 ms-0 pb-3 active"
-							data-bs-toggle="pill" href="#tab-1"> <i
-								class="fa fa-coffee fa-2x text-primary"></i>
-								<div class="ps-3">
-									<small class="text-body">Popular</small>
-									<h6 class="mt-n1 mb-0">Breakfast</h6>
-								</div>
-						</a></li>
-						<li class="nav-item"><a
-							class="d-flex align-items-center text-start mx-3 pb-3"
-							data-bs-toggle="pill" href="#tab-2"> <i
-								class="fa fa-hamburger fa-2x text-primary"></i>
-								<div class="ps-3">
-									<small class="text-body">Special</small>
-									<h6 class="mt-n1 mb-0">Lunch</h6>
-								</div>
-						</a></li>
-						<li class="nav-item"><a
-							class="d-flex align-items-center text-start mx-3 me-0 pb-3"
-							data-bs-toggle="pill" href="#tab-3"> <i
-								class="fa fa-utensils fa-2x text-primary"></i>
-								<div class="ps-3">
-									<small class="text-body">Lovely</small>
-									<h6 class="mt-n1 mb-0">Dinner</h6>
-								</div>
-						</a></li>
+
+						<li class="nav-item"><i
+							class="fa fa-utensils fa-2x text-primary"></i>
+							<div class="ps-6">
+								<small class="text-body">Lovely</small>
+								<h6 class="mt-n1 mb-0">Meals</h6>
+							</div></li>
 					</ul>
 					<div class="tab-content">
 						<div id="tab-1" class="tab-pane fade show p-0 active">
 							<div class="row g-4">
-								<!-- Giả sử đây là danh sách món ăn được lấy từ cơ sở dữ liệu -->
-								<table>
-									<thead>
-										<tr>
-											<th>ID</th>
-											<th>Tên Món Ăn</th>
-											<th>Giá</th>
-											<th>Mô Tả</th>
-											<th>Thao Tác</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr th:each="meal : ${meals}">
-											<td th:text="${meal.id}"></td>
-											<td th:text="${meal.mealName}"></td>
-											<td th:text="${meal.price}"></td>
-											<td th:text="${meal.description}"></td>
-											<td><a
-												th:href="@{/admin/meals/edit/{id}(id=${meal.id})}">Chỉnh
-													Sửa</a> <a th:href="@{/admin/meals/delete/{id}(id=${meal.id})}"
-												onclick="return confirm('Bạn có chắc chắn muốn xóa?');">Xóa</a>
-											</td>
-										</tr>
-									</tbody>
-								</table>
+								<div class="col" th:each="meal : ${meals}">
+									<div class="d-flex align-items-center border-bottom pb-2">
+										<div class="w-100 d-flex flex-column text-start ps-4">
+											<h5 class="d-flex justify-content-between">
+												<!-- Hiển thị tên món ăn và giá -->
+												<a th:text="${meal.mealName}"></a> <span
+													class="text-primary" th:text="${meal.price}"></span>
+											</h5>
+											<small class="fst-italic" th:text="${meal.description}"></small>
+											<!-- Nút để tạo hợp đồng cho món ăn -->
+											<form th:action="@{/contracts/create-contract}" method="get">
+												<input type="hidden" name="usrId" th:value="${userId}" /> <input
+													type="hidden" name="mealId" th:value="${meal.id}" />
+												<button type="submit" class="btn btn-primary mt-2">Tạo
+													hợp đồng</button>
+											</form>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
-						<!-- Các tab khác (tab-2, tab-3) có thể được thêm vào ở đây -->
 					</div>
+
 				</div>
 			</div>
 		</div>

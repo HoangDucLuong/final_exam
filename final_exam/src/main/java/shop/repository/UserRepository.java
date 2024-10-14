@@ -37,6 +37,10 @@ public class UserRepository {
         String sql = "SELECT * FROM tbl_user WHERE email = ?";
         return db.queryForObject(sql, new Object[]{email}, new UserRowMapper());
     }
+    public User findById(int id) {
+        String sql = "SELECT * FROM tbl_user WHERE id = ?";
+        return db.queryForObject(sql, new Object[]{id}, new UserRowMapper());
+    }
 
     // Phương thức cập nhật thông tin người dùng
     public void updateUser(User user) {

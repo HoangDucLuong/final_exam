@@ -12,4 +12,5 @@ public interface MenuRepository {
     void deleteMenu(int id);    // Xóa menu theo id
     void save(Menu menu);  // Phương thức lưu menu
     List<Menu> findAll();
+    
 }
