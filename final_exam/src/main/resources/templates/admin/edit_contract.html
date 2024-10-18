@@ -1,39 +1,170 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
-    <title>Chỉnh sửa hợp đồng</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="/assets/images/favicon.svg"
+	type="image/x-icon" />
+<title>PlainAdmin Demo | Bootstrap 5 Admin Template</title>
+<link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/assets/css/lineicons.css" type="text/css" />
+<link rel="stylesheet" href="/assets/css/materialdesignicons.min.css"
+	type="text/css" />
+<link rel="stylesheet" href="/assets/css/fullcalendar.css" />
+<link rel="stylesheet" href="/assets/css/main.css" />
 </head>
 <body>
-    <h1>Chỉnh sửa hợp đồng</h1>
-    <form th:action="@{/admin/contracts/edit}" method="post">
-        <input type="hidden" th:value="${contract.id}" name="id"/>
-        <div>
-            <label for="usrId">User ID:</label>
-            <input type="number" id="usrId" name="usrId" th:value="${contract.usrId}" required>
+	<div id="preloader">
+		<div class="spinner"></div>
+	</div>
+	<aside class="sidebar-nav-wrapper">
+		<div class="navbar-logo">
+			<a href="index.html"> <img src="/assets/images/logo/logo.svg"
+				alt="logo" />
+			</a>
+		</div>
+		<nav class="sidebar-nav">
+			<ul>
+				<li class="nav-item"><a href="index"> <span
+						class="icon"> <svg width="20" height="20"
+								viewBox="0 0 20 20" fill="none"
+								xmlns="http://www.w3.org/2000/svg">
+              <path
+									d="M8.74999 18.3333C12.2376 18.3333 15.1364 15.8128 15.7244 12.4941C15.8448 11.8143 15.2737 11.25 14.5833 11.25H9.99999C9.30966 11.25 8.74999 10.6903 8.74999 10V5.41666C8.74999 4.7263 8.18563 4.15512 7.50586 4.27556C4.18711 4.86357 1.66666 7.76243 1.66666 11.25C1.66666 15.162 4.83797 18.3333 8.74999 18.3333Z" />
+              <path
+									d="M17.0833 10C17.7737 10 18.3432 9.43708 18.2408 8.75433C17.7005 5.14918 14.8508 2.29947 11.2457 1.75912C10.5629 1.6568 10 2.2263 10 2.91665V9.16666C10 9.62691 10.3731 10 10.8333 10H17.0833Z" />
+            </svg>
+					</span> <span class="text">Dashboard</span>
+				</a></li>
+
+				<li class="nav-item"><a href="contracts"> <span
+						class="icon"> <svg width="20" height="20"
+								viewBox="0 0 20 20" fill="none"
+								xmlns="http://www.w3.org/2000/svg">
+              <path
+									d="M3.33334 3.35442C3.33334 2.4223 4.07954 1.66666 5.00001 1.66666H15C15.9205 1.66666 16.6667 2.4223 16.6667 3.35442V16.8565C16.6667 17.5519 15.8827 17.9489 15.3333 17.5317L13.8333 16.3924C13.537 16.1673 13.1297 16.1673 12.8333 16.3924L10.5 18.1646C10.2037 18.3896 9.79634 18.3896 9.50001 18.1646L7.16668 16.3924C6.87038 16.1673 6.46298 16.1673 6.16668 16.3924L4.66668 17.5317C4.11731 17.9489 3.33334 17.5519 3.33334 16.8565V3.35442ZM4.79168 5.04218C4.79168 5.39173 5.0715 5.6751 5.41668 5.6751H10C10.3452 5.6751 10.625 5.39173 10.625 5.04218C10.625 4.69264 10.3452 4.40927 10 4.40927H5.41668C5.0715 4.40927 4.79168 4.69264 4.79168 5.04218ZM5.41668 7.7848C5.0715 7.7848 4.79168 8.06817 4.79168 8.41774C4.79168 8.76724 5.0715 9.05066 5.41668 9.05066H10C10.3452 9.05066 10.625 8.76724 10.625 8.41774C10.625 8.06817 10.3452 7.7848 10 7.7848H5.41668ZM4.79168 11.7932C4.79168 12.1428 5.0715 12.4262 5.41668 12.4262H10C10.3452 12.4262 10.625 12.1428 10.625 11.7932C10.625 11.4437 10.3452 11.1603 10 11.1603H5.41668C5.0715 11.1603 4.79168 11.4437 4.79168 11.7932ZM13.3333 4.40927C12.9882 4.40927 12.7083 4.69264 12.7083 5.04218C12.7083 5.39173 12.9882 5.6751 13.3333 5.6751H14.5833C14.9285 5.6751 15.2083 5.39173 15.2083 5.04218C15.2083 4.69264 14.9285 4.40927 14.5833 4.40927H13.3333ZM12.7083 8.41774C12.7083 8.76724 12.9882 9.05066 13.3333 9.05066H14.5833C14.9285 9.05066 15.2083 8.76724 15.2083 8.41774C15.2083 8.06817 14.9285 7.7848 14.5833 7.7848H13.3333C12.9882 7.7848 12.7083 8.06817 12.7083 8.41774ZM13.3333 11.1603C12.9882 11.1603 12.7083 11.4437 12.7083 11.7932C12.7083 12.1428 12.9882 12.4262 13.3333 12.4262H14.5833C14.9285 12.4262 15.2083 12.1428 15.2083 11.7932C15.2083 11.4437 14.9285 11.1603 14.5833 11.1603H13.3333Z" />
+            </svg>
+					</span> <span class="text">Invoice</span>
+				</a></li>
+				<li class="nav-item nav-item-has-children"><a href="#0"
+					class="collapsed" data-bs-toggle="collapse"
+					data-bs-target="#ddmenu_3" aria-controls="ddmenu_3"
+					aria-expanded="false" aria-label="Toggle navigation"> <span
+						class="icon"> <svg width="20" height="20"
+								viewBox="0 0 20 20" fill="none"
+								xmlns="http://www.w3.org/2000/svg">
+              <path
+									d="M14.9211 10.1294C15.1652 9.88534 15.1652 9.48967 14.9211 9.24559L10.7544 5.0789C10.5103 4.83482 10.1147 4.83482 9.87057 5.0789C9.62649 5.32297 9.62649 5.71871 9.87057 5.96278L12.9702 9.06251H1.97916C1.63398 9.06251 1.35416 9.34234 1.35416 9.68751C1.35416 10.0327 1.63398 10.3125 1.97916 10.3125H12.9702L9.87057 13.4122C9.62649 13.6563 9.62649 14.052 9.87057 14.2961C10.1147 14.5402 10.5103 14.5402 10.7544 14.2961L14.9211 10.1294Z" />
+            </svg>
+					</span> <span class="text">Menu</span>
+				</a>
+					<ul id="ddmenu_3" class="collapse">
+						<li><a href="menu.html">Menu List</a></li>
+						<li><a href="menu-add.html">Add Menu</a></li>
+					</ul></li>
+				<li class="nav-item nav-item-has-children"><a href="#0"
+					class="collapsed" data-bs-toggle="collapse"
+					data-bs-target="#ddmenu_4" aria-controls="ddmenu_4"
+					aria-expanded="false" aria-label="Toggle navigation"> <span
+						class="icon"> <svg width="20" height="20"
+								viewBox="0 0 20 20" fill="none"
+								xmlns="http://www.w3.org/2000/svg">
+              <path
+									d="M10.329 1.57102C10.5847 1.31541 11.1585 1.31541 11.4142 1.57102L18.3284 8.4853C18.5841 8.74101 18.5841 9.31477 18.3284 9.57047L11.4142 16.4853C11.1585 16.741 10.5847 16.741 10.329 16.4853C10.0733 16.2297 10.0733 15.6559 10.329 15.4003L14.9476 10.7817H2.5C2.22386 10.7817 2 10.5578 2 10.2817C2 10.0056 2.22386 9.78166 2.5 9.78166H14.9476L10.329 5.16207C10.0733 4.90646 10.0733 4.3327 10.329 4.07709Z" />
+            </svg>
+					</span> <span class="text">Orders</span>
+				</a>
+					<ul id="ddmenu_4" class="collapse">
+						<li><a href="orders.html">Orders List</a></li>
+					</ul></li>
+				<li class="nav-item"><a href="user-management"> <span
+						class="icon"> <svg width="20" height="20"
+								viewBox="0 0 20 20" fill="none"
+								xmlns="http://www.w3.org/2000/svg">
+              <path
+									d="M9.99999 10C7.79086 10 5.99999 8.20914 5.99999 6C5.99999 3.79086 7.79086 2 10 2C12.2091 2 13.9999 3.79086 13.9999 6C13.9999 8.20914 12.2091 10 9.99999 10ZM2 17.5C2 14.8783 4.87829 13 8.00001 13H12C15.1217 13 18 14.8783 18 17.5V18.5H2V17.5Z" />
+            </svg>
+					</span> <span class="text">Customer</span>
+				</a></li>
+				<li class="nav-item"><a href="logout.html"> <span
+						class="icon"> <svg width="20" height="20"
+								viewBox="0 0 20 20" fill="none"
+								xmlns="http://www.w3.org/2000/svg">
+              <path
+									d="M14.9211 10.1294C15.1652 9.88534 15.1652 9.48967 14.9211 9.24559L10.7544 5.0789C10.5103 4.83482 10.1147 4.83482 9.87057 5.0789C9.62649 5.32297 9.62649 5.71871 9.87057 5.96278L12.9702 9.06251H1.97916C1.63398 9.06251 1.35416 9.34234 1.35416 9.68751C1.35416 10.0327 1.63398 10.3125 1.97916 10.3125H12.9702L9.87057 13.4122C9.62649 13.6563 9.62649 14.052 9.87057 14.2961C10.1147 14.5402 10.5103 14.5402 10.7544 14.2961L14.9211 10.1294Z" />
+            </svg>
+					</span> <span class="text">Logout</span>
+				</a></li>
+			</ul>
+		</nav>
+	</aside>
+<
+	<div class="overlay"></div>
+
+<main class="main-wrapper">
+    <header class="header">
+        <div class="container-fluid">
+            <div class="title d-flex flex-wrap align-items-center justify-content-between">
+                <div class="left">
+                    <h6 class="text-medium mb-30">Chỉnh sửa hợp đồng</h6>
+                </div>
+                <div class="right">
+                    <a href="/admin/contracts" class="btn btn-secondary">Quay lại</a>
+                </div>
+            </div>
+            <div class="card-style mb-30">
+                <form th:action="@{/admin/contracts/update/{id}(id=${contract.id})}" method="post">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="usrId" class="form-label">User ID</label>
+                            <input type="number" class="form-control" id="usrId" name="usrId" th:value="${contract.usrId}" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="startDate" class="form-label">Ngày Bắt Đầu</label>
+                            <input type="date" class="form-control" id="startDate" name="startDate" th:value="${#temporals.format(contract.startDate, 'yyyy-MM-dd')}" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="endDate" class="form-label">Ngày Kết Thúc</label>
+                            <input type="date" class="form-control" id="endDate" name="endDate" th:value="${#temporals.format(contract.endDate, 'yyyy-MM-dd')}" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="totalAmount" class="form-label">Tổng Số Tiền</label>
+                            <input type="number" class="form-control" id="totalAmount" name="totalAmount" th:value="${contract.totalAmount}" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="depositAmount" class="form-label">Số Tiền Đặt Cọc</label>
+                            <input type="number" class="form-control" id="depositAmount" name="depositAmount" th:value="${contract.depositAmount}" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="status" class="form-label">Trạng Thái</label>
+                            <input type="number" class="form-control" id="status" name="status" th:value="${contract.status}" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="paymentStatus" class="form-label">Trạng Thái Thanh Toán</label>
+                            <select class="form-select" id="paymentStatus" name="paymentStatus" required>
+                                <option th:value="0" th:selected="${contract.paymentStatus == 0}">Chưa Thanh Toán</option>
+                                <option th:value="1" th:selected="${contract.paymentStatus == 1}">Đã Thanh Toán</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Cập Nhật Hợp Đồng</button>
+                    <a href="/admin/contracts" class="btn btn-secondary">Hủy Bỏ</a>
+                </form>
+            </div>
         </div>
-        <div>
-            <label for="startDate">Ngày bắt đầu:</label>
-            <input type="date" id="startDate" name="startDate" th:value="${#dates.format(contract.startDate, 'yyyy-MM-dd')}" required>
-        </div>
-        <div>
-            <label for="endDate">Ngày kết thúc:</label>
-            <input type="date" id="endDate" name="endDate" th:value="${#dates.format(contract.endDate, 'yyyy-MM-dd')}" required>
-        </div>
-        <div>
-            <label for="totalAmount">Tổng số tiền:</label>
-            <input type="number" step="0.01" id="totalAmount" name="totalAmount" th:value="${contract.totalAmount}" required>
-        </div>
-        <div>
-            <label for="depositAmount">Số tiền đặt cọc:</label>
-            <input type="number" step="0.01" id="depositAmount" name="depositAmount" th:value="${contract.depositAmount}" required>
-        </div>
-        <div>
-            <label for="status">Trạng thái:</label>
-            <input type="number" id="status" name="status" th:value="${contract.status}" required>
-        </div>
-        <button type="submit">Cập nhật hợp đồng</button>
-        <a href="/admin/contracts">Hủy bỏ</a>
-    </form>
+    </header>
+</main>
+
+<script src="/assets/js/bootstrap.bundle.min.js"></script>
+<script src="/assets/js/Chart.min.js"></script>
+<script src="/assets/js/dynamic-pie-chart.js"></script>
+<script src="/assets/js/moment.min.js"></script>
+<script src="/assets/js/fullcalendar.js"></script>
+<script src="/assets/js/jvectormap.min.js"></script>
+<script src="/assets/js/world-merc.js"></script>
+<script src="/assets/js/polyfill.js"></script>
+<script src="/assets/js/main.js"></script>
+
 </body>
 </html>

@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
 import shop.model.User;
 
 import java.sql.ResultSet;
@@ -17,7 +16,7 @@ public class UserRepository {
     @Autowired
     JdbcTemplate db;
 
- // Phương thức tìm kiếm người dùng theo từ khóa và phân trang
+    // Phương thức tìm kiếm người dùng theo từ khóa và phân trang
     public List<User> findAllUsers(int page, String search) {
         int pageSize = 10; // Số lượng người dùng mỗi trang
         int offset = (page - 1) * pageSize;
@@ -37,18 +36,20 @@ public class UserRepository {
         db.update(sql, user.getName(), user.getEmail(), user.getPwd(),
                 user.getUsrType(), user.getPhone(), user.getAddress(), user.getCreatedAt(), user.getStatus());
     }
+
     // Phương thức tìm kiếm người dùng theo ID
     public User findById(int id) {
         String sql = "SELECT * FROM tbl_user WHERE id = ?";
         return db.queryForObject(sql, new Object[]{id}, new UserRowMapper());
     }
+
     // Phương thức lấy tên người dùng theo email
     public String findNameByUid(String email) {
         String sql = "SELECT name FROM tbl_user WHERE email = ?";
         return db.queryForObject(sql, new Object[]{email}, String.class);
     }
 
-    // Phương thức lấy thông tin người dùng theo email (có thể cần thiết trong tương lai)
+    // Phương thức lấy thông tin người dùng theo email
     public User findUserByEmail(String email) {
         String sql = "SELECT * FROM tbl_user WHERE email = ?";
         return db.queryForObject(sql, new Object[]{email}, new UserRowMapper());
@@ -65,6 +66,13 @@ public class UserRepository {
         String sql = "DELETE FROM tbl_user WHERE id = ?";
         db.update(sql, id);
     }
+
+    // Phương thức lấy toàn bộ danh sách người dùng
+    public List<User> findAll() {
+        String sql = "SELECT * FROM tbl_user";
+        return db.query(sql, new UserRowMapper());
+    }
+
     // RowMapper để ánh xạ kết quả truy vấn thành đối tượng User
     private static class UserRowMapper implements RowMapper<User> {
         @Override
@@ -82,4 +90,5 @@ public class UserRepository {
             return user;
         }
     }
+    
 }
