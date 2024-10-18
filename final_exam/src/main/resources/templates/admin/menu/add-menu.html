@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Menu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <style>
+        .meal-group {
+            margin-bottom: 20px;
+            border: 1px solid #007bff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .meal-group h6 {
+            cursor: pointer;
+        }
+
+        .meals-list {
+            display: none; /* Hide meal list by default */
+            margin-top: 10px;
+        }
+
+        .meal-item {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-5">Add New Menu</h1>
+    <form th:action="@{/admin/menu/add}" method="post">
+        <div class="form-group">
+            <label for="menuName">Menu Name</label>
+            <input type="text" id="menuName" name="menuName" class="form-control" required>
+        </div>
+
+        <h5>Meal Groups and Meals</h5>
+        <div id="mealGroups" class="mb-4">
+            <div th:each="group : ${mealGroups}" class="meal-group">
+                <h6 th:text="${group.groupName}" onclick="toggleMeals(this)" th:data-id="${group.id}"></h6>
+                <div class="meals-list">
+                    <div th:each="meal : ${group.meals}" class="meal-item">
+                        <input type="checkbox" name="mealIds" id="meal-{#meal.id}" th:value="${meal.id}" />
+                        <label th:for="'meal-' + ${meal.id}" th:text="${meal.mealName}"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" id="mealGroupId" name="mealGroupId" th:value="0" />
+
+        <button type="submit" class="btn btn-success">Add Menu</button>
+        <a href="/admin/menu/list" class="btn btn-secondary">Back to Menu List</a>
+    </form>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    function toggleMeals(element) {
+        $(element).next('.meals-list').slideToggle(); // Toggle the meal list for the selected group
+
+        // Set mealGroupId to the currently selected group id
+        var groupId = $(element).data('id');
+        $('#mealGroupId').val(groupId);
+    }
+</script>
+</body>
+</html>

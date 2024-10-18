@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Meal List</title>
+</head>
+<body>
+    <h1>Meal List</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Group</th>
+                <th>Price</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="meal : ${meals}">
+                <td th:text="${meal.id}"></td>
+                <td th:text="${meal.mealName}"></td>
+                <td th:text="${meal.mealGroupName}"></td>
+                <td th:text="${meal.price}"></td>
+                <td th:text="${meal.description}"></td>
+                <td>
+                    <a th:href="@{/admin/meal/edit/{id}(id=${meal.id})}">Edit</a>
+                    <a th:href="@{/admin/meal/delete/{id}(id=${meal.id})}" onclick="return confirm('Are you sure you want to delete this meal?');">Delete</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <a href="/admin/meal/add">Add New Meal</a>
+</body>
+</html>

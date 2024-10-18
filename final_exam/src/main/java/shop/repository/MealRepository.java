@@ -11,4 +11,5 @@ public interface MealRepository {
     void deleteMeal(int id);
     List<Meal> findMealsByIds(List<Integer> ids); // Thêm phương thức này
     Meal findById(int id);
+    List<Meal> findMealsByGroupId(int groupId);
 }

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Meal</title>
+</head>
+<body>
+    <h1>Edit Meal</h1>
+    <form th:action="@{/admin/meal/edit/{id}(id=${meal.id})}" th:object="${meal}" method="post">
+        <label for="mealName">Meal Name:</label>
+        <input type="text" id="mealName" th:field="*{mealName}" required/>
+
+        <label for="mealGroupId">Meal Group:</label>
+        <select id="mealGroupId" th:field="*{mealGroupId}" required>
+            <option th:each="group : ${mealGroups}" 
+                    th:value="${group.id}" 
+                    th:text="${group.name}" 
+                    th:selected="${group.id == meal.mealGroupId}"></option>
+        </select>
+
+        <label for="price">Price:</label>
+        <input type="number" id="price" th:field="*{price}" step="0.01" required/>
+
+        <label for="description">Description:</label>
+        <textarea id="description" th:field="*{description}"></textarea>
+
+        <button type="submit">Update Meal</button>
+    </form>
+    <a href="/admin/meal/list">Back to Meal List</a>
+</body>
+</html>

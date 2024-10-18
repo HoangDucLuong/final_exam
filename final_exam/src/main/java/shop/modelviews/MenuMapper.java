@@ -9,21 +9,21 @@ import java.sql.Timestamp;
 
 public class MenuMapper implements RowMapper<Menu> {
 
-	@Override
-	public Menu mapRow(ResultSet rs, int rowNum) throws SQLException {
-	    Menu menu = new Menu();
-	    menu.setId(rs.getInt("id"));
-	    menu.setMenuName(rs.getString("menu_name"));
-	    menu.setMenuType(rs.getInt("menu_type"));
+    @Override
+    public Menu mapRow(ResultSet rs, int rowNum) throws SQLException {
+        Menu menu = new Menu();
+        menu.setId(rs.getInt("id"));
+        menu.setMenuName(rs.getString("menu_name"));
+        menu.setMenuType(rs.getInt("menu_type"));
 
-	    Timestamp createdAtTimestamp = rs.getTimestamp("created_at");
-	    if (createdAtTimestamp != null) {
-	        menu.setCreatedAt(createdAtTimestamp.toLocalDateTime());
-	    } else {
-	        menu.setCreatedAt(null); // Hoặc đặt giá trị mặc định nào đó
-	    }
+        Timestamp createdAtTimestamp = rs.getTimestamp("created_at");
+        if (createdAtTimestamp != null) {
+            menu.setCreatedAt(createdAtTimestamp.toLocalDateTime());
+        } else {
+            menu.setCreatedAt(null);
+        }
 
-	    return menu;
-	}
+        return menu;
+    }
 
 }

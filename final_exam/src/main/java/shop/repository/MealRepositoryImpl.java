@@ -1,6 +1,7 @@
 package shop.repository;
 
 import shop.model.Meal;
+import shop.model.MealGroup; // Thêm import
 import shop.modelviews.MealMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,40 @@ public class MealRepositoryImpl implements MealRepository {
 
     @Override
     public List<Meal> getAllMeals() {
-        String sql = "SELECT * FROM tbl_meal";
-        return jdbcTemplate.query(sql, new MealMapper());
+        String sql = "SELECT m.*, g.group_name FROM tbl_meal m LEFT JOIN tbl_meal_group g ON m.meal_group_id = g.id";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Meal meal = new Meal();
+            meal.setId(rs.getInt("id"));
+            meal.setMealGroupId(rs.getInt("meal_group_id"));
+            meal.setMealName(rs.getString("meal_name"));
+            meal.setPrice(rs.getBigDecimal("price"));
+            meal.setDescription(rs.getString("description"));
+            meal.setMealGroupName(rs.getString("group_name")); // Thêm tên nhóm vào đối tượng Meal
+            return meal;
+        });
     }
 
     @Override
     public Meal getMealById(int id) {
-        String sql = "SELECT * FROM tbl_meal WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new MealMapper());
+        String sql = "SELECT m.*, g.group_name FROM tbl_meal m LEFT JOIN tbl_meal_group g ON m.meal_group_id = g.id WHERE m.id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) -> {
+            Meal meal = new Meal();
+            meal.setId(rs.getInt("id"));
+            meal.setMealGroupId(rs.getInt("meal_group_id"));
+            meal.setMealName(rs.getString("meal_name"));
+            meal.setPrice(rs.getBigDecimal("price"));
+            meal.setDescription(rs.getString("description"));
+            meal.setMealGroupName(rs.getString("group_name")); // Thêm tên nhóm vào đối tượng Meal
+            return meal;
+        });
+    }
+    
+    @Override
+    public List<Meal> findMealsByGroupId(int groupId) {
+        String sql = "SELECT m.*, g.group_name FROM tbl_meal m " +
+                     "JOIN tbl_meal_group g ON m.meal_group_id = g.id " +
+                     "WHERE m.meal_group_id = ?";
+        return jdbcTemplate.query(sql, new Object[]{groupId}, new MealMapper());
     }
 
     @Override
@@ -43,18 +70,22 @@ public class MealRepositoryImpl implements MealRepository {
         String sql = "DELETE FROM tbl_meal WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
+
     @Override
     public List<Meal> findMealsByIds(List<Integer> ids) {
-        String sql = "SELECT * FROM tbl_meal WHERE id IN (" + String.join(",", ids.stream().map(String::valueOf).toArray(String[]::new)) + ")";
+        String sql = "SELECT m.*, g.group_name FROM tbl_meal m LEFT JOIN tbl_meal_group g ON m.meal_group_id = g.id WHERE m.id IN (" + String.join(",", ids.stream().map(String::valueOf).toArray(String[]::new)) + ")";
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             Meal meal = new Meal();
             meal.setId(rs.getInt("id"));
+            meal.setMealGroupId(rs.getInt("meal_group_id"));
             meal.setMealName(rs.getString("meal_name"));
             meal.setPrice(rs.getBigDecimal("price"));
             meal.setDescription(rs.getString("description"));
+            meal.setMealGroupName(rs.getString("group_name")); // Thêm tên nhóm vào đối tượng Meal
             return meal;
         });
     }
+
     @Override
     public Meal findById(int id) {
         String sql = "SELECT * FROM tbl_meal WHERE id = ?";

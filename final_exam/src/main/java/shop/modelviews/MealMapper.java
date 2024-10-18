@@ -3,7 +3,6 @@ package shop.modelviews;
 import shop.model.Meal;
 import org.springframework.jdbc.core.RowMapper;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -16,6 +15,10 @@ public class MealMapper implements RowMapper<Meal> {
         meal.setMealName(rs.getString("meal_name"));
         meal.setPrice(rs.getBigDecimal("price"));
         meal.setDescription(rs.getString("description"));
+        
+        // Nếu bạn muốn lấy tên nhóm món ăn từ cơ sở dữ liệu
+        meal.setMealGroupName(rs.getString("group_name")); // Có thể đã được ánh xạ từ mealGroup
+
         return meal;
     }
 }

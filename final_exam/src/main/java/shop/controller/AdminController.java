@@ -123,30 +123,4 @@ public class AdminController {
         return "redirect:/admin/index";
     }
     
-    // Trang tạo menu
-    @GetMapping("/menu/create")
-    public String createMenuPage() {
-        return "admin/add_menu"; // Trả về trang tạo menu
-    }
-
-    // Xử lý việc tạo menu
-    @PostMapping("/menu/create")
-    public String createMenu(@RequestParam("menu_name") String menuName, 
-                             @RequestParam("menu_type") int menuType, Model model) {
-        Menu menu = new Menu();
-        menu.setMenuName(menuName);
-        menu.setMenuType(menuType);
-        
-        menuRepo.save(menu); // Lưu menu vào cơ sở dữ liệu
-
-        model.addAttribute("message", "Menu created successfully!");
-        return "redirect:/admin/menu/list"; // Chuyển hướng đến trang danh sách menu
-    }
-
-    // Trang danh sách các menu
-    @GetMapping("/menu/list")
-    public String listMenu(Model model) {
-        model.addAttribute("menus", menuRepo.findAll()); // Lấy tất cả các menu từ cơ sở dữ liệu
-        return "admin/list_menu"; // Trả về trang danh sách menu
-    }
 }

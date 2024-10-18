@@ -1,10 +1,19 @@
 package shop.model;
 
+import java.util.List;
+
 public class MealGroup {
     private int id;
     private String groupName;
     private String description;
+    private List<Meal> meals;
     
+	public List<Meal> getMeals() {
+		return meals;
+	}
+	public void setMeals(List<Meal> meals) {
+		this.meals = meals;
+	}
 	public int getId() {
 		return id;
 	}

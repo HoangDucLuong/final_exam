@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Groups</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Link đến file CSS nếu có -->
+</head>
+<body>
+    <h1>Danh sách nhóm món ăn</h1>
+    <a th:href="@{/admin/meal-groups/create}">Thêm nhóm món ăn</a>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên nhóm</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="mealGroup : ${mealGroups}">
+                <td th:text="${mealGroup.id}"></td>
+                <td th:text="${mealGroup.groupName}"></td>
+                <td>
+                    <a th:href="@{/admin/meal-groups/edit/{id}(id=${mealGroup.id})}">Chỉnh sửa</a> |
+                    <a th:href="@{/admin/meal-groups/delete/{id}(id=${mealGroup.id})}" 
+                       onclick="return confirm('Bạn có chắc chắn muốn xóa không?');">Xóa</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

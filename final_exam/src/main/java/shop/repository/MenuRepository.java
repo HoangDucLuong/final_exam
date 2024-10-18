@@ -12,5 +12,8 @@ public interface MenuRepository {
     void deleteMenu(int id);    // Xóa menu theo id
     void save(Menu menu);  // Phương thức lưu menu
     List<Menu> findAll();
+    List<Integer> getMealsByMenuId(int menuId); // Thêm phương thức này
     
+    List<Menu> findAllMenus(int page, String search); // Tìm kiếm và phân trang menu
+    int countAllMenus(String search); // Đếm tổng số menu theo từ khóa tìm kiếm
 }
