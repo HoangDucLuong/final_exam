@@ -86,17 +86,14 @@ public class UserManagementController {
             user.setPhone(phone);
             user.setAddress(address);
             user.setStatus(status); // Cập nhật trạng thái
-
             userRepository.updateUser(user); // Cập nhật thông tin user
         }
         return "redirect:/admin/user-management"; // Sau khi chỉnh sửa thành công, điều hướng về trang quản lý user
     }
-
     // Xử lý việc xóa user
     @GetMapping("/admin/user/delete/{id}")
     public String deleteUser(@PathVariable("id") int id) {
         userRepository.deleteUser(id); // Xóa user theo ID
-
         return "redirect:/admin/user-management"; // Sau khi xóa thành công, điều hướng về trang quản lý user
     }
 }

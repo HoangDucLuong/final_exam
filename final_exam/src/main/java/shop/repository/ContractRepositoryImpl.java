@@ -13,7 +13,11 @@ public class ContractRepositoryImpl implements ContractRepository {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
+    @Override
+    public List<Contract> findAll() {
+        String sql = "SELECT * FROM tbl_contract";
+        return jdbcTemplate.query(sql, new ContractRowMapper());
+    }
     @Override
     public List<Contract> getAllContracts() {
         String sql = "SELECT * FROM tbl_contract";
@@ -34,17 +38,18 @@ public class ContractRepositoryImpl implements ContractRepository {
 
     @Override
     public void addContract(Contract contract) {
-        String sql = "INSERT INTO tbl_contract (usr_id, start_date, end_date, total_amount, deposit_amount, status) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO tbl_contract (usr_id, start_date, end_date, total_amount, deposit_amount, status, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, contract.getUsrId(), contract.getStartDate(), contract.getEndDate(),
-                contract.getTotalAmount(), contract.getDepositAmount(), contract.getStatus());
+                contract.getTotalAmount(), contract.getDepositAmount(), contract.getStatus(), contract.getPaymentStatus());
     }
 
     @Override
     public void updateContract(Contract contract) {
-        String sql = "UPDATE tbl_contract SET usr_id = ?, start_date = ?, end_date = ?, total_amount = ?, deposit_amount = ?, status = ? WHERE id = ?";
+        String sql = "UPDATE tbl_contract SET usr_id = ?, start_date = ?, end_date = ?, total_amount = ?, deposit_amount = ?, status = ?, payment_status = ? WHERE id = ?";
         jdbcTemplate.update(sql, contract.getUsrId(), contract.getStartDate(), contract.getEndDate(),
-                contract.getTotalAmount(), contract.getDepositAmount(), contract.getStatus(), contract.getId());
+                contract.getTotalAmount(), contract.getDepositAmount(), contract.getStatus(), contract.getPaymentStatus(), contract.getId());
     }
+
 
     @Override
     public void deleteContract(int id) {

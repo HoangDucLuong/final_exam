@@ -7,6 +7,9 @@ public interface ContractRepository {
     // Lấy tất cả hợp đồng (dành cho admin)
     List<Contract> getAllContracts();
 
+    // Lấy tất cả hợp đồng (dành cho admin)
+    List<Contract> findAll();  // Phương thức mới
+
     // Lấy hợp đồng theo ID của user (dành cho user)
     List<Contract> getContractsByUserId(int usrId);
 

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Contract Details</title>
+    <link rel="stylesheet" href="/css/style.css" /> <!-- Đường dẫn tới file CSS của bạn -->
+</head>
+<body>
+
+    <div class="container">
+        <h1>Contract Details</h1>
+
+        <!-- Hiển thị thông tin chi tiết hợp đồng -->
+        <div class="contract-info">
+            <h2>Contract Information</h2>
+            <p><strong>Contract ID:</strong> <span th:text="${contract.id}"></span></p>
+            <p><strong>Start Date:</strong> <span th:text="${contract.startDate}"></span></p>
+            <p><strong>End Date:</strong> <span th:text="${contract.endDate}"></span></p>
+            <p><strong>Total Amount:</strong> <span th:text="${#numbers.formatDecimal(contract.totalAmount, 1, 'COMMA', 2, 'POINT')}"></span> VND</p>
+            <p><strong>Deposit Amount:</strong> <span th:text="${#numbers.formatDecimal(contract.depositAmount, 1, 'COMMA', 2, 'POINT')}"></span> VND</p>
+            <p><strong>Status:</strong> <span th:text="${contract.status == 0 ? 'Pending' : contract.status == 1 ? 'Active' : contract.status == 2 ? 'Completed' : 'Cancelled'}"></span></p>
+            <p><strong>Payment Status:</strong> <span th:text="${contract.paymentStatus == 0 ? 'Unpaid' : 'Paid'}"></span></p>
+        </div>
+
+        <!-- Hiển thị danh sách chi tiết hợp đồng (nếu có) -->
+        <div class="contract-details">
+            <h2>Contract Items</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="detail : ${contractDetails}">
+                        <td th:text="${detail.meal.name}"></td>
+                        <td th:text="${detail.quantity}"></td>
+                        <td th:text="${#numbers.formatDecimal(detail.price, 1, 'COMMA', 2, 'POINT')}">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Nút quay lại -->
+        <div class="back-button">
+            <a href="#" th:href="@{/contracts/user/{usrId}(usrId=${contract.usrId})}">Back to Contracts</a> <!-- Thay đường dẫn này nếu cần -->
+        </div>
+    </div>
+
+</body>
+</html>

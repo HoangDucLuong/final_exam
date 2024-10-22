@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="/assets/images/favicon.svg" type="image/x-icon" />
-    <title>Chỉnh Sửa Người Dùng</title>
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/assets/css/main.css" />
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="/assets/images/favicon.svg"
+	type="image/x-icon" />
+<title>PlainAdmin Demo | Bootstrap 5 Admin Template</title>
+<link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/assets/css/lineicons.css" type="text/css" />
+<link rel="stylesheet" href="/assets/css/materialdesignicons.min.css"
+	type="text/css" />
+<link rel="stylesheet" href="/assets/css/fullcalendar.css" />
+<link rel="stylesheet" href="/assets/css/main.css" />
 </head>
 <body>
-    <aside class="sidebar-nav-wrapper">
-       <div class="navbar-logo">
+	<div id="preloader">
+		<div class="spinner"></div>
+	</div>
+	<aside class="sidebar-nav-wrapper">
+		<div class="navbar-logo">
 			<a href="index.html"> <img src="/assets/images/logo/logo.svg"
 				alt="logo" />
 			</a>
@@ -90,58 +98,73 @@
 				</a></li>
 			</ul>
 		</nav>
-    </aside>
+	</aside>
 
-<main class="main-wrapper">
+	<div class="overlay"></div>
+
+   <main class="main-wrapper">
     <header class="header">
         <div class="container-fluid">
             <div class="title d-flex flex-wrap align-items-center justify-content-between">
                 <div class="left">
-                    <h6 class="text-medium mb-30">Chỉnh Sửa Người Dùng</h6>
+                    <h6 class="text-medium mb-30">Tạo Hợp Đồng Mới</h6>
                 </div>
                 <div class="right">
-                    <a href="/admin/user-management" class="btn btn-secondary">Quay lại</a>
+                    <a href="/admin/contracts" class="btn btn-secondary">Quay lại</a>
                 </div>
             </div>
             <div class="card-style mb-30">
-                <form method="post" action="/admin/user/edit">
-                    <input type="hidden" name="id" th:value="${user.id}" />
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="name" class="form-label">Tên</label>
-                            <input type="text" class="form-control" id="name" name="name" th:value="${user.name}" required />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" th:value="${user.email}" required />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="phone" class="form-label">Số điện thoại</label>
-                            <input type="text" class="form-control" id="phone" name="phone" th:value="${user.phone}" required />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="address" class="form-label">Địa chỉ</label>
-                            <input type="text" class="form-control" id="address" name="address" th:value="${user.address}" required />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="status" class="form-label">Trạng thái</label>
-                            <select class="form-select" id="status" name="status" required>
-                                <option th:value="1" th:if="${user.status == 1}" selected>Hoạt động</option>
-                                <option th:value="0" th:if="${user.status == 0}" selected>Không hoạt động</option>
-                                <option th:value="1" th:if="${user.status != 1}">Hoạt động</option>
-                                <option th:value="0" th:if="${user.status != 0}">Không hoạt động</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Lưu</button>
-                </form>
+                <form method="post" th:action="@{/admin/contracts/create}">
+    <div class="row">
+        <!-- Hiển thị thông tin người dùng (ID người dùng sẽ được lấy từ model) -->
+        <div class="col-md-6 mb-3">
+            <label for="usrId" class="form-label">Tên Người Dùng</label>
+            <input type="hidden" name="usrId" th:value="${user.id}" />
+            <input type="text" class="form-control" id="userName" name="userName" th:value="${user.name}" readonly />
+        </div>
+
+        <!-- Hiển thị thông tin email -->
+        <div class="col-md-6 mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" th:value="${user.email}" readonly />
+        </div>
+
+        <!-- Ngày bắt đầu hợp đồng -->
+        <div class="col-md-6 mb-3">
+            <label for="startDate" class="form-label">Ngày Bắt Đầu</label>
+            <input type="date" class="form-control" id="startDate" name="startDate" required />
+        </div>
+
+        <!-- Thời hạn hợp đồng -->
+        <div class="col-md-6 mb-3">
+            <label for="contractDuration" class="form-label">Thời Hạn Hợp Đồng (tháng)</label>
+            <input type="number" class="form-control" id="contractDuration" name="contractDuration" required />
+        </div>
+
+        <!-- Tiền cọc -->
+        <div class="col-md-6 mb-3">
+            <label for="depositAmount" class="form-label">Tiền Cọc</label>
+            <input type="text" class="form-control" id="depositAmount" name="depositAmount" required />
+        </div>
+    </div>
+    
+    <!-- Nút submit -->
+    <button type="submit" class="btn btn-primary">Tạo Hợp Đồng</button>
+</form>
+
             </div>
         </div>
     </header>
 </main>
 
 <script src="/assets/js/bootstrap.bundle.min.js"></script>
-<script src="/assets/js/main.js"></script>
-
+	<script src="/assets/js/Chart.min.js"></script>
+	<script src="/assets/js/dynamic-pie-chart.js"></script>
+	<script src="/assets/js/moment.min.js"></script>
+	<script src="/assets/js/fullcalendar.js"></script>
+	<script src="/assets/js/jvectormap.min.js"></script>
+	<script src="/assets/js/world-merc.js"></script>
+	<script src="/assets/js/polyfill.js"></script>
+	<script src="/assets/js/main.js"></script>
 </body>
 </html>
