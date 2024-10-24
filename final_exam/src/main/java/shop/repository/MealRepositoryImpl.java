@@ -44,6 +44,7 @@ public class MealRepositoryImpl implements MealRepository {
             return meal;
         });
     }
+
     
     @Override
     public List<Meal> findMealsByGroupId(int groupId) {
@@ -91,5 +92,16 @@ public class MealRepositoryImpl implements MealRepository {
         String sql = "SELECT * FROM tbl_meal WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new MealMapper(), id);
     }
+    @Override
+    public List<Meal> findMealsByMenuId(int menuId) {
+        String sql = "SELECT m.*, mg.group_name " +
+                     "FROM tbl_meal m " +
+                     "JOIN tbl_menu_details md ON m.id = md.meal_id " +
+                     "JOIN tbl_meal_group mg ON m.meal_group_id = mg.id " +
+                     "WHERE md.menu_id = ?";
+        
+        return jdbcTemplate.query(sql, new Object[]{menuId}, new MealMapper());
+    }
+
 
 }

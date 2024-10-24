@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -15,10 +16,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import shop.model.Contract;
 import shop.model.ContractDetail;
 import shop.model.Meal;
+import shop.model.Menu;
 import shop.model.User;
 import shop.repository.ContractDetailRepository;
 import shop.repository.ContractRepository;
 import shop.repository.MealRepository;
+import shop.repository.MenuRepository;
 import shop.repository.UserRepository;
 import shop.utils.SecurityUtility;
 
@@ -28,8 +31,11 @@ public class HomeController {
 	@Autowired
 	UserRepository repUser;
 	@Autowired
+	private MenuRepository menuRepository;
+	
+	@Autowired
 	private MealRepository mealRepository;
-
+	
 	@Autowired
 	private ContractRepository contractRepository;
 
@@ -58,16 +64,31 @@ public class HomeController {
 
 	@GetMapping("/menu")
 	public String showMenuPage(Model model, HttpServletRequest request) {
-		String email = (String) request.getSession().getAttribute("user");
-		if (email != null) {
-			User user = repUser.findUserByEmail(email);
-			model.addAttribute("userId", user.getId()); // Đưa userId vào model
-		}
+	    String email = (String) request.getSession().getAttribute("user");
+	    if (email != null) {
+	        User user = repUser.findUserByEmail(email);
+	        model.addAttribute("userId", user.getId()); // Đưa userId vào model
+	    }
 
-		List<Meal> meals = mealRepository.getAllMeals(); // Lấy danh sách món ăn
-		model.addAttribute("meals", meals); // Đưa danh sách món ăn vào model
-		return "home/menu"; // Trả về view hiển thị danh sách món ăn
+	    // Lấy danh sách menu từ menuRepository
+	    List<Menu> menus = menuRepository.getAllMenus();
+	    model.addAttribute("menus", menus); // Đưa danh sách menu vào model
+
+	    return "home/menu"; // Trả về view hiển thị danh sách menu
 	}
+	@GetMapping("/menu/detail/{id}")
+	public String showMenuDetail(@PathVariable("id") int id, Model model) {
+	    Menu menu = menuRepository.getMenuById(id);
+	    model.addAttribute("menu", menu); // Đưa menu vào model
+
+	    List<Meal> meals = mealRepository.findMealsByMenuId(id);
+	    model.addAttribute("meals", meals); // Đưa danh sách món ăn của menu vào model
+
+	    return "home/menu-detail"; // Trả về view hiển thị chi tiết menu
+	}
+
+
+
 
 	// Thêm một phương thức mới để điều hướng tới trang tạo hợp đồng
 	@GetMapping("/contracts/create-contract")

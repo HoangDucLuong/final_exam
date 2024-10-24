@@ -12,4 +12,5 @@ public interface MealRepository {
     List<Meal> findMealsByIds(List<Integer> ids); // Thêm phương thức này
     Meal findById(int id);
     List<Meal> findMealsByGroupId(int groupId);
+    List<Meal> findMealsByMenuId(int menuId);
 }

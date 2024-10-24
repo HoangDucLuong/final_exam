@@ -1,18 +1,63 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="shortcut icon" href="/assets/images/favicon.svg"
 	type="image/x-icon" />
-<title th:block="title">Dashboard</title>
+<title>PlainAdmin Demo | Bootstrap 5 Admin Template</title>
 <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
 <link rel="stylesheet" href="/assets/css/lineicons.css" type="text/css" />
 <link rel="stylesheet" href="/assets/css/materialdesignicons.min.css"
 	type="text/css" />
 <link rel="stylesheet" href="/assets/css/fullcalendar.css" />
 <link rel="stylesheet" href="/assets/css/main.css" />
+<style>
+	h1, h2 {
+    text-align: center; /* Căn giữa tiêu đề */
+    margin-bottom: 20px; /* Khoảng cách dưới tiêu đề */
+    color: #333; /* Màu chữ */
+}
+
+.card-style {
+    background-color: #fff; /* Nền trắng cho thẻ */
+    border-radius: 8px; /* Bo góc cho thẻ */
+    padding: 20px; /* Khoảng cách bên trong thẻ */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ cho thẻ */
+}
+
+.meal-detail-table {
+    width: 100%; /* Chiếm toàn bộ chiều rộng */
+    border-collapse: collapse; /* Gộp viền */
+    margin-top: 20px; /* Khoảng cách trên bảng */
+    text-align: left; /* Căn trái chữ */
+}
+
+.meal-detail-table th, 
+.meal-detail-table td {
+    padding: 12px 15px; /* Padding cho ô */
+    border: 1px solid #ddd; /* Viền của ô */
+}
+
+.meal-detail-table th {
+    background-color: #f2f2f2; /* Màu nền tiêu đề */
+    font-weight: bold; /* Chữ đậm */
+}
+
+.meal-detail-table tr:hover {
+    background-color: #f9f9f9; /* Đổi màu khi hover */
+}
+
+.meal-detail-table td {
+    color: #333; /* Màu chữ trong bảng */
+}
+
+.meal-detail-table th {
+    color: #555; /* Màu chữ của tiêu đề bảng */
+}
+	
+</style>
 </head>
 <body>
 	<div id="preloader">
@@ -26,14 +71,16 @@
 		</div>
 		<nav class="sidebar-nav">
 			<ul>
-				<li class="nav-item"><a href="/admin/index"> <span class="lni lni-dashboard">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+				<li class="nav-item"><a href="/admin/index"> <span
+						class="lni lni-dashboard"> <svg width="20" height="20"
+								viewBox="0 0 20 20" fill="none"
 								xmlns="http://www.w3.org/2000/svg">
             </svg>
 					</span> <span class="text">Dashboard</span>
 				</a></li>
-				<li class="nav-item"><a href="/admin/contracts/list"> <span class="lni lni-bookmark">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+				<li class="nav-item"><a href="/admin/contracts/list"> <span
+						class="lni lni-bookmark"> <svg width="20" height="20"
+								viewBox="0 0 20 20" fill="none"
 								xmlns="http://www.w3.org/2000/svg">
             </svg>
 					</span> <span class="text">Contracts</span>
@@ -93,7 +140,7 @@
 						class="lni lni-user"> <svg width="20" height="20"
 								viewBox="0 0 20 20" fill="none"
 								xmlns="http://www.w3.org/2000/svg">
-            </svg>         		
+            </svg>
 					</span> <span class="text">Customer</span>
 				</a></li>
 				<li class="nav-item"><a href="logout.html"> <span
@@ -121,8 +168,8 @@
 								</button>
 							</div>
 							<div class="header-search d-none d-md-flex">
-								<form method="get" th:action="@{/admin/user-management}">
-									<input type="text" name="search" placeholder="Search..." />
+								<form method="get" action="/admin/menu/list">
+									<input type="text" name="search" placeholder="Tìm kiếm..." />
 									<button type="submit" class="btn btn-primary">
 										<i class="lni lni-search-alt"></i>
 									</button>
@@ -133,29 +180,34 @@
 				</div>
 				<div class="col-lg-12">
 					<div class="card-style mb-30">
-						<div class="table-responsive">
-							<h2>Thêm Nhóm Món Ăn Mới</h2>
+						<h1>
+							Chi tiết Menu: <span th:text="${menu.menuName}"></span>
+						</h1>
 
-							<form th:action="@{/admin/meal-groups/save}"
-								th:object="${mealGroup}" method="post" class="meal-group-form">
-								<label for="groupName">Tên Nhóm:</label> <input type="text"
-									id="groupName" th:field="*{groupName}"
-									placeholder="Nhập tên nhóm" required /> <label
-									for="description">Mô Tả:</label> <input type="text"
-									id="description" th:field="*{description}"
-									placeholder="Nhập mô tả nhóm" required />
-
-								<button type="submit">Lưu</button>
-							</form>
-
-							<a href="/admin/meal-groups">Quay lại danh sách</a>
-						</div>
+						<h2>Món ăn trong menu:</h2>
+						<table class="meal-detail-table">
+							<thead>
+								<tr>
+									<th>Tên món ăn</th>
+									<th>Mô tả</th>
+									<th>Giá</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="meal : ${meals}">
+									<td th:text="${meal.mealName}"></td>
+									<td th:text="${meal.description}"></td>
+									<td th:text="${meal.price}"></td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
 				</div>
+
+
 			</div>
 		</header>
 	</main>
-
 	<script src="/assets/js/bootstrap.bundle.min.js"></script>
 	<script src="/assets/js/Chart.min.js"></script>
 	<script src="/assets/js/dynamic-pie-chart.js"></script>
@@ -165,5 +217,6 @@
 	<script src="/assets/js/world-merc.js"></script>
 	<script src="/assets/js/polyfill.js"></script>
 	<script src="/assets/js/main.js"></script>
+
 </body>
 </html>

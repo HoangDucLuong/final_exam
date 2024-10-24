@@ -143,21 +143,20 @@
 					<div class="tab-content">
 						<div id="tab-1" class="tab-pane fade show p-0 active">
 							<div class="row g-4">
-								<div class="col" th:each="meal : ${meals}">
+								<div class="col" th:each="menu : ${menus}">
 									<div class="d-flex align-items-center border-bottom pb-2">
 										<div class="w-100 d-flex flex-column text-start ps-4">
 											<h5 class="d-flex justify-content-between">
-												<!-- Hiển thị tên món ăn và giá -->
-												<a th:text="${meal.mealName}"></a> <span
-													class="text-primary" th:text="${meal.price}"></span>
+												<!-- Hiển thị tên menu -->
+												<a th:href="@{/menu/detail/{id}(id=${menu.id})}"
+													th:text="${menu.menuName}"></a>
 											</h5>
-											<small class="fst-italic" th:text="${meal.description}"></small>
-											<!-- Nút để tạo hợp đồng cho món ăn -->
-											<form th:action="@{/contracts/create-contract}" method="get">
-												<input type="hidden" name="usrId" th:value="${userId}" /> <input
-													type="hidden" name="mealId" th:value="${meal.id}" />
-												<button type="submit" class="btn btn-primary mt-2">Tạo
-													hợp đồng</button>
+											
+											<!-- Nút để xem chi tiết menu -->
+											<form th:action="@{/menu/detail/{id}(id=${menu.id})}"
+												method="get">
+												<button type="submit" class="btn btn-primary mt-2">Xem
+													chi tiết</button>
 											</form>
 										</div>
 									</div>
@@ -165,6 +164,7 @@
 							</div>
 						</div>
 					</div>
+
 
 				</div>
 			</div>
