@@ -6,8 +6,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import shop.model.Contract;
 import shop.model.ContractDetail;
+import shop.model.Meal; // Giả sử bạn có một model cho Meal
 import shop.repository.ContractRepository;
 import shop.repository.ContractDetailRepository;
+import shop.repository.MealRepository; // Repository để lấy thông tin món ăn
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -21,6 +23,8 @@ public class ContractController {
     private ContractRepository contractRepository;
     @Autowired
     private ContractDetailRepository contractDetailRepository;
+    @Autowired
+    private MealRepository mealRepository; // Thêm repository cho món ăn
 
     // Lấy danh sách hợp đồng của user
     @GetMapping("/user/{usrId}")
@@ -38,9 +42,20 @@ public class ContractController {
             return "redirect:/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
         }
         List<ContractDetail> contractDetails = contractDetailRepository.getContractDetailsByContractId(id);
+        List<Meal> meals = mealRepository.getMealsByContractId(id); // Lấy danh sách món ăn theo hợp đồng
+
         model.addAttribute("contract", contract);
         model.addAttribute("contractDetails", contractDetails);
-        return "contract-details"; // Trả về trang chi tiết hợp đồng (có thể dùng chung)
+        model.addAttribute("meals", meals); // Thêm danh sách món ăn vào model
+        return "user/contract-details"; // Trả về trang chi tiết hợp đồng (có thể dùng chung)
+    }
+
+    // Lấy danh sách món ăn theo hợp đồng
+    @GetMapping("/meals/{contractId}")
+    @ResponseBody
+    public List<Meal> getMealsByContractId(@PathVariable("contractId") int contractId) {
+        // Giả sử bạn có một phương thức trong MealRepository để lấy món ăn theo contractId
+        return mealRepository.getMealsByContractId(contractId);
     }
 
     // Hủy hợp đồng - User có thể hủy hợp đồng của mình

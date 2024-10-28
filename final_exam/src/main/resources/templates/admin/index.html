@@ -18,7 +18,7 @@
 	<div id="preloader">
 		<div class="spinner"></div>
 	</div>
-<aside class="sidebar-nav-wrapper">
+	<aside class="sidebar-nav-wrapper">
 		<div class="navbar-logo">
 			<a href="/admin/index"> <img src="/assets/images/logo/logo.svg"
 				alt="logo" />
@@ -26,14 +26,16 @@
 		</div>
 		<nav class="sidebar-nav">
 			<ul>
-				<li class="nav-item"><a href="/admin/index"> <span class="lni lni-dashboard">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+				<li class="nav-item"><a href="/admin/index"> <span
+						class="lni lni-dashboard"> <svg width="20" height="20"
+								viewBox="0 0 20 20" fill="none"
 								xmlns="http://www.w3.org/2000/svg">
             </svg>
 					</span> <span class="text">Dashboard</span>
 				</a></li>
-				<li class="nav-item"><a href="/admin/contracts/list"> <span class="lni lni-bookmark">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+				<li class="nav-item"><a href="/admin/contracts/list"> <span
+						class="lni lni-bookmark"> <svg width="20" height="20"
+								viewBox="0 0 20 20" fill="none"
 								xmlns="http://www.w3.org/2000/svg">
             </svg>
 					</span> <span class="text">Contracts</span>
@@ -93,7 +95,7 @@
 						class="lni lni-user"> <svg width="20" height="20"
 								viewBox="0 0 20 20" fill="none"
 								xmlns="http://www.w3.org/2000/svg">
-            </svg>         		
+            </svg>
 					</span> <span class="text">Customer</span>
 				</a></li>
 				<li class="nav-item"><a href="logout.html"> <span
@@ -133,17 +135,45 @@
 				</div>
 				<div class="col-lg-12">
 					<div class="card-style mb-30">
-						<div
-							class="title d-flex flex-wrap align-items-center justify-content-between">
-							<div class="left">
-								<h6 class="text-medium mb-30"></h6>
-							</div>
-						</div>
+						<h5 class="mb-4">Danh sách Meal Requests</h5>
 						<div class="table-responsive">
-							
+							<table class="table">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>User Name</th>
+										<th>Contract ID</th>
+										<!-- Thêm cột hợp đồng -->
+										<th>Delivery Date</th>
+										<th>Total Meals</th>
+										<th>Status</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="mealRequest : ${mealRequests}">
+										<td th:text="${mealRequest.id}"></td>
+										<td><span
+											th:text="${mealRequest.user != null ? mealRequest.user.name : 'N/A'}"></span>
+										</td>
+										<td th:text="${mealRequest.contract.id}"></td>
+										<!-- Hiển thị Contract ID -->
+										<td th:text="${mealRequest.deliveryDate}"></td>
+										<td th:text="${mealRequest.totalMeals}"></td>
+										<td><span th:if="${mealRequest.status == 0}">Pending</span>
+											<span th:if="${mealRequest.status == 1}">Confirmed</span> <span
+											th:if="${mealRequest.status == 2}">Delivered</span></td>
+										<td><a
+											th:href="@{/admin/meal-request/detail(id=${mealRequest.id})}">Xem
+												chi tiết</a> <a href="#" class="btn btn-sm btn-primary">Approve</a>
+											<a href="#" class="btn btn-sm btn-danger">Reject</a></td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>
+
 			</div>
 		</header>
 	</main>

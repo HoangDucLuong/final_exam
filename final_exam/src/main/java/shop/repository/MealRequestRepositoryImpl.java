@@ -2,6 +2,7 @@ package shop.repository;
 
 import shop.model.MealRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -32,12 +33,21 @@ public class MealRequestRepositoryImpl implements MealRequestRepository {
     };
 
     @Override
-    public void addMealRequest(MealRequest mealRequest) {
+    public int addMealRequest(MealRequest mealRequest) {
         String sql = "INSERT INTO tbl_meal_request (contract_id, request_date, delivery_date, total_meals, status) "
-                + "VALUES (?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, mealRequest.getContractId(), mealRequest.getRequestDate(),
-                mealRequest.getDeliveryDate(), mealRequest.getTotalMeals(), mealRequest.getStatus());
+                + "VALUES (?, ?, ?, ?, ?); SELECT SCOPE_IDENTITY();"; // Use SCOPE_IDENTITY() to get the last inserted ID
+
+        // Thực hiện câu lệnh SQL để thêm yêu cầu và lấy ID của yêu cầu vừa được tạo
+        return jdbcTemplate.queryForObject(sql, new Object[]{
+                mealRequest.getContractId(),
+                mealRequest.getRequestDate(),
+                mealRequest.getDeliveryDate(),
+                mealRequest.getTotalMeals(),
+                mealRequest.getStatus()
+        }, Integer.class);
     }
+
+
 
     @Override
     public List<MealRequest> getAllMealRequests() {
@@ -55,12 +65,30 @@ public class MealRequestRepositoryImpl implements MealRequestRepository {
     public void updateMealRequest(MealRequest mealRequest) {
         String sql = "UPDATE tbl_meal_request SET contract_id = ?, request_date = ?, delivery_date = ?, total_meals = ?, status = ? WHERE id = ?";
         jdbcTemplate.update(sql, mealRequest.getContractId(), mealRequest.getRequestDate(),
-                mealRequest.getDeliveryDate(), mealRequest.getTotalMeals(), mealRequest.getStatus(), mealRequest.getId());
+                mealRequest.getDeliveryDate(), mealRequest.getTotalMeals(), mealRequest.getStatus(),
+                mealRequest.getId());
     }
 
     @Override
     public void deleteMealRequest(int id) {
         String sql = "DELETE FROM tbl_meal_request WHERE id = ?";
         jdbcTemplate.update(sql, id);
+    }
+
+    @Override
+    public Integer getUserIdByMealRequestId(int mealRequestId) {
+        String sql = "SELECT c.usr_id FROM tbl_meal_request mr JOIN tbl_contract c ON mr.contract_id = c.id WHERE mr.id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{mealRequestId}, Integer.class);
+    }
+    
+    @Override
+    public void updateTotalMeals(int mealRequestId, int totalMeals) {
+        String sql = "UPDATE tbl_meal_request SET total_meals = ? WHERE id = ?";
+        jdbcTemplate.update(sql, totalMeals, mealRequestId);
+    }
+    @Override
+    public MealRequest findById(Long id) {
+        String sql = "SELECT * FROM tbl_meal_request WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new BeanPropertyRowMapper<>(MealRequest.class));
     }
 }

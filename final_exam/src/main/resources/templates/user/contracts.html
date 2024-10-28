@@ -1,40 +1,84 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Danh sách hợp đồng - User</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách hợp đồng - User</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .contracts {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .status {
+            font-weight: bold;
+        }
+        .button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-	<div class="contracts">
-		<h3>Danh sách hợp đồng</h3>
-		<table>
-			<thead>
-				<tr>
-					<th>Mã hợp đồng</th>
-					<th>Ngày bắt đầu</th>
-					<th>Ngày kết thúc</th>
-					<th>Tổng tiền</th>
-					<th>Trạng thái</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="contract : ${contracts}">
-					<td th:text="${contract.id}"></td>
-					<td th:text="${contract.startDate}"></td>
-					<td th:text="${contract.endDate}"></td>
-					<td th:text="${contract.totalAmount}"></td>
-					<td><span th:if="${contract.status == 0}" style="color: red;">Đang
-							chờ</span> <span th:if="${contract.status == 1}" style="color: green;">Đã
-							xác nhận</span> <span th:if="${contract.status == 2}"
-						style="color: orange;">Đang thực hiện</span> <span
-						th:if="${contract.status == 3}" style="color: blue;">Đã
-							hoàn thành</span> <span th:if="${contract.status == 4}"
-						style="color: grey;">Đã hủy</span></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-
+    <div class="contracts">
+        <h3>Danh sách hợp đồng</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã hợp đồng</th>
+                    <th>Ngày bắt đầu</th>
+                    <th>Ngày kết thúc</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th> <!-- Thêm cột cho các thao tác -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="contract : ${contracts}">
+                    <td th:text="${contract.id}"></td>
+                    <td th:text="${contract.startDate}"></td>
+                    <td th:text="${contract.endDate}"></td>
+                    <td th:text="${contract.totalAmount}"></td>
+                    <td>
+                        <span th:if="${contract.status == 0}" class="status" style="color: red;">Đang chờ</span>
+                        <span th:if="${contract.status == 1}" class="status" style="color: green;">Đã xác nhận</span>
+                        <span th:if="${contract.status == 2}" class="status" style="color: orange;">Đang thực hiện</span>
+                        <span th:if="${contract.status == 3}" class="status" style="color: blue;">Đã hoàn thành</span>
+                        <span th:if="${contract.status == 4}" class="status" style="color: grey;">Đã hủy</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/contracts/{id}(id=${contract.id})}" class="button">Chi tiết</a>
+                        <a th:href="@{/mealRequest/create(contractId=${contract.id})}" class="button">Tạo phiếu yêu cầu suất ăn</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>

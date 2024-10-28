@@ -1,6 +1,7 @@
 package shop.controller;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
-import shop.model.Menu;
+import shop.model.Contract;
+import shop.model.Meal;
+import shop.model.MealRequest;
+import shop.model.MealRequestDetail;
 import shop.model.User;
 import shop.repository.AuthRepository;
-import shop.repository.MenuRepository;
+import shop.repository.ContractRepository;
+import shop.repository.MealRepository;
+import shop.repository.MealRequestDetailRepository;
+import shop.repository.MealRequestRepository;
 import shop.repository.UserRepository; 
 import shop.utils.SecurityUtility;
 
@@ -28,29 +35,104 @@ public class AdminController {
     @Autowired
     UserRepository repUser; 
     @Autowired
-    private MenuRepository menuRepo;
+    private MealRequestRepository mealRequestRepository;
+    @Autowired
+    private ContractRepository contractRepository; // Repository cho Contract
+    
+    @Autowired
+    private MealRequestDetailRepository mealRequestDetailRepository;
+    @Autowired
+    private MealRepository mealRepository;
 
     // Trang chính của admin
     @GetMapping("/index")
-    public String index() {
-        return "admin/index"; // Trả về trang admin index
+    public String viewMealRequests(Model model) {
+        // Lấy danh sách meal request từ repository
+        List<MealRequest> mealRequests = mealRequestRepository.getAllMealRequests();
+
+        // Lặp qua từng MealRequest để thiết lập thông tin người dùng và hợp đồng
+     // Lặp qua từng MealRequest để thiết lập thông tin người dùng và hợp đồng
+        for (MealRequest mealRequest : mealRequests) {
+        	List<MealRequestDetail> details = mealRequestDetailRepository.getDetailsByMealRequestId(mealRequest.getId());
+            mealRequest.setMealRequestDetails(details);
+            Integer userId = mealRequest.getUserId(); // Lấy userId từ mealRequest
+            if (userId != null) { // Kiểm tra userId không null
+                User user = repUser.findById(userId); // Lấy người dùng từ repository
+                mealRequest.setUser(user); // Thiết lập thông tin người dùng cho MealRequest
+            }
+            Contract contract = contractRepository.getContractById(mealRequest.getContractId()); // Lấy hợp đồng
+
+            // Kiểm tra xem hợp đồng có tồn tại không
+            if (contract != null) {
+                mealRequest.setContract(contract); // Thiết lập hợp đồng cho MealRequest
+            }
+
+            // Thiết lập trạng thái dưới dạng chữ
+            switch (mealRequest.getStatus()) {
+                case 0:
+                    mealRequest.setStatusText("Pending");
+                    break;
+                case 1:
+                    mealRequest.setStatusText("Confirmed");
+                    break;
+                case 2:
+                    mealRequest.setStatusText("Delivered");
+                    break;
+                default:
+                    mealRequest.setStatusText("Unknown");
+            }
+        }
+
+
+        model.addAttribute("mealRequests", mealRequests);
+        return "admin/index"; // Trả về trang admin chính
     }
+    @GetMapping("/meal-request/detail")
+    public String getMealRequestDetail(@RequestParam("id") Long id, Model model) {
+        // Tìm kiếm mealRequest dựa trên id
+        MealRequest mealRequest = mealRequestRepository.findById(id);
+        
+        // Kiểm tra nếu mealRequest không tồn tại
+        if (mealRequest == null) {
+            // Chuyển hướng đến trang thông báo lỗi
+            return "error/404"; // Hoặc bạn có thể dùng một trang thông báo không tìm thấy khác
+        }
+        
+        Contract contract = contractRepository.getContractById(mealRequest.getContractId()); // Lấy hợp đồng
+
+        // Kiểm tra xem hợp đồng có tồn tại không
+        if (contract != null) {
+            mealRequest.setContract(contract); // Thiết lập hợp đồng cho MealRequest
+        }
+
+        // Lấy các chi tiết của mealRequest
+        List<MealRequestDetail> mealRequestDetails = mealRequestDetailRepository.getDetailsByMealRequestId(id.intValue());
+        model.addAttribute("mealRequest", mealRequest);
+        model.addAttribute("mealRequestDetails", mealRequestDetails);
+        List<Meal> meals = mealRepository.getAllMeals(); // Giả sử bạn có phương thức này
+        model.addAttribute("meals", meals);
+        
+        return "admin/meal-request-detail"; // Trả về trang detail.html
+    }
+
+
+
 
     // Trang đăng nhập
     @GetMapping("/login")
     public String login() {
         return "admin/login"; // Trả về trang đăng nhập admin
     }
-    
-    // Renamed the mapping for user management
-    @GetMapping("/admin/user-management") 
-    public String usermanagement(){
-        return "admin/index";
+
+    // Quản lý người dùng
+    @GetMapping("/user-management") 
+    public String userManagement() {
+        return "admin/user-management"; // Trả về trang quản lý người dùng
     }
-    
-  // Kiểm tra đăng nhập
+
+    // Kiểm tra đăng nhập
     @PostMapping("/chklogins")
-    public String chklogins(@RequestParam("email") String email, @RequestParam("pwd") String password,
+    public String chkLogins(@RequestParam("email") String email, @RequestParam("pwd") String password,
                             HttpServletRequest request) {
         Logger log = Logger.getGlobal();
         log.info("Attempted login by user: " + email);
@@ -60,14 +142,7 @@ public class AdminController {
         Integer role = repAuth.findUserTypeByUid(email);
 
         // Kiểm tra mật khẩu
-        if (encryptedPassword == null) {
-            // Nếu email không tồn tại
-            request.setAttribute("error", "Invalid email or password");
-            return "admin/login"; // Trả về trang đăng nhập với thông báo lỗi
-        }
-
-        if (!SecurityUtility.compareBcrypt(encryptedPassword, password)) {
-            // Nếu mật khẩu không đúng
+        if (encryptedPassword == null || !SecurityUtility.compareBcrypt(encryptedPassword, password)) {
             request.setAttribute("error", "Invalid email or password");
             return "admin/login"; // Trả về trang đăng nhập với thông báo lỗi
         }
@@ -97,8 +172,7 @@ public class AdminController {
                           @RequestParam String address) {
         // Kiểm tra giá trị address
         if (address == null || address.isEmpty()) {
-            // Có thể ném ra một thông báo lỗi hoặc xử lý khác nếu cần
-            return "redirect:/admin/addUser?error=Address is required";
+            return "redirect:/admin/register?error=Address is required"; // Thông báo lỗi nếu không có địa chỉ
         }
 
         // Tạo đối tượng User mới
@@ -122,5 +196,4 @@ public class AdminController {
         // Điều hướng lại trang admin sau khi thêm user thành công
         return "redirect:/admin/index";
     }
-    
 }

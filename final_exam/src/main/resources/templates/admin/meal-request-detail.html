@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+    <title>Meal Request Detail</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Chi tiết yêu cầu suất ăn</h1>
+        <h3>ID: <span th:text="${mealRequest.id}"></span></h3>
+        <h4>User Name: <span th:text="${mealRequest.user != null ? mealRequest.user.name : 'N/A'}"></span></h4>
+        <h4>Contract ID: <span th:text="${mealRequest.contract.id}"></span></h4>
+        <h4>Delivery Date: <span th:text="${mealRequest.deliveryDate}"></span></h4>
+        <h4>Total Meals: <span th:text="${mealRequest.totalMeals}"></span></h4>
+        <h4>Status: 
+            <span th:if="${mealRequest.status == 0}">Pending</span>
+            <span th:if="${mealRequest.status == 1}">Confirmed</span>
+            <span th:if="${mealRequest.status == 2}">Delivered</span>
+        </h4>
+
+        <h2>Chi tiết món ăn trong yêu cầu</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Meal ID</th>
+                    <th>Meal Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="detail : ${mealRequestDetails}">
+                    <td th:text="${detail.mealId}"></td>
+                    <td th:text="${meals[detail.mealId].mealName}"></td> <!-- Nếu Meal có thuộc tính name -->
+                    <td th:text="${detail.quantity}"></td>
+                    <td th:text="${detail.price}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
