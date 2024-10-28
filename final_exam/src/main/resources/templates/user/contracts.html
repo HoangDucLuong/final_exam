@@ -1,40 +1,45 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Danh sách hợp đồng - User</title>
+    <meta charset="UTF-8">
+    <title>Danh sách Hợp Đồng</title>
 </head>
 <body>
-	<div class="contracts">
-		<h3>Danh sách hợp đồng</h3>
-		<table>
-			<thead>
-				<tr>
-					<th>Mã hợp đồng</th>
-					<th>Ngày bắt đầu</th>
-					<th>Ngày kết thúc</th>
-					<th>Tổng tiền</th>
-					<th>Trạng thái</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="contract : ${contracts}">
-					<td th:text="${contract.id}"></td>
-					<td th:text="${contract.startDate}"></td>
-					<td th:text="${contract.endDate}"></td>
-					<td th:text="${contract.totalAmount}"></td>
-					<td><span th:if="${contract.status == 0}" style="color: red;">Đang
-							chờ</span> <span th:if="${contract.status == 1}" style="color: green;">Đã
-							xác nhận</span> <span th:if="${contract.status == 2}"
-						style="color: orange;">Đang thực hiện</span> <span
-						th:if="${contract.status == 3}" style="color: blue;">Đã
-							hoàn thành</span> <span th:if="${contract.status == 4}"
-						style="color: grey;">Đã hủy</span></td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+    <h1>Danh sách Hợp Đồng</h1>
 
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Mã Hợp Đồng</th>
+                <th>Ngày Bắt Đầu</th>
+                <th>Ngày Kết Thúc</th>
+                <th>Số Tiền Đặt Cọc</th>
+                <th>Trạng Thái</th>
+                <th>Thanh Toán</th>
+                <th>Chi Tiết</th>
+                <th>Hủy</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Lặp qua danh sách hợp đồng -->
+            <tr th:each="contract : ${contracts}">
+                <td th:text="${contract.id}"></td>
+                <td th:text="${contract.startDate}"></td>
+                <td th:text="${contract.endDate}"></td>
+                <td th:text="${contract.depositAmount}"></td>
+                <td th:text="${contract.status} == 0 ? 'Pending' : 'Active'"></td>
+                <td th:text="${contract.paymentStatus} == 0 ? 'Chưa thanh toán' : 'Đã thanh toán'"></td>
+                <td><a th:href="@{/user/{id}(id=${contract.id})}">Xem Chi Tiết</a></td>
+                <td>
+                    <form th:action="@{/user/cancel}" method="post">
+                        <input type="hidden" name="contractId" th:value="${contract.id}">
+                        <button type="submit">Hủy</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="/user/create-contract">Tạo Hợp Đồng Mới</a>
 </body>
 </html>

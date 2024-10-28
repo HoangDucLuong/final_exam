@@ -1,7 +1,10 @@
 package shop.repository;
 
 import shop.model.Meal;
+import shop.model.Menu;
+
 import java.util.List;
+import java.util.Optional;
 
 public interface MealRepository {
     List<Meal> getAllMeals();
@@ -10,7 +13,10 @@ public interface MealRepository {
     void updateMeal(Meal meal);
     void deleteMeal(int id);
     List<Meal> findMealsByIds(List<Integer> ids); // Thêm phương thức này
-    Meal findById(int id);
+    Optional<Meal> findById(int id);
     List<Meal> findMealsByGroupId(int groupId);
     List<Meal> findMealsByMenuId(int menuId);
+    List<Meal> findAll(); // Thêm phương thức findAll để lấy tất cả món ăn
+  
+
 }

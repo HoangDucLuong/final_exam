@@ -5,9 +5,11 @@ import shop.model.MealGroup; // Thêm import
 import shop.modelviews.MealMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class MealRepositoryImpl implements MealRepository {
@@ -17,6 +19,22 @@ public class MealRepositoryImpl implements MealRepository {
 
     @Override
     public List<Meal> getAllMeals() {
+        String sql = "SELECT m.*, g.group_name FROM tbl_meal m LEFT JOIN tbl_meal_group g ON m.meal_group_id = g.id";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Meal meal = new Meal();
+            meal.setId(rs.getInt("id"));
+            meal.setMealGroupId(rs.getInt("meal_group_id"));
+            meal.setMealName(rs.getString("meal_name"));
+            meal.setPrice(rs.getBigDecimal("price"));
+            meal.setDescription(rs.getString("description"));
+            meal.setMealGroupName(rs.getString("group_name")); // Thêm tên nhóm vào đối tượng Meal
+            return meal;
+        });
+    }
+
+    // Thêm phương thức findAll để lấy tất cả các bản ghi từ bảng tbl_meal
+    @Override
+    public List<Meal> findAll() {
         String sql = "SELECT m.*, g.group_name FROM tbl_meal m LEFT JOIN tbl_meal_group g ON m.meal_group_id = g.id";
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             Meal meal = new Meal();
@@ -44,6 +62,7 @@ public class MealRepositoryImpl implements MealRepository {
             return meal;
         });
     }
+
 
     
     @Override
@@ -88,9 +107,24 @@ public class MealRepositoryImpl implements MealRepository {
     }
 
     @Override
-    public Meal findById(int id) {
-        String sql = "SELECT * FROM tbl_meal WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, new MealMapper(), id);
+    public Optional<Meal> findById(int id) {
+        String sql = "SELECT m.*, g.group_name FROM tbl_meal m LEFT JOIN tbl_meal_group g ON m.meal_group_id = g.id WHERE m.id = ?";
+        
+        try {
+            Meal meal = jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) -> {
+                Meal m = new Meal();
+                m.setId(rs.getInt("id"));
+                m.setMealGroupId(rs.getInt("meal_group_id"));
+                m.setMealName(rs.getString("meal_name"));
+                m.setPrice(rs.getBigDecimal("price"));
+                m.setDescription(rs.getString("description"));
+                m.setMealGroupName(rs.getString("group_name")); // Thêm tên nhóm vào đối tượng Meal
+                return m;
+            });
+            return Optional.of(meal);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty(); // Trả về Optional.empty nếu không tìm thấy món ăn
+        }
     }
     @Override
     public List<Meal> findMealsByMenuId(int menuId) {

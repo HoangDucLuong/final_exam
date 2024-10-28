@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="/assets/images/favicon.svg" type="image/x-icon" />
+    <title>Create Menu</title>
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/assets/css/lineicons.css" type="text/css" />
+    <link rel="stylesheet" href="/assets/css/materialdesignicons.min.css" type="text/css" />
+    <link rel="stylesheet" href="/assets/css/main.css" />
+
+</head>
+<body>
+    <div class="container">
+        <h1>Create New Menu</h1>
+        <form action="/menu/create" method="POST">
+            <div class="form-group">
+                <label for="menuName">Menu Name</label>
+                <input type="text" id="menuName" name="menuName" class="form-control" required />
+            </div>
+
+            <h5>Meal Groups and Meals</h5>
+            <div id="mealGroups" class="mb-4">
+                <div th:each="group : ${mealGroups}" class="meal-group">
+                    <h6 th:text="${group.groupName}" onclick="toggleMeals(this)" th:data-id="${group.id}"></h6>
+                    <div class="meals-list">
+                        <div th:each="meal : ${group.meals}" class="meal-item">
+                            <input type="checkbox" name="mealIds" id="meal-{#meal.id}" th:value="${meal.id}" />
+                            <label th:for="'meal-' + ${meal.id}" th:text="${meal.mealName}"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success">Add Menu</button>
+            <a href="/menu" class="btn btn-secondary">Back to Menu List</a>
+        </form>
+    </div>
+
+    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleMeals(groupElement) {
+            const mealsList = groupElement.nextElementSibling;
+            mealsList.style.display = mealsList.style.display === "block" ? "none" : "block";
+        }
+    </script>
+</body>
+</html>

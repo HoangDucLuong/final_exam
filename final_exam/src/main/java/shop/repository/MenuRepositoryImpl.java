@@ -19,6 +19,25 @@ public class MenuRepositoryImpl implements MenuRepository {
     public MenuRepositoryImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+    @Override
+    public List<Menu> findMenusByUserId(int userId) {
+        String sql = "SELECT * FROM tbl_menu WHERE usr_id = ?";
+        return jdbcTemplate.query(sql, new Object[]{userId}, new MenuMapper()); // Bạn cần có MenuMapper
+    }
+
+    @Override
+    public Menu findMenuByIdAndUserId(int menuId, int userId) {
+        String sql = "SELECT * FROM tbl_menu WHERE id = ? AND usr_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{menuId, userId}, new MenuMapper());
+    }
+
+    @Override
+    public void delete(Menu menu) {
+        String sql = "DELETE FROM tbl_menu WHERE id = ?";
+        jdbcTemplate.update(sql, menu.getId());
+    }
+
+    // Các phương thức khác đã được khai báo
 
     @Override
     public void addMenu(Menu menu) {
@@ -36,6 +55,11 @@ public class MenuRepositoryImpl implements MenuRepository {
     public List<Menu> getAllMenus() {
         String sql = "SELECT * FROM tbl_menu";
         return jdbcTemplate.query(sql, new MenuMapper());
+    }
+    @Override
+    public List<Menu> findAdminMenus() {
+        String sql = "SELECT * FROM tbl_menu WHERE usr_id IS NULL";
+        return jdbcTemplate.query(sql, new MenuMapper()); // Sử dụng MenuMapper để ánh xạ kết quả vào đối tượng Menu
     }
 
     @Override
@@ -64,7 +88,19 @@ public class MenuRepositoryImpl implements MenuRepository {
 
     @Override
     public void save(Menu menu) {
-        addMenu(menu); // Gọi phương thức addMenu để lưu menu
+        String sql = "INSERT INTO tbl_menu (menu_name, menu_type, usr_id, created_at) VALUES (?, ?, ?, ?)";
+        
+        try {
+            jdbcTemplate.update(sql, menu.getMenuName(), menu.getMenuType(), menu.getUsrId(), menu.getCreatedAt());
+            
+            // Lấy ID của menu vừa tạo
+            int newId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
+            menu.setId(newId); // Cập nhật ID vào đối tượng menu
+
+        } catch (Exception e) {
+            System.err.println("Error saving menu: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override

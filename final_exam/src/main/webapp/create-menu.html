@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<main class="main-wrapper">
+    <header class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-5 col-md-5 col-6">
+                    <div class="header-left d-flex align-items-center">
+                        <div class="menu-toggle-btn mr-15">
+                            <button id="menu-toggle" class="main-btn primary-btn btn-hover">
+                                <i class="lni lni-chevron-left me-2"></i> Menu
+                            </button>
+                        </div>
+                        <div class="header-search d-none d-md-flex">
+                            <form method="get" action="/menu/create">
+                                <input type="text" name="search" placeholder="Search..." />
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="lni lni-search-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="col-lg-12">
+        <div class="card-style mb-30">
+            <div class="title d-flex flex-wrap align-items-center justify-content-between">
+                <div class="left">
+                    <h6 class="text-medium mb-30">Add New Menu</h6>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <form action="/menu/create" method="post">
+                    <div class="form-group">
+                        <label for="menuName">Menu Name</label>
+                        <input type="text" id="menuName" name="menuName" class="form-control" required>
+                    </div>
+
+                    <h5>Meal Groups and Meals</h5>
+                    <div id="mealGroups" class="mb-4">
+                        <div th:each="group : ${mealGroups}" class="meal-group">
+                            <h6 th:text="${group.groupName}" onclick="toggleMeals(this)" th:data-id="${group.id}"></h6>
+                            <div class="meals-list">
+                                <div th:each="meal : ${group.meals}" class="meal-item">
+                                    <input type="checkbox" name="mealIds" id="meal-{#meal.id}" th:value="${meal.id}" />
+                                    <label th:for="'meal-' + ${meal.id}" th:text="${meal.mealName}"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="mealGroupId" name="mealGroupId" th:value="0" />
+
+                    <button type="submit" class="btn btn-success">Add Menu</button>
+                    <a href="/menu" class="btn btn-secondary">Back to Menu List</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

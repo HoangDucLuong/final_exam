@@ -25,7 +25,7 @@
                     <td th:text="${menu.id}"></td>
                     <td th:text="${menu.menuName}"></td>
                     <td th:text="${menu.menuType == 0 ? 'User-created' : 'Admin-created'}"></td>
-                    <td th:text="${#dates.format(menu.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${menu.formattedCreatedAt}"></td> <!-- Nếu đã định dạng trong controller -->
                 </tr>
             </tbody>
         </table>

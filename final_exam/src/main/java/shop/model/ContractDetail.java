@@ -30,7 +30,7 @@ public class ContractDetail {
 		this.description = description;
 	}
 
-    // Getters and Setters
+    
     
 }
 

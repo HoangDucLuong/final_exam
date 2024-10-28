@@ -1,54 +1,29 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tạo hợp đồng</title>
-    <link rel="stylesheet" href="path/to/your/css/style.css"> <!-- Link đến CSS của bạn -->
+    <title>Create Contract</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-    <main class="main-wrapper">
-    <header class="header">
-        <div class="container-fluid">
-            <div class="title d-flex flex-wrap align-items-center justify-content-between">
-                <div class="left">
-                    <h6 class="text-medium mb-30">Tạo Hợp Đồng Mới</h6>
-                </div>
-                <div class="right">
-                    <a href="/contracts/admin" class="btn btn-secondary">Quay lại</a>
-                </div>
-            </div>
-            <div class="card-style mb-30">
-                <form method="post" action="/contracts/admin/create">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="usrId" class="form-label">Người Dùng</label>
-                            <select class="form-select" id="usrId" name="usrId" required>
-                                <option value="">Chọn người dùng</option>
-                                <th:block th:each="user : ${users}">
-                                    <option th:value="${user.id}" th:text="${user.name}"></option>
-                                </th:block>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="startDate" class="form-label">Ngày Bắt Đầu</label>
-                            <input type="date" class="form-control" id="startDate" name="startDate" required />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="contractDuration" class="form-label">Thời Hạn Hợp Đồng (tháng)</label>
-                            <input type="number" class="form-control" id="contractDuration" name="contractDuration" required />
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="depositAmount" class="form-label">Tiền Cọc</label>
-                            <input type="text" class="form-control" id="depositAmount" name="depositAmount" required />
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Tạo Hợp Đồng</button>
-                </form>
-            </div>
-        </div>
-    </header>
-</main>
+    <h2>Create Contract</h2>
+    <form th:action="@{/user/create-contract}" method="post">
 
+        <div>
+    <label for="startDate">Ngày bắt đầu:</label>
+    <input type="date" id="startDate" name="startDate" required>
+</div>
+<div>
+    <label for="contractDuration">Thời hạn hợp đồng (Tháng):</label>
+    <input type="number" id="contractDuration" name="contractDuration" required>
+</div>
+<div>
+    <label for="depositAmount">Số tiền đặt cọc:</label>
+    <input type="text" id="depositAmount" name="depositAmount" required>
+</div>
+
+        
+        <button type="submit">Submit</button>
+    </form>
 </body>
 </html>
