@@ -23,6 +23,7 @@ import shop.repository.UserRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/user")
@@ -38,106 +39,113 @@ public class ContractController {
     private UserRepository userRepository;
 
     @Autowired
-    private MealRepository mealRepository; // Khai báo MealRepository
+    private MealRepository mealRepository;
 
     @Autowired
-    private MenuDetailsRepository menuDetailsRepository; // Khai báo MenuDetailsRepository
-    @Autowired
-    private MenuRepository menuRepository; // Khai báo MenuRepository
+    private MenuDetailsRepository menuDetailsRepository;
 
+    @Autowired
+    private MenuRepository menuRepository;
 
     @GetMapping("/contracts")
     public String getAllContractsForUser(HttpServletRequest request, Model model) {
         String email = (String) request.getSession().getAttribute("user");
         if (email != null) {
-            User user = userRepository.findUserByEmail(email);
-            if (user != null) {
+            Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByEmail(email));
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
                 List<Contract> userContracts = contractRepository.getContractsByUserId(user.getId());
                 model.addAttribute("contracts", userContracts);
 
-                // Truyền danh sách các món ăn vào model
                 List<Meal> meals = mealRepository.findAll();
                 model.addAttribute("meals", meals);
 
-                // Giả sử có danh sách menus cần truyền vào
                 List<Menu> menus = menuRepository.getAllMenus();
                 model.addAttribute("menus", menus);
 
-                return "user/contracts"; // Trả về trang danh sách hợp đồng cho user
+                return "user/contracts";
             }
         }
-        return "redirect:/user/login"; // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+        return "redirect:/user/login";
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/contracts/{id}")
     public String getContractById(@PathVariable("id") int id, HttpServletRequest request, Model model) {
         String email = (String) request.getSession().getAttribute("user");
         if (email != null) {
-            User user = userRepository.findUserByEmail(email);
-            if (user != null) {
+            Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByEmail(email));
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
                 Contract contract = contractRepository.getContractById(id);
                 if (contract == null || contract.getUsrId() != user.getId()) {
-                    return "redirect:/contracts?error=notfound"; // Nếu không tìm thấy hợp đồng hoặc hợp đồng không thuộc user
+                    return "redirect:/user/contracts?error=notfound";
                 }
                 List<ContractDetail> contractDetails = contractDetailRepository.getContractDetailsByContractId(id);
                 model.addAttribute("contract", contract);
                 model.addAttribute("contractDetails", contractDetails);
-                return "user/contract-details"; // Trả về trang chi tiết hợp đồng cho user
+                return "user/contract-details";
             }
         }
-        return "redirect:/user/login"; // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+        return "redirect:/user/login";
     }
 
     @PostMapping("/cancel")
     public String cancelContract(@RequestParam("contractId") int contractId, HttpServletRequest request, Model model) {
         String email = (String) request.getSession().getAttribute("user");
         if (email != null) {
-            User user = userRepository.findUserByEmail(email);
-            if (user != null) {
+            Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByEmail(email));
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
                 Contract contract = contractRepository.getContractById(contractId);
                 if (contract != null && contract.getUsrId() == user.getId()) {
                     contractRepository.updateContractStatus(contractId, 4); // 4: Cancelled
                     model.addAttribute("message", "Hợp đồng đã bị hủy.");
-                    return "redirect:/contracts/user"; // Quay lại trang hợp đồng của user
+                    return "redirect:/user/contracts";
                 }
             }
         }
-        return "redirect:/user/login"; // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+        return "redirect:/user/login";
+    }
+    @GetMapping("/create-contract")
+    public String showCreateContractForm() {
+        return "user/create-contract";
     }
 
     @PostMapping("/user/create-contract")
     public String createContract(
-    	    @RequestParam("startDate") String startDate,
-    	    @RequestParam("contractDuration") Integer contractDuration,
-    	    @RequestParam("depositAmount") BigDecimal depositAmount,
-    	    HttpServletRequest request,
-    	    Model model) {
+            @RequestParam("startDate") String startDate,
+            @RequestParam("contractDuration") Integer contractDuration,
+            @RequestParam("depositAmount") BigDecimal depositAmount,
+            HttpServletRequest request,
+            Model model) {
         String email = (String) request.getSession().getAttribute("user");
 
         if (email != null) {
-            User user = userRepository.findUserByEmail(email);
+            Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByEmail(email));
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                try {
+                    LocalDate start = LocalDate.parse(startDate);
+                    LocalDate endDate = start.plusMonths(contractDuration);
 
-            try {
-                LocalDate start = LocalDate.parse(startDate);
-                LocalDate endDate = start.plusMonths(contractDuration);
+                    Contract newContract = new Contract();
+                    newContract.setUsrId(user.getId());
+                    newContract.setStartDate(start);
+                    newContract.setEndDate(endDate);
+                    newContract.setDepositAmount(depositAmount);
+                    newContract.setStatus(0);
+                    newContract.setPaymentStatus(0);
 
-                Contract newContract = new Contract();
-                newContract.setUsrId(user.getId());
-                newContract.setStartDate(start);
-                newContract.setEndDate(endDate);
-                newContract.setDepositAmount(depositAmount);
-                newContract.setStatus(0);
-                newContract.setPaymentStatus(0);
+                    contractRepository.addContract(newContract);
 
-                contractRepository.addContract(newContract);
-
-                return "redirect:/user/contracts";
-            } catch (Exception e) {
-                model.addAttribute("error", "Đã có lỗi xảy ra khi tạo hợp đồng: " + e.getMessage());
-                return "user/create-contract"; // Trở về trang tạo hợp đồng với thông báo lỗi
+                    return "redirect:/user/contracts";
+                } catch (Exception e) {
+                    model.addAttribute("error", "Đã có lỗi xảy ra khi tạo hợp đồng: " + e.getMessage());
+                    return "user/create-contract";
+                }
             }
         }
-        return "redirect:/user/login"; // Nếu không tìm thấy email, redirect đến trang đăng nhập
+        return "redirect:/user/login";
     }
 
     @PostMapping("/contracts/save")
@@ -152,51 +160,46 @@ public class ContractController {
         String email = (String) request.getSession().getAttribute("user");
 
         if (email != null) {
-            User user = userRepository.findUserByEmail(email);
+            Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByEmail(email));
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
 
-            // Tạo hợp đồng mới
-            Contract contract = new Contract();
-            contract.setUsrId(user.getId());
-            contract.setStartDate(LocalDate.parse(startDate));
-            contract.setEndDate(LocalDate.parse(endDate));
-            contract.setTotalAmount(totalAmount);
-            contract.setStatus(0); // 0: Pending
-            contractRepository.save(contract); // Lưu hợp đồng vào database
+                Contract contract = new Contract();
+                contract.setUsrId(user.getId());
+                contract.setStartDate(LocalDate.parse(startDate));
+                contract.setEndDate(LocalDate.parse(endDate));
+                contract.setTotalAmount(totalAmount);
+                contract.setStatus(0);
+                contractRepository.save(contract);
 
-            // Nếu người dùng chọn menu có sẵn
-            if (menuId != null && menuId > 0) {
-                // Lấy chi tiết của menu có sẵn và thêm vào hợp đồng
-                List<MenuDetails> menuDetails = menuDetailsRepository.findByMenuId(menuId);
-                for (MenuDetails detail : menuDetails) {
-                    ContractDetail contractDetail = new ContractDetail();
-                    contractDetail.setContractId(contract.getId());
-                    contractDetail.setMealId(detail.getMealId());
-                    
-                    // Lấy thông tin món ăn
-                    Meal meal = mealRepository.findById(detail.getMealId()).orElse(null);
-                    if (meal != null) {
-                        contractDetail.setDescription("Món ăn từ menu " + meal.getMealName());
-                    }
-                    
-                    contractDetailRepository.saveContractDetail(contractDetail);
-                }
-            } else if (customMenuIds != null && !customMenuIds.isEmpty()) {
-                // Nếu người dùng tự chọn món ăn, thêm từng món ăn vào hợp đồng
-                for (Integer mealId : customMenuIds) {
-                    Meal meal = mealRepository.findById(mealId).orElse(null);
-                    if (meal != null) {
+                if (menuId != null && menuId > 0) {
+                    List<MenuDetails> menuDetails = menuDetailsRepository.findByMenuId(menuId);
+                    for (MenuDetails detail : menuDetails) {
                         ContractDetail contractDetail = new ContractDetail();
                         contractDetail.setContractId(contract.getId());
-                        contractDetail.setMealId(mealId);
-                        contractDetail.setDescription("Món ăn tự chọn: " + meal.getMealName());
+                        contractDetail.setMealId(detail.getMealId());
+
+                        mealRepository.findById(detail.getMealId()).ifPresent(meal ->
+                            contractDetail.setDescription("Món ăn từ menu " + meal.getMealName())
+                        );
+
                         contractDetailRepository.saveContractDetail(contractDetail);
                     }
+                } else if (customMenuIds != null && !customMenuIds.isEmpty()) {
+                    for (Integer mealId : customMenuIds) {
+                        mealRepository.findById(mealId).ifPresent(meal -> {
+                            ContractDetail contractDetail = new ContractDetail();
+                            contractDetail.setContractId(contract.getId());
+                            contractDetail.setMealId(mealId);
+                            contractDetail.setDescription("Món ăn tự chọn: " + meal.getMealName());
+                            contractDetailRepository.saveContractDetail(contractDetail);
+                        });
+                    }
                 }
+
+                return "redirect:/user/contracts";
             }
-
-            return "redirect:/contracts"; // Quay lại trang hợp đồng
         }
-        return "redirect:/user/login"; // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+        return "redirect:/user/login";
     }
-
 }

@@ -58,7 +58,7 @@ public class MenuRepositoryImpl implements MenuRepository {
     }
     @Override
     public List<Menu> findAdminMenus() {
-        String sql = "SELECT * FROM tbl_menu WHERE usr_id IS NULL";
+        String sql = "SELECT * FROM tbl_menu WHERE usr_id =1";
         return jdbcTemplate.query(sql, new MenuMapper()); // Sử dụng MenuMapper để ánh xạ kết quả vào đối tượng Menu
     }
 
@@ -88,20 +88,26 @@ public class MenuRepositoryImpl implements MenuRepository {
 
     @Override
     public void save(Menu menu) {
-        String sql = "INSERT INTO tbl_menu (menu_name, menu_type, usr_id, created_at) VALUES (?, ?, ?, ?)";
-        
-        try {
-            jdbcTemplate.update(sql, menu.getMenuName(), menu.getMenuType(), menu.getUsrId(), menu.getCreatedAt());
-            
-            // Lấy ID của menu vừa tạo
-            int newId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Integer.class);
-            menu.setId(newId); // Cập nhật ID vào đối tượng menu
+        // Gộp câu lệnh chèn và lấy ID vào một câu lệnh duy nhất
+        String sql = "INSERT INTO tbl_menu (menu_name, menu_type, usr_id, created_at) VALUES (?, ?, ?, ?); SELECT CAST(SCOPE_IDENTITY() AS int)";
 
-        } catch (Exception e) {
-            System.err.println("Error saving menu: " + e.getMessage());
-            e.printStackTrace();
+        // Thực hiện câu lệnh và lấy ID của bản ghi mới tạo
+        Integer newId = jdbcTemplate.queryForObject(sql, new Object[]{
+            menu.getMenuName(),
+            menu.getMenuType(),
+            menu.getUsrId(),
+            menu.getCreatedAt()
+        }, Integer.class);
+
+        if (newId != null) {
+            menu.setId(newId); // Cập nhật ID vào đối tượng menu
+        } else {
+            throw new RuntimeException("Không lấy được ID của menu mới tạo!");
         }
     }
+
+
+
 
     @Override
     public List<Menu> findAll() {

@@ -2,7 +2,10 @@ package shop.repository;
 
 import shop.model.Meal;
 import shop.model.MealGroup; // Thêm import
+import shop.model.Menu;
 import shop.modelviews.MealMapper;
+import shop.modelviews.MenuMapper;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -32,6 +35,7 @@ public class MealRepositoryImpl implements MealRepository {
         });
     }
 
+
     // Thêm phương thức findAll để lấy tất cả các bản ghi từ bảng tbl_meal
     @Override
     public List<Meal> findAll() {
@@ -47,7 +51,6 @@ public class MealRepositoryImpl implements MealRepository {
             return meal;
         });
     }
-
     @Override
     public Meal getMealById(int id) {
         String sql = "SELECT m.*, g.group_name FROM tbl_meal m LEFT JOIN tbl_meal_group g ON m.meal_group_id = g.id WHERE m.id = ?";
@@ -136,6 +139,33 @@ public class MealRepositoryImpl implements MealRepository {
         
         return jdbcTemplate.query(sql, new Object[]{menuId}, new MealMapper());
     }
+    @Override
+    public List<Menu> findAllMeals(int page, String search) {
+        int pageSize = 5; // Số lượng menu trên mỗi trang
+        int offset = (page - 1) * pageSize;
 
+        String sql = "SELECT * FROM tbl_meal WHERE meal_name LIKE ? ORDER BY id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
+        return jdbcTemplate.query(sql, new Object[]{"%" + search + "%", offset, pageSize}, new MenuMapper());
+    }
+
+    @Override
+    public int countAllMeals(String search) {
+        String sql = "SELECT COUNT(*) FROM tbl_meal WHERE meal_name LIKE ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{"%" + search + "%"}, Integer.class);
+    }
+    
+    @Override
+    public List<Meal> getMealsByContractId(int contractId) {
+        String sql = "SELECT m.*, g.group_name FROM tbl_meal m " +
+                     "JOIN contract_detail cd ON m.id = cd.meal_id " +
+                     "JOIN tbl_meal_group g ON m.meal_group_id = g.id " +
+                     "WHERE cd.contract_id = ?";
+        return jdbcTemplate.query(sql, new Object[]{contractId}, new MealMapper());
+    }
+    @Override
+    public double getMealPriceById(int mealId) {
+        String sql = "SELECT price FROM tbl_meal WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{mealId}, Double.class);
+    }
 }

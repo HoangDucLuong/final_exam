@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Yêu Cầu Suất Ăn</title>
+</head>
+<body>
+    <div class="container">
+        <h2>Danh Sách Yêu Cầu Suất Ăn</h2>
+        <table>
+    <tr>
+        <th>ID</th>
+        <th>Contract ID</th>
+        <th>Request Date</th>
+        <th>Delivery Date</th>
+        <th>Total Meals</th>
+        <th>Status</th>
+        <th>Details</th>
+    </tr>
+    <tr th:each="mealRequest : ${mealRequests}">
+        <td th:text="${mealRequest.id}"></td>
+        <td th:text="${mealRequest.contractId}"></td>
+        <td th:text="${mealRequest.requestDate}"></td>
+        <td th:text="${mealRequest.deliveryDate}"></td>
+        <td th:text="${mealRequest.totalMeals}"></td>
+        <td th:text="${mealRequest.status}"></td>
+        <td>
+            <table>
+                <tr>
+                    <th>Meal ID</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+                <tr th:each="detail : ${mealRequest.mealRequestDetails}">
+                    <td th:text="${detail.mealId}"></td>
+                    <td th:text="${detail.quantity}"></td>
+                    <td th:text="${detail.price}"></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+        <!-- Thêm liên kết để tạo yêu cầu mới -->
+        <a href="#" th:href="@{/mealRequest/create}">Tạo Yêu Cầu Suất Ăn Mới</a>
+    </div>
+</body>
+</html>

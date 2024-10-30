@@ -80,8 +80,7 @@
         </div>
         <nav class="sidebar-nav">
             <ul>
-                <li class="nav-item"><a href="/admin/index"> <span class="lni lni-dashboard"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"></svg></span> <span class="text">Dashboard</span></a></li>
-                <li class="nav-item"><a href="/admin/contracts/list"> <span class="lni lni-bookmark"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"></svg></span> <span class="text">Contracts</span></a></li>
+                <li class="nav-item"><a href="/admin/index"> <span class="lni lni-dashboard"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"></svg></span> <span class="text">Dashboard</span></a></li><li class="nav-item"><a href="/admin/contracts/list"> <span class="lni lni-bookmark"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"></svg></span> <span class="text">Contracts</span></a></li>
                 <li class="nav-item"><a href=""> <span class="lni lni-stats-up"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"></svg></span> <span class="text">Invoice</span></a></li>
                 <li class="nav-item nav-item-has-children"><a href="#0" class="collapsed" data-bs-toggle="collapse" data-bs-target="#ddmenu_3" aria-controls="ddmenu_3" aria-expanded="false" aria-label="Toggle navigation"> <span class="lni lni-menu"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"></svg></span> <span class="text">Menu</span></a>
                     <ul id="ddmenu_3" class="collapse">
@@ -104,8 +103,7 @@
                 </li>
                 <li class="nav-item"><a href="user-management"> <span class="lni lni-user"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"></svg></span> <span class="text">Customer</span></a></li>
                 <li class="nav-item"><a href="logout.html"> <span class="lni lni-exit"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"></svg></span> <span class="text">Logout</span></a></li>
-            </ul>
-        </nav>
+            </ul></nav>
     </aside>
 
     <div class="overlay"></div>
@@ -162,9 +160,7 @@
                             </div>
                         </div>
 
-                        <input type="hidden" id="mealGroupId" name="mealGroupId" th:value="0" />
-
-                        <button type="submit" class="btn btn-success">Add Menu</button>
+                        <input type="hidden" id="mealGroupId" name="mealGroupId" th:value="0" /><button type="submit" class="btn btn-success">Add Menu</button>
                         <a href="/admin/menu/list" class="btn btn-secondary">Back to Menu List</a>
                     </form>
                 </div>

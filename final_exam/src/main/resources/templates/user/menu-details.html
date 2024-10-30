@@ -76,42 +76,33 @@
         <div class="container-xxl py-5 bg-dark hero-header mb-5">
             <div class="container text-center my-5 pt-5 pb-4">
                 <h1 class="display-3 text-white mb-3">Menu Details</h1>
-                                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb justify-content-center text-uppercase">
-                        <li class="breadcrumb-item"><a href="/">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Create Menu</li>
-                    </ol>
-                </nav>
             </div>
         </div>
-
         <!-- Hero Header End -->
 
         <div class="container">
-            <form action="/menu/create" method="POST">
-                <div class="form-group">
-                    <label for="menuName">Menu Name</label>
-                    <input type="text" id="menuName" name="menuName" class="form-control" required />
-                </div>
+            <h3 th:text="${menu.menuName}">Menu Name</h3>
+            <p><strong>Type:</strong> <span th:text="${menu.menuType == 0 ? 'User-created' : 'Admin-created'}"></span></p>
+            <p><strong>Created At:</strong> <span th:text="${#temporals.format(menu.createdAt, 'yyyy-MM-dd HH:mm')}"></span></p>
 
-                <h5 class="mt-4">Meal Groups and Meals</h5>
-                <div id="mealGroups" class="mb-4">
-                    <div th:each="group : ${mealGroups}" class="meal-group">
-                        <h6 th:text="${group.groupName}" onclick="toggleMeals(this)" th:data-id="${group.id}"></h6>
-                        <div class="meals-list" style="display:none;">
-                            <div th:each="meal : ${group.meals}" class="meal-item">
-                                <input type="checkbox" name="mealIds" id="meal-{#meal.id}" th:value="${meal.id}" />
-                                <label th:for="'meal-' + ${meal.id}" th:text="${meal.mealName}"></label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-success">Add Menu</button>
-                <a href="/menu" class="btn btn-secondary">Back to Menu List</a>
-            </form>
+            <h3>Meal Details</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Tên Món Ăn</th>
+                        <th>Giá</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="meal : ${meals}">
+                        <td th:text="${meal.mealName}">Tên Món Ăn</td>
+                        <td th:text="${meal.price}">Giá</td> <!-- Giả sử Meal có thuộc tính price -->
+                    </tr>
+                </tbody>
+            </table>
         </div>
-       <!-- Footer Start -->
+
+        <!-- Footer Start -->
         <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
             <div class="container py-5">
                 <div class="row g-5">
@@ -166,12 +157,6 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/main.js"></script>
-    <script>
-        function toggleMeals(element) {
-            const mealsList = element.nextElementSibling;
-            mealsList.style.display = mealsList.style.display === "none" ? "block" : "none";
-        }
-    </script>
 </body>
 
 </html>

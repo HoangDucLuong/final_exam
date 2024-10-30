@@ -16,7 +16,14 @@ public interface MealRepository {
     Optional<Meal> findById(int id);
     List<Meal> findMealsByGroupId(int groupId);
     List<Meal> findMealsByMenuId(int menuId);
+
     List<Meal> findAll(); // Thêm phương thức findAll để lấy tất cả món ăn
   
+
+
+    List<Menu> findAllMeals(int page, String search); // Tìm kiếm và phân trang menu
+    int countAllMeals(String search);
+    List<Meal> getMealsByContractId(int contractId);
+    double getMealPriceById(int mealId);
 
 }

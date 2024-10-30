@@ -70,8 +70,31 @@ h1 {
 .btn-delete:hover {
 	color: #c82333;
 }
-</style>
 
+.pagination {
+	justify-content: center;
+	margin-top: 20px;
+}
+
+.pagination a {
+	margin: 0 5px;
+	padding: 8px 12px;
+	border: 1px solid #007bff;
+	color: #007bff;
+	text-decoration: none;
+	border-radius: 4px;
+}
+
+.pagination a:hover {
+	background-color: #007bff;
+	color: white;
+}
+
+.pagination .active a {
+	background-color: #007bff;
+	color: white;
+}
+</style>
 </head>
 <body>
 	<div id="preloader">
@@ -80,59 +103,46 @@ h1 {
 	<aside class="sidebar-nav-wrapper">
 		<div class="navbar-logo">
 			<a href="/admin/index"> <img src="/assets/images/logo/logo.svg"
-				alt="logo" />
-			</a>
+				alt="logo" /></a>
 		</div>
 		<nav class="sidebar-nav">
 			<ul>
 				<li class="nav-item"><a href="/admin/index"> <span
-						class="icon"> <svg width="20" height="20"
+						class="lni lni-dashboard"> <svg width="20" height="20"
 								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-              <path
-									d="M8.74999 18.3333C12.2376 18.3333 15.1364 15.8128 15.7244 12.4941C15.8448 11.8143 15.2737 11.25 14.5833 11.25H9.99999C9.30966 11.25 8.74999 10.6903 8.74999 10V5.41666C8.74999 4.7263 8.18563 4.15512 7.50586 4.27556C4.18711 4.86357 1.66666 7.76243 1.66666 11.25C1.66666 15.162 4.83797 18.3333 8.74999 18.3333Z" />
-              <path
-									d="M17.0833 10C17.7737 10 18.3432 9.43708 18.2408 8.75433C17.7005 5.14918 14.8508 2.29947 11.2457 1.75912C10.5629 1.6568 10 2.2263 10 2.91665V9.16666C10 9.62691 10.3731 10 10.8333 10H17.0833Z" />
-            </svg>
-					</span> <span class="text">Dashboard</span>
-				</a></li>
-
-				<li class="nav-item"><a href="invoice.html"> <span
-						class="icon"> <svg width="20" height="20"
+								xmlns="http://www.w3.org/2000/svg"></svg>
+					</span> <span class="text">Dashboard</span></a></li>
+				<li class="nav-item"><a href="/admin/contracts/list"> <span
+						class="lni lni-bookmark"> <svg width="20" height="20"
 								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
+								xmlns="http://www.w3.org/2000/svg"></svg>
+					</span> <span class="text">Contracts</span></a></li>
 
-            </svg>
-					</span> <span class="text">Invoice</span>
-				</a></li>
+				<li class="nav-item"><a href=""> <span
+						class="lni lni-stats-up"> <svg width="20" height="20"
+								viewBox="0 0 20 20" fill="none"
+								xmlns="http://www.w3.org/2000/svg"></svg>
+					</span> <span class="text">Invoice</span></a></li>
 				<li class="nav-item nav-item-has-children"><a href="#0"
 					class="collapsed" data-bs-toggle="collapse"
 					data-bs-target="#ddmenu_3" aria-controls="ddmenu_3"
 					aria-expanded="false" aria-label="Toggle navigation"> <span
-						class="icon"> <svg width="20" height="20"
+						class="lni lni-menu"> <svg width="20" height="20"
 								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-              <path
-									d="M14.9211 10.1294C15.1652 9.88534 15.1652 9.48967 14.9211 9.24559L10.7544 5.0789C10.5103 4.83482 10.1147 4.83482 9.87057 5.0789C9.62649 5.32297 9.62649 5.71871 9.87057 5.96278L12.9702 9.06251H1.97916C1.63398 9.06251 1.35416 9.34234 1.35416 9.68751C1.35416 10.0327 1.63398 10.3125 1.97916 10.3125H12.9702L9.87057 13.4122C9.62649 13.6563 9.62649 14.052 9.87057 14.2961C10.1147 14.5402 10.5103 14.5402 10.7544 14.2961L14.9211 10.1294Z" />
-            </svg>
-					</span> <span class="text">Menu</span>
-				</a>
+								xmlns="http://www.w3.org/2000/svg"></svg>
+					</span> <span class="text">Menu</span></a>
 					<ul id="ddmenu_3" class="collapse">
-						<li><a href="list">Menu List</a></li>
-						<li><a href="add">Add Menu</a></li>
+						<li><a href="/admin/menu/list">Menu List</a></li>
+						<li><a href="/admin/menu/add">Add Menu</a></li>
 					</ul></li>
 				<li class="nav-item nav-item-has-children"><a href="#0"
 					class="collapsed" data-bs-toggle="collapse"
 					data-bs-target="#ddmenu_4" aria-controls="ddmenu_4"
 					aria-expanded="false" aria-label="Toggle navigation"> <span
-						class="icon"> <svg width="20" height="20"
+						class="lni lni-arrow-right"> <svg width="20" height="20"
 								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-              <path
-									d="M14.9211 10.1294C15.1652 9.88534 15.1652 9.48967 14.9211 9.24559L10.7544 5.0789C10.5103 4.83482 10.1147 4.83482 9.87057 5.0789C9.62649 5.32297 9.62649 5.71871 9.87057 5.96278L12.9702 9.06251H1.97916C1.63398 9.06251 1.35416 9.34234 1.35416 9.68751C1.35416 10.0327 1.63398 10.3125 1.97916 10.3125H12.9702L9.87057 13.4122C9.62649 13.6563 9.62649 14.052 9.87057 14.2961C10.1147 14.5402 10.5103 14.5402 10.7544 14.2961L14.9211 10.1294Z" />
-            </svg>
-					</span> <span class="text">Orders</span>
-				</a>
+								xmlns="http://www.w3.org/2000/svg"></svg>
+					</span> <span class="text">Orders</span></a>
 					<ul id="ddmenu_4" class="collapse">
 						<li><a href="orders.html">Orders List</a></li>
 					</ul></li>
@@ -140,14 +150,10 @@ h1 {
 					class="collapsed" data-bs-toggle="collapse"
 					data-bs-target="#ddmenu_5" aria-controls="ddmenu_5"
 					aria-expanded="false" aria-label="Toggle navigation"> <span
-						class="icon"> <svg width="20" height="20"
+						class="lni lni-arrow-right"> <svg width="20" height="20"
 								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-              <path
-									d="M14.9211 10.1294C15.1652 9.88534 15.1652 9.48967 14.9211 9.24559L10.7544 5.0789C10.5103 4.83482 10.1147 4.83482 9.87057 5.0789C9.62649 5.32297 9.62649 5.71871 9.87057 5.96278L12.9702 9.06251H1.97916C1.63398 9.06251 1.35416 9.34234 1.35416 9.68751C1.35416 10.0327 1.63398 10.3125 1.97916 10.3125H12.9702L9.87057 13.4122C9.62649 13.6563 9.62649 14.052 9.87057 14.2961C10.1147 14.5402 10.5103 14.5402 10.7544 14.2961L14.9211 10.1294Z" />
-            </svg>
-					</span> <span class="text">Meals</span>
-				</a>
+								xmlns="http://www.w3.org/2000/svg"></svg>
+					</span> <span class="text">Meals</span></a>
 					<ul id="ddmenu_5" class="collapse">
 						<li><a href="/admin/meal/list">Meal List</a></li>
 						<li><a href="/admin/meal-groups">Meal Group</a></li>
@@ -155,23 +161,15 @@ h1 {
 						<li><a href="#">Meal Order</a></li>
 					</ul></li>
 				<li class="nav-item"><a href="/admin/user-management"> <span
-						class="icon"> <svg width="20" height="20"
+						class="lni lni-user"> <svg width="20" height="20"
 								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-              <path
-									d="M9.99999 10C7.79086 10 5.99999 8.20914 5.99999 6C5.99999 3.79086 7.79086 2 10 2C12.2091 2 13.9999 3.79086 13.9999 6C13.9999 8.20914 12.2091 10 9.99999 10ZM2 17.5C2 14.8783 4.87829 13 8.00001 13H12C15.1217 13 18 14.8783 18 17.5V18.5H2V17.5Z" />
-            </svg>
-					</span> <span class="text">Customer</span>
-				</a></li>
+								xmlns="http://www.w3.org/2000/svg"></svg>
+					</span> <span class="text">Customer</span></a></li>
 				<li class="nav-item"><a href="logout.html"> <span
-						class="icon"> <svg width="20" height="20"
+						class="lni lni-exit"> <svg width="20" height="20"
 								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-              <path
-									d="M14.9211 10.1294C15.1652 9.88534 15.1652 9.48967 14.9211 9.24559L10.7544 5.0789C10.5103 4.83482 10.1147 4.83482 9.87057 5.0789C9.62649 5.32297 9.62649 5.71871 9.87057 5.96278L12.9702 9.06251H1.97916C1.63398 9.06251 1.35416 9.34234 1.35416 9.68751C1.35416 10.0327 1.63398 10.3125 1.97916 10.3125H12.9702L9.87057 13.4122C9.62649 13.6563 9.62649 14.052 9.87057 14.2961C10.1147 14.5402 10.5103 14.5402 10.7544 14.2961L14.9211 10.1294Z" />
-            </svg>
-					</span> <span class="text">Logout</span>
-				</a></li>
+								xmlns="http://www.w3.org/2000/svg"></svg>
+					</span> <span class="text">Logout</span></a></li>
 			</ul>
 		</nav>
 	</aside>
@@ -191,7 +189,8 @@ h1 {
 							</div>
 							<div class="header-search d-none d-md-flex">
 								<form method="get" action="/admin/menu/list">
-									<input type="text" name="search" placeholder="Tìm kiếm..." />
+									<input type="text" name="search"
+										placeholder="Search By Menu Name..." />
 									<button type="submit" class="btn btn-primary">
 										<i class="lni lni-search-alt"></i>
 									</button>
@@ -230,10 +229,22 @@ h1 {
 									</tr>
 								</tbody>
 							</table>
+
+							<!-- Phân trang -->
+							<div class="pagination">
+								<a th:href="@{/admin/menu/list(page=${currentPage - 1})}"
+									th:if="${currentPage > 0}">&laquo; Previous</a> <span
+									th:each="i : ${#numbers.sequence(0, totalPages - 1)}"> <a
+									th:href="@{/admin/menu/list(page=${i})}"
+									th:class="${currentPage == i} ? 'active' : ''"
+									th:text="${i + 1}"></a>
+								</span> <a th:href="@{/admin/menu/list(page=${currentPage + 1})}"
+									th:if="${currentPage < totalPages - 1}">Next &raquo;</a>
+							</div>
+
 						</div>
 					</div>
 				</div>
-
 			</div>
 		</header>
 	</main>
@@ -246,6 +257,5 @@ h1 {
 	<script src="/assets/js/world-merc.js"></script>
 	<script src="/assets/js/polyfill.js"></script>
 	<script src="/assets/js/main.js"></script>
-
 </body>
 </html>

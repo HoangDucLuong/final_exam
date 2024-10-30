@@ -73,7 +73,8 @@ public class MenuController {
 	public String addMenu(@ModelAttribute("menu") Menu menu, @RequestParam("mealGroupId") Integer mealGroupId,
 			@RequestParam("mealIds") List<Integer> mealIds) {
 		menu.setCreatedAt(LocalDateTime.now());
-		menu.setMenuType(0);
+		menu.setMenuType(1);
+		menu.setUsrId(1);
 
 		// Lưu menu và nhận ID
 		menuRepository.save(menu); // Gọi phương thức save

@@ -1,6 +1,7 @@
 package shop.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -38,10 +39,16 @@ public class UserRepository {
     }
 
     // Phương thức tìm kiếm người dùng theo ID
+ // Phương thức tìm kiếm người dùng theo ID
     public User findById(int id) {
         String sql = "SELECT * FROM tbl_user WHERE id = ?";
-        return db.queryForObject(sql, new Object[]{id}, new UserRowMapper());
+        try {
+            return db.queryForObject(sql, new Object[]{id}, new UserRowMapper());
+        } catch (EmptyResultDataAccessException e) {
+            return null; // Trả về null nếu không tìm thấy người dùng
+        }
     }
+
 
     // Phương thức lấy tên người dùng theo email
     public String findNameByUid(String email) {

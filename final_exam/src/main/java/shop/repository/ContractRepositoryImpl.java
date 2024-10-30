@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import shop.model.Contract;
+import shop.model.Meal;
 import shop.modelviews.ContractRowMapper;
+import shop.modelviews.MealMapper;
 
 import java.util.List;
 
@@ -29,6 +31,18 @@ public class ContractRepositoryImpl implements ContractRepository {
         String sql = "SELECT * FROM tbl_contract WHERE usr_id = ?";
         return jdbcTemplate.query(sql, new Object[]{usrId}, new ContractRowMapper());
     }
+    @Override
+    public List<Meal> findMealsByContractId(int contractId) {
+    	// Thêm meal_group_id vào câu truy vấn
+    	String sql = "SELECT m.id, m.meal_group_id, m.meal_name, m.price, m.description, mg.group_name " +
+    	             "FROM tbl_meal m " +
+    	             "JOIN contract_detail cd ON m.id = cd.meal_id " +
+    	             "JOIN tbl_meal_group mg ON m.meal_group_id = mg.id " +
+    	             "WHERE cd.contract_id = ?";
+
+        return jdbcTemplate.query(sql, new Object[]{contractId}, new MealMapper());
+    }
+
 
     @Override
     public Contract getContractById(int id) {

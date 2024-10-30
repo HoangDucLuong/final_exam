@@ -1,6 +1,8 @@
 package shop.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MealRequest {
     private int id;
@@ -9,8 +11,21 @@ public class MealRequest {
     private LocalDate deliveryDate;
     private int totalMeals;
     private int status;
-
+    private String statusText; // Thêm thuộc tính statusText để hiển thị trạng thái dạng chữ
+    private User user; // Thuộc tính User cho thông tin người dùng
+    private Contract contract; // Thuộc tính Contract cho thông tin hợp đồng
+    private List<MealRequestDetail> mealRequestDetails = new ArrayList<>(); // Danh sách chi tiết yêu cầu suất ăn
+    private Integer userId;
+    
     // Getters và Setters
+    
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
     public int getId() {
         return id;
     }
@@ -57,5 +72,37 @@ public class MealRequest {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getStatusText() { // Thêm phương thức getter cho statusText
+        return statusText;
+    }
+
+    public void setStatusText(String statusText) { // Thêm phương thức setter cho statusText
+        this.statusText = statusText;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Contract getContract() { // Thêm phương thức getter cho contract
+        return contract;
+    }
+
+    public void setContract(Contract contract) { // Thêm phương thức setter cho contract
+        this.contract = contract;
+    }
+
+    public List<MealRequestDetail> getMealRequestDetails() {
+        return mealRequestDetails;
+    }
+
+    public void setMealRequestDetails(List<MealRequestDetail> mealRequestDetails) {
+        this.mealRequestDetails = mealRequestDetails;
     }
 }

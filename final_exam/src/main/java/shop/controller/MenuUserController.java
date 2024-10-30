@@ -1,16 +1,20 @@
 package shop.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
+import shop.model.Meal;
 import shop.model.MealGroup;
 import shop.model.Menu;
 import shop.model.MenuDetails;
@@ -124,6 +128,33 @@ public class MenuUserController {
         }
         return "redirect:/user/login";
     }
+ // Hiển thị chi tiết của một menu
+    @GetMapping("/menu/details/{menuId}")
+    public String getMenuDetails(@PathVariable int menuId, Model model) {
+        Menu menu = menuRepository.getMenuById(menuId);
+        
+        if (menu == null) {
+            return "redirect:/menu"; 
+        }
+        
+        List<MenuDetails> menuDetailsList = menuDetailsRepository.findByMenuId(menuId);
+        List<Meal> meals = new ArrayList<>();
+
+        for (MenuDetails details : menuDetailsList) {
+            Optional<Meal> mealOptional = mealRepository.findById(details.getMealId());
+
+            if (mealOptional.isPresent()) {
+                meals.add(mealOptional.get());
+            } else {
+                System.out.println("Món ăn với ID " + details.getMealId() + " không tồn tại.");
+            }
+        }
+
+        model.addAttribute("menu", menu);
+        model.addAttribute("menuDetails", menuDetailsList);
+        model.addAttribute("meals", meals);
+        return "user/menu-details";
+    }
 
     // Xóa menu của user
     @PostMapping("/menu/delete")
@@ -145,4 +176,5 @@ public class MenuUserController {
 
         return "redirect:/user/login"; 
     }
+
 }
