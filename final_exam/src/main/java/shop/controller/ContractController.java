@@ -190,6 +190,7 @@ public class ContractController {
                         mealRepository.findById(detail.getMealId()).ifPresent(meal ->
                             contractDetail.setDescription("Món ăn từ menu " + meal.getMealName())
                         );
+
                         contractDetailRepository.saveContractDetail(contractDetail);
                     }
                 } else if (customMenuIds != null && !customMenuIds.isEmpty()) {
@@ -203,6 +204,7 @@ public class ContractController {
                         });
                     }
                 }
+
                 return "redirect:/user/contracts";
             }
         }
