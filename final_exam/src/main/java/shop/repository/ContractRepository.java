@@ -1,7 +1,7 @@
 package shop.repository;
 
 import shop.model.Contract;
-import shop.model.Meal;
+import shop.model.Menu; // Thay đổi từ Meal thành Menu
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public interface ContractRepository {
     // Lấy hợp đồng theo ID của user (dành cho user)
     List<Contract> getContractsByUserId(int usrId);
     
-    List<Meal> findMealsByContractId(int contractId);
+    List<Menu> findMenusByContractId(int contractId); // Thay đổi từ Meal thành Menu
 
     // Lấy chi tiết hợp đồng theo ID hợp đồng (dùng cho cả user và admin)
     Contract getContractById(int id);

@@ -23,13 +23,13 @@ public class ContractDetailRepositoryImpl implements ContractDetailRepository {
 
     @Override
     public void saveContractDetail(ContractDetail contractDetail) {
-        String sql = "INSERT INTO contract_detail (contract_id, meal_id, description) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO contract_detail (contract_id, menu_id, description) VALUES (?, ?, ?)"; // Đổi meal_id thành menu_id
         KeyHolder keyHolder = new GeneratedKeyHolder();
         
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, contractDetail.getContractId());
-            ps.setInt(2, contractDetail.getMealId());
+            ps.setInt(2, contractDetail.getMenuId()); // Đổi từ mealId thành menuId
             ps.setString(3, contractDetail.getDescription());
             return ps;
         }, keyHolder);

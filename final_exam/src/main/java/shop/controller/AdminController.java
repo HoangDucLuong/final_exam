@@ -88,7 +88,7 @@ public class AdminController {
         return "admin/index"; // Trả về trang admin chính
     }
     @GetMapping("/meal-request/detail")
-    public String getMealRequestDetail(@RequestParam("id") Long id, Model model) {
+    public String getMealRequestDetail(@RequestParam("id") int id, Model model) {
         // Tìm kiếm mealRequest dựa trên id
         MealRequest mealRequest = mealRequestRepository.findById(id);
         
@@ -106,7 +106,7 @@ public class AdminController {
         }
 
         // Lấy các chi tiết của mealRequest
-        List<MealRequestDetail> mealRequestDetails = mealRequestDetailRepository.getDetailsByMealRequestId(id.intValue());
+        List<MealRequestDetail> mealRequestDetails = mealRequestDetailRepository.getDetailsByMealRequestId(id);
         model.addAttribute("mealRequest", mealRequest);
         model.addAttribute("mealRequestDetails", mealRequestDetails);
         List<Meal> meals = mealRepository.getAllMeals(); // Giả sử bạn có phương thức này

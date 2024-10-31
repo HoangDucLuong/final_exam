@@ -12,9 +12,9 @@ public class MealRequestDetailMapper implements RowMapper<MealRequestDetail> {
         MealRequestDetail detail = new MealRequestDetail();
         detail.setId(rs.getInt("id"));
         detail.setMealRequestId(rs.getInt("meal_request_id"));
-        detail.setMealId(rs.getInt("meal_id"));
+        detail.setMenuId(rs.getInt("menu_id"));
         detail.setQuantity(rs.getInt("quantity"));
-        detail.setPrice(rs.getDouble("price")); // Lấy giá từ kết quả truy vấn
+        detail.setPrice(rs.getBigDecimal("price")); // Lấy giá từ kết quả truy vấn
         return detail;
     }
 }

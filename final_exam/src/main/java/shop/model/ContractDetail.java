@@ -3,7 +3,7 @@ package shop.model;
 public class ContractDetail {
     private int id;
     private int contractId;
-    private int mealId;
+    private int menuId;
     private String description;
 	public int getId() {
 		return id;
@@ -17,11 +17,11 @@ public class ContractDetail {
 	public void setContractId(int contractId) {
 		this.contractId = contractId;
 	}
-	public int getMealId() {
-		return mealId;
+	public int getMenuId() {
+		return menuId;
 	}
-	public void setMealId(int mealId) {
-		this.mealId = mealId;
+	public void setMenuId(int mealId) {
+		this.menuId = mealId;
 	}
 	public String getDescription() {
 		return description;

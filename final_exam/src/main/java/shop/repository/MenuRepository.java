@@ -4,6 +4,7 @@ import shop.model.Meal;
 import shop.model.Menu;
 import shop.model.MenuDetails;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface MenuRepository {
@@ -26,4 +27,7 @@ public interface MenuRepository {
     List<Menu> findMenusByUserId(int userId); // Lấy danh sách menu theo ID người dùng
     Menu findMenuByIdAndUserId(int menuId, int userId); // Lấy menu theo ID và ID người dùng
     void delete(Menu menu); // Xóa menu
+
+    // Thêm phương thức để lấy giá món ăn theo ID
+    BigDecimal getMenuPriceById(int menuId); // Lấy giá món ăn theo ID
 }

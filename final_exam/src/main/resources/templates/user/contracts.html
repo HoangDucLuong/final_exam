@@ -1,10 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
-
-    <title>Danh sách Hợp Đồng</title>
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Danh sách hợp đồng - User</title>
     <style>
@@ -18,7 +15,7 @@
             background: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         table {
             width: 100%;
@@ -42,17 +39,29 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            text-decoration: none; /* Đảm bảo không có gạch chân cho liên kết */
         }
         .button:hover {
             background-color: #0056b3;
         }
+        .create-contract {
+            margin-bottom: 20px; /* Tạo khoảng cách cho nút tạo hợp đồng mới */
+            display: inline-block; /* Hiển thị nút như một khối */
+            padding: 10px 15px;
+            background-color: #28a745; /* Màu xanh lá cho nút tạo mới */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none; /* Đảm bảo không có gạch chân cho liên kết */
+        }
+        .create-contract:hover {
+            background-color: #218838; /* Đổi màu khi di chuột */
+        }
     </style>
-
 </head>
 <body>
-    
-
-    <a href="/user/create-contract">Tạo Hợp Đồng Mới</a>
+    <a href="/user/create-contract" class="create-contract">Tạo Hợp Đồng Mới</a>
     <div class="contracts">
         <h3>Danh sách hợp đồng</h3>
         <table>
@@ -63,7 +72,7 @@
                     <th>Ngày kết thúc</th>
                     <th>Tổng tiền</th>
                     <th>Trạng thái</th>
-                    <th>Thao tác</th> <!-- Thêm cột cho các thao tác -->
+                    <th>Thao tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -87,6 +96,5 @@
             </tbody>
         </table>
     </div>
-
 </body>
 </html>

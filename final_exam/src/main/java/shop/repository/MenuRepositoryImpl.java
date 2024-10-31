@@ -1,5 +1,6 @@
 package shop.repository;
 
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +10,7 @@ import shop.model.MenuDetails;
 import shop.modelviews.MenuMapper;
 import shop.modelviews.MealMapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -19,6 +21,12 @@ public class MenuRepositoryImpl implements MenuRepository {
     public MenuRepositoryImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+    
+    public BigDecimal getMenuPriceById(int menuId) {
+        String sql = "SELECT price FROM tbl_menu_details WHERE menu_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{menuId}, (rs, rowNum) -> rs.getBigDecimal("price"));
+    }
+
     @Override
     public List<Menu> findMenusByUserId(int userId) {
         String sql = "SELECT * FROM tbl_menu WHERE usr_id = ?";
