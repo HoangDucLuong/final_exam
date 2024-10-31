@@ -81,12 +81,20 @@ public class ContractController {
                     return "redirect:/user/contracts?error=notfound";
                 }
                 List<ContractDetail> contractDetails = contractDetailRepository.getContractDetailsByContractId(id);
+                List<Meal> meals = mealRepository.getMealsByContractId(id);
                 model.addAttribute("contract", contract);
                 model.addAttribute("contractDetails", contractDetails);
+                model.addAttribute("meals", meals);
                 return "user/contract-details";
             }
         }
         return "redirect:/user/login";
+    }
+    @GetMapping("/meals/{contractId}")
+    @ResponseBody
+    public List<Meal> getMealsByContractId(@PathVariable("contractId") int contractId) {
+        // Giả sử bạn có một phương thức trong MealRepository để lấy món ăn theo contractId
+        return mealRepository.getMealsByContractId(contractId);
     }
 
     @PostMapping("/cancel")

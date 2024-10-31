@@ -21,9 +21,10 @@ public class MenuDetailsRepositoryImpl implements MenuDetailsRepository {
 
     @Override
     public void addMenuDetail(MenuDetails menuDetails) {
-        String sql = "INSERT INTO tbl_menu_details (menu_id, meal_id) VALUES (?, ?)";
-        jdbcTemplate.update(sql, menuDetails.getMenuId(), menuDetails.getMealId());
+        String sql = "INSERT INTO tbl_menu_details (menu_id, meal_id, price) VALUES (?, ?, ?)";
+        jdbcTemplate.update(sql, menuDetails.getMenuId(), menuDetails.getMealId(), menuDetails.getPrice());
     }
+
 
     @Override
     public List<MenuDetails> findByMenuId(Integer menuId) {
@@ -34,10 +35,12 @@ public class MenuDetailsRepositoryImpl implements MenuDetailsRepository {
                 MenuDetails menuDetails = new MenuDetails();
                 menuDetails.setMenuId(rs.getInt("menu_id"));
                 menuDetails.setMealId(rs.getInt("meal_id"));
+                menuDetails.setPrice(rs.getBigDecimal("price")); // ánh xạ cột price
                 return menuDetails;
             }
         });
     }
+
 
     @Override
     public List<MenuDetails> findMenuDetailsByMenuId(Integer menuId) {

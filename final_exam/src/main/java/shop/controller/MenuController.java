@@ -85,10 +85,12 @@ public class MenuController {
 
 		// Liên kết các món ăn với menu vừa tạo
 		for (Integer mealId : mealIds) {
+			Meal meal = mealRepository.getMealById(mealId);
 			if (mealRepository.getMealById(mealId) != null) {// Tạo đối tượng MenuDetails để lưu vào tbl_menu_details
 				MenuDetails menuDetails = new MenuDetails();
 				menuDetails.setMenuId(newMenuId);
 				menuDetails.setMealId(mealId);
+				 menuDetails.setPrice(meal.getPrice());
 
 				// Lưu vào tbl_menu_details
 				menuDetailsRepository.addMenuDetail(menuDetails);

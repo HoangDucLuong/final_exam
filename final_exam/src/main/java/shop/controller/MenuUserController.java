@@ -112,11 +112,13 @@ public class MenuUserController {
 
                 // Lưu chi tiết món ăn liên kết với menu
                 for (Integer mealId : mealIds) {
+                	Meal meal = mealRepository.getMealById(mealId);
                     // Kiểm tra xem món ăn có tồn tại không
                     if (mealRepository.getMealById(mealId) != null) {
                         MenuDetails menuDetails = new MenuDetails();
                         menuDetails.setMenuId(newMenuId); // Sử dụng ID của menu vừa tạo
                         menuDetails.setMealId(mealId);
+                        menuDetails.setPrice(meal.getPrice());
                         
                         // Lưu vào tbl_menu_details
                         menuDetailsRepository.addMenuDetail(menuDetails);

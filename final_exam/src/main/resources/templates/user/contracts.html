@@ -80,7 +80,7 @@
                         <span th:if="${contract.status == 4}" class="status" style="color: grey;">Đã hủy</span>
                     </td>
                     <td>
-                        <a th:href="@{/contracts/{id}(id=${contract.id})}" class="button">Chi tiết</a>
+                        <a th:href="@{/user/contracts/{id}(id=${contract.id})}" class="button">Chi tiết</a>
                         <a th:href="@{/mealRequest/create(contractId=${contract.id})}" class="button">Tạo phiếu yêu cầu suất ăn</a>
                     </td>
                 </tr>

@@ -46,9 +46,9 @@ public class MenuRepositoryImpl implements MenuRepository {
     }
 
     @Override
-    public void addMenuDetail(MenuDetails menuDetails) {  // Thêm phương thức mới
-        String sql = "INSERT INTO tbl_menu_details (menu_id, meal_id) VALUES (?, ?)";
-        jdbcTemplate.update(sql, menuDetails.getMenuId(), menuDetails.getMealId());
+    public void addMenuDetail(MenuDetails menuDetails) {
+        String sql = "INSERT INTO tbl_menu_details (menu_id, meal_id, price) VALUES (?, ?, ?)";
+        jdbcTemplate.update(sql, menuDetails.getMenuId(), menuDetails.getMealId(), menuDetails.getPrice());
     }
 
     @Override
