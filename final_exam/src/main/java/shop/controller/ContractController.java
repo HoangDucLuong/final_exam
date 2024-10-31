@@ -8,22 +8,25 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 import shop.model.Contract;
 import shop.model.ContractDetail;
-import shop.model.Meal;
 import shop.model.MenuDetails;
 import shop.model.User;
 import shop.model.Menu;
 
 import shop.repository.ContractRepository;
 import shop.repository.ContractDetailRepository;
-import shop.repository.MealRepository;
 import shop.repository.MenuDetailsRepository;
 import shop.repository.MenuRepository;
 import shop.repository.UserRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/user")
@@ -37,9 +40,6 @@ public class ContractController {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private MealRepository mealRepository;
 
     @Autowired
     private MenuDetailsRepository menuDetailsRepository;
@@ -56,9 +56,6 @@ public class ContractController {
                 User user = userOptional.get();
                 List<Contract> userContracts = contractRepository.getContractsByUserId(user.getId());
                 model.addAttribute("contracts", userContracts);
-
-                List<Meal> meals = mealRepository.findAll();
-                model.addAttribute("meals", meals);
 
                 List<Menu> menus = menuRepository.getAllMenus();
                 model.addAttribute("menus", menus);
@@ -77,24 +74,28 @@ public class ContractController {
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
                 Contract contract = contractRepository.getContractById(id);
+                
                 if (contract == null || contract.getUsrId() != user.getId()) {
                     return "redirect:/user/contracts?error=notfound";
                 }
+                
                 List<ContractDetail> contractDetails = contractDetailRepository.getContractDetailsByContractId(id);
-                List<Meal> meals = mealRepository.getMealsByContractId(id);
+                List<Menu> menus = contractRepository.findMenusByContractId(id);
+                Map<Integer, BigDecimal> menuPrices = new HashMap<>();
+                for (Menu menu : menus) {
+                    BigDecimal price = menuRepository.getMenuPriceById(menu.getId());
+                    menuPrices.put(menu.getId(), price);
+                }
+
                 model.addAttribute("contract", contract);
                 model.addAttribute("contractDetails", contractDetails);
-                model.addAttribute("meals", meals);
+                model.addAttribute("menus", menus); 
+                model.addAttribute("menuPrices", menuPrices);
+
                 return "user/contract-details";
             }
         }
         return "redirect:/user/login";
-    }
-    @GetMapping("/meals/{contractId}")
-    @ResponseBody
-    public List<Meal> getMealsByContractId(@PathVariable("contractId") int contractId) {
-        // Giả sử bạn có một phương thức trong MealRepository để lấy món ăn theo contractId
-        return mealRepository.getMealsByContractId(contractId);
     }
 
     @PostMapping("/cancel")
@@ -114,12 +115,13 @@ public class ContractController {
         }
         return "redirect:/user/login";
     }
+
     @GetMapping("/create-contract")
     public String showCreateContractForm() {
         return "user/create-contract";
     }
 
-    @PostMapping("/user/create-contract")
+    @PostMapping("/create-contract")
     public String createContract(
             @RequestParam("startDate") String startDate,
             @RequestParam("contractDuration") Integer contractDuration,
@@ -159,7 +161,6 @@ public class ContractController {
     @PostMapping("/contracts/save")
     public String saveContract(
             @RequestParam(value = "menuId", required = false) Integer menuId,
-            @RequestParam(value = "customMenuId", required = false) List<Integer> customMenuIds,
             @RequestParam("startDate") String startDate,
             @RequestParam("endDate") String endDate,
             @RequestParam("totalAmount") BigDecimal totalAmount,
@@ -185,23 +186,10 @@ public class ContractController {
                     for (MenuDetails detail : menuDetails) {
                         ContractDetail contractDetail = new ContractDetail();
                         contractDetail.setContractId(contract.getId());
-                        contractDetail.setMenuId(detail.getMealId());
-
-                        mealRepository.findById(detail.getMealId()).ifPresent(meal ->
-                            contractDetail.setDescription("Món ăn từ menu " + meal.getMealName())
-                        );
+                        contractDetail.setMenuId(detail.getMenuId());
+                        
 
                         contractDetailRepository.saveContractDetail(contractDetail);
-                    }
-                } else if (customMenuIds != null && !customMenuIds.isEmpty()) {
-                    for (Integer mealId : customMenuIds) {
-                        mealRepository.findById(mealId).ifPresent(meal -> {
-                            ContractDetail contractDetail = new ContractDetail();
-                            contractDetail.setContractId(contract.getId());
-                            contractDetail.setMenuId(menuId);
-                            contractDetail.setDescription("Món ăn tự chọn: " + meal.getMealName());
-                            contractDetailRepository.saveContractDetail(contractDetail);
-                        });
                     }
                 }
 

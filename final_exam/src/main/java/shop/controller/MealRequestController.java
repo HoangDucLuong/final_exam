@@ -160,4 +160,15 @@ public class MealRequestController {
         // Chuyển hướng về trang đăng nhập nếu không tìm thấy user
         return "redirect:/user/login";
     }
+    @GetMapping("/detail")
+    public String showMealRequestDetail(@RequestParam("id") int id, Model model) {
+        MealRequest mealRequest = mealRequestRepository.getMealRequestById(id);
+        List<MealRequestDetail> mealRequestDetails = mealRequestDetailRepository.getDetailsByMealRequestId(id);
+
+        model.addAttribute("mealRequest", mealRequest);
+        model.addAttribute("mealRequestDetails", mealRequestDetails);
+        
+        return "mealRequest/detail"; // Trả về giao diện chi tiết yêu cầu
+    }
+
 }

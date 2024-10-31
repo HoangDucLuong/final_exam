@@ -152,5 +152,10 @@ public class MenuRepositoryImpl implements MenuRepository {
                      "WHERE md.menu_id = ?";
         return jdbcTemplate.query(sql, new MealMapper(), menuId);
     }
+    @Override
+    public String getMenuNameById(int menuId) {
+        String sql = "SELECT menu_name FROM tbl_menu WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{menuId}, String.class);
+    }
 }
 

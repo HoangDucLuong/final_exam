@@ -119,59 +119,50 @@
 
 		<!-- Profile Section Start -->
 		<div class="container py-5">
-			<h2 class="mb-4 text-center">Meal Request List</h2>
-
 			<div class="row justify-content-center">
 				<div class="col-md-12">
 					<div class="table-responsive">
-						<table class="table table-striped table-hover">
-							<thead>
+						<div class="mb-4 border p-4 rounded bg-light text-center">
+							<p>
+								<strong>Request Date:</strong> <span
+									th:text="${mealRequest.requestDate}"></span>
+							</p>
+							<p>
+								<strong>Delivery Date:</strong> <span
+									th:text="${mealRequest.deliveryDate}"></span>
+							</p>
+							<p>
+								<strong>Total Meals:</strong> <span
+									th:text="${mealRequest.totalMeals}"></span>
+							</p>
+							<p>
+								<strong>Status:</strong> <span
+									th:if="${mealRequest.status == 0}">Pending</span> <span
+									th:if="${mealRequest.status == 1}">Confirmed</span> <span
+									th:if="${mealRequest.status == 2}">Delivered</span>
+							</p>
+						</div>
+						<table class="table table-bordered text-center">
+							<thead class="table-light">
 								<tr>
-									<th>Request Date</th>
-									<th>Delivery Date</th>
-									<th>Total Meals</th>
-									<th>Status</th>
+									<th>Menu Name</th>
+									<th>Quantity</th>
+									<th>Price</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr th:each="mealRequest : ${mealRequests}">
-									<td><a
-										th:href="@{/mealRequest/detail(id=${mealRequest.id})}"
-										th:text="${mealRequest.requestDate}"></a></td>
-									<td><a
-										th:href="@{/mealRequest/detail(id=${mealRequest.id})}"
-										th:text="${mealRequest.deliveryDate}"></a></td>
-									<td><a
-										th:href="@{/mealRequest/detail(id=${mealRequest.id})}"
-										th:text="${mealRequest.totalMeals}"></a></td>
-									<td><a
-										th:href="@{/mealRequest/detail(id=${mealRequest.id})}"> <span
-											th:if="${mealRequest.status == 0}">Pending</span> <span
-											th:if="${mealRequest.status == 1}">Confirmed</span> <span
-											th:if="${mealRequest.status == 2}">Delivered</span>
-									</a></td>
+								<tr th:each="detail : ${mealRequestDetails}">
+									<td th:text="${detail.menuName}"></td>
+									<td th:text="${detail.quantity}"></td>
+									<td th:text="${detail.price}"></td>
 								</tr>
 							</tbody>
 						</table>
-						<div>
-							<span th:if="${totalRequests > 0}">Total: <span
-								th:text="${totalRequests}"></span></span>
-							<div>
-								<a th:if="${currentPage > 1}"
-									th:href="@{/mealRequest/list(page=${currentPage - 1},
-									contractId=${contractId})}"
-									class="btn btn-primary">Previous </a> <span
-									th:text="${currentPage}" class="btn btn-success"></span> <a
-									th:if="${currentPage < totalPages}"
-									th:href="@{/mealRequest/list(page=${currentPage + 1}, contractId=${contractId})}"
-									class="btn btn-primary">Next</a>
-							</div>
-
-						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+
 	</div>
 	<!-- Profile Section End -->
 	<!-- Footer Start -->

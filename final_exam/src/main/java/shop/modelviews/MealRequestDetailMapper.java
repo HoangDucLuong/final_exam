@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class MealRequestDetailMapper implements RowMapper<MealRequestDetail> {
+    
     @Override
     public MealRequestDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
         MealRequestDetail detail = new MealRequestDetail();
@@ -15,6 +16,9 @@ public class MealRequestDetailMapper implements RowMapper<MealRequestDetail> {
         detail.setMenuId(rs.getInt("menu_id"));
         detail.setQuantity(rs.getInt("quantity"));
         detail.setPrice(rs.getBigDecimal("price")); // Lấy giá từ kết quả truy vấn
+        
+        // Ghi chú: Để lấy tên menu, bạn có thể gọi menuRepository từ nơi cần thiết
+        // Đừng lấy tên menu tại đây, vì điều đó vi phạm nguyên tắc tách biệt
         return detail;
     }
 }

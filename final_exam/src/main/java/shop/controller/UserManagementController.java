@@ -22,7 +22,7 @@ public class UserManagementController {
     private UserRepository userRepository;
 
     // Trang quản lý user
-    @GetMapping("/admin/users")
+    @GetMapping("/admin/user-management")
     public String getAllUsers(Model model,
                               @RequestParam(value = "page", defaultValue = "1") int page,
                               @RequestParam(value = "search", required = false, defaultValue = "") String search) {

@@ -9,8 +9,17 @@ public class MealRequestDetail {
     private int quantity;
     private BigDecimal price; // Thêm thuộc tính price
     private Meal meal;
+    private String menuName;
 
-    // Getters và Setters
+    public String getMenuName() {
+		return menuName;
+	}
+
+	public void setMenuName(String menuName) {
+		this.menuName = menuName;
+	}
+
+	// Getters và Setters
     public int getId() {
         return id;
     }

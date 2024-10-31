@@ -125,9 +125,9 @@ public class AdminController {
     }
 
     // Quản lý người dùng
-    @GetMapping("/user-management") 
-    public String userManagement() {
-        return "admin/user-management"; // Trả về trang quản lý người dùng
+    @GetMapping("/admin/user-management") 
+    public String usermanagement(){
+        return "admin/index";
     }
 
     // Kiểm tra đăng nhập

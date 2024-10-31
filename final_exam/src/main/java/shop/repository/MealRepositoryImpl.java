@@ -157,12 +157,15 @@ public class MealRepositoryImpl implements MealRepository {
     
     @Override
     public List<Meal> getMealsByContractId(int contractId) {
-        String sql = "SELECT m.*, g.group_name FROM tbl_meal m " +
-                     "JOIN contract_detail cd ON m.id = cd.meal_id " +
+        String sql = "SELECT m.*, g.group_name " +
+                     "FROM tbl_meal m " +
+                     "JOIN tbl_menu_details md ON m.id = md.meal_id " +
                      "JOIN tbl_meal_group g ON m.meal_group_id = g.id " +
+                     "JOIN contract_detail cd ON md.menu_id = cd.menu_id " +
                      "WHERE cd.contract_id = ?";
         return jdbcTemplate.query(sql, new Object[]{contractId}, new MealMapper());
     }
+
     @Override
     public double getMealPriceById(int mealId) {
         String sql = "SELECT price FROM tbl_meal WHERE id = ?";

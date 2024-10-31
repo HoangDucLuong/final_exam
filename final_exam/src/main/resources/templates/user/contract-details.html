@@ -1,42 +1,42 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi tiết hợp đồng</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chi tiết hợp đồng</title>
 </head>
 <body>
-    <div class="contract-detail">
-        <h3>Chi tiết hợp đồng</h3>
-        <h4>
-            Mã hợp đồng: <span th:text="${contract.id}"></span>
-        </h4>
-        <h4>
-            Ngày bắt đầu: <span th:text="${contract.startDate}"></span>
-        </h4>
-        <h4>
-            Ngày kết thúc: <span th:text="${contract.endDate}"></span>
-        </h4>
+	<div class="contract-detail">
+		<h3>Chi tiết hợp đồng</h3>
+		<h4>
+			Mã hợp đồng: <span th:text="${contract.id}"></span>
+		</h4>
+		<h4>
+			Ngày bắt đầu: <span th:text="${contract.startDate}"></span>
+		</h4>
+		<h4>
+			Ngày kết thúc: <span th:text="${contract.endDate}"></span>
+		</h4>
 
-        <h4>Thông tin menu:</h4>
-        <form action="/mealRequest/create" method="post">
-            <input type="hidden" name="contractId" th:value="${contract.id}" />
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tên menu</th>
-                        <th>Giá</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="menu : ${menus}">
-                        <td th:text="${menu.menuName}"></td>
-                        <td th:text="${menu.price}"></td>
-                    </tr>
-                </tbody>
-            </table>
-            <button type="submit">Tạo phiếu yêu cầu suất ăn</button>
-        </form>
-    </div>
+		<h4>Thông tin menu:</h4>
+		<form action="/mealRequest/create" method="post">
+			<input type="hidden" name="contractId" th:value="${contract.id}" />
+			<table>
+				<thead>
+					<tr>
+						<th>Tên menu</th>
+						<th>Giá</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="menu : ${menus}">
+						<td th:text="${menu.menuName}"></td>
+						<td th:text="${menuPrices[menu.id]}"></td>
+					</tr>
+				</tbody>
+			</table>
+			<button type="submit">Tạo phiếu yêu cầu suất ăn</button>
+		</form>
+	</div>
 </body>
 </html>

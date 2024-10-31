@@ -49,7 +49,25 @@ public class MealRequestDetailRepositoryImpl implements MealRequestDetailReposit
     // Thêm phương thức để lấy chi tiết yêu cầu suất ăn theo mealRequestId
     @Override
     public List<MealRequestDetail> getDetailsByMealRequestId(int mealRequestId) {
-        String sql = "SELECT * FROM meal_request_detail WHERE meal_request_id = ?";
-        return jdbcTemplate.query(sql, new Object[]{mealRequestId}, new MealRequestDetailMapper());
+        String sql = "SELECT mrd.*, m.menu_name " +
+                     "FROM meal_request_detail mrd " +
+                     "JOIN tbl_menu m ON mrd.menu_id = m.id " +
+                     "WHERE mrd.meal_request_id = ?";
+
+        return jdbcTemplate.query(sql, new Object[]{mealRequestId}, (rs, rowNum) -> {
+            MealRequestDetail detail = new MealRequestDetail();
+            detail.setId(rs.getInt("id"));
+            detail.setMealRequestId(rs.getInt("meal_request_id"));
+            detail.setMenuId(rs.getInt("menu_id"));
+            detail.setQuantity(rs.getInt("quantity"));
+            detail.setPrice(rs.getBigDecimal("price"));
+            
+            // Lấy tên menu từ kết quả truy vấn
+            detail.setMenuName(rs.getString("menu_name")); // Đảm bảo rằng MealRequestDetail có trường menuName
+            
+            return detail;
+        });
     }
+
+
 }
