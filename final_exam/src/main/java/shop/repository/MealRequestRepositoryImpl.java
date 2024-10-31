@@ -87,8 +87,45 @@ public class MealRequestRepositoryImpl implements MealRequestRepository {
         jdbcTemplate.update(sql, totalMeals, mealRequestId);
     }
     @Override
-    public MealRequest findById(Long id) {
+    public MealRequest findById(int id) {
         String sql = "SELECT * FROM tbl_meal_request WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, new BeanPropertyRowMapper<>(MealRequest.class));
     }
+    @Override
+    public List<MealRequest> getMealRequestsByUserId(int userId) {
+        String sql = "SELECT mr.* FROM tbl_meal_request mr "
+                   + "JOIN tbl_contract c ON mr.contract_id = c.id "
+                   + "WHERE c.usr_id = ?";
+        return jdbcTemplate.query(sql, new Object[]{userId}, mealRequestRowMapper);
+    }
+    @Override
+    public List<MealRequest> getMealRequestsByUserId(int userId, int page, int size) {
+        String sql = "SELECT mr.* FROM tbl_meal_request mr " +
+                     "JOIN tbl_contract c ON mr.contract_id = c.id " +
+                     "WHERE c.usr_id = ? " +
+                     "ORDER BY mr.id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        return jdbcTemplate.query(sql, new Object[]{userId, (page - 1) * size, size}, mealRequestRowMapper);
+    }
+
+    @Override
+    public List<MealRequest> getMealRequestsByContractId(int contractId, int page, int size) {
+        String sql = "SELECT * FROM tbl_meal_request WHERE contract_id = ? " +
+                     "ORDER BY id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        return jdbcTemplate.query(sql, new Object[]{contractId, (page - 1) * size, size}, mealRequestRowMapper);
+    }
+
+    @Override
+    public int countMealRequestsByUserId(int userId) {
+        String sql = "SELECT COUNT(*) FROM tbl_meal_request mr " +
+                     "JOIN tbl_contract c ON mr.contract_id = c.id " +
+                     "WHERE c.usr_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{userId}, Integer.class);
+    }
+
+    @Override
+    public int countMealRequestsByContractId(int contractId) {
+        String sql = "SELECT COUNT(*) FROM tbl_meal_request WHERE contract_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{contractId}, Integer.class);
+    }
+
 }

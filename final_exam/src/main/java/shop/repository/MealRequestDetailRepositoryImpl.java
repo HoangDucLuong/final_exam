@@ -28,15 +28,15 @@ public class MealRequestDetailRepositoryImpl implements MealRequestDetailReposit
 
     @Override
     public void addMealRequestDetail(MealRequestDetail mealRequestDetail) {
-        String sql = "INSERT INTO meal_request_detail (meal_request_id, meal_id, quantity, price) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(sql, mealRequestDetail.getMealRequestId(), mealRequestDetail.getMealId(), 
+        String sql = "INSERT INTO meal_request_detail (meal_request_id, menu_id, quantity, price) VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sql, mealRequestDetail.getMealRequestId(), mealRequestDetail.getMenuId(), 
                 mealRequestDetail.getQuantity(), mealRequestDetail.getPrice());
     }
 
     @Override
     public void updateMealRequestDetail(MealRequestDetail mealRequestDetail) {
-        String sql = "UPDATE meal_request_detail SET meal_request_id = ?, meal_id = ?, quantity = ?, price = ? WHERE id = ?";
-        jdbcTemplate.update(sql, mealRequestDetail.getMealRequestId(), mealRequestDetail.getMealId(), 
+        String sql = "UPDATE meal_request_detail SET meal_request_id = ?, menu_id = ?, quantity = ?, price = ? WHERE id = ?";
+        jdbcTemplate.update(sql, mealRequestDetail.getMealRequestId(), mealRequestDetail.getMenuId(), 
                 mealRequestDetail.getQuantity(), mealRequestDetail.getPrice(), mealRequestDetail.getId());
     }
 

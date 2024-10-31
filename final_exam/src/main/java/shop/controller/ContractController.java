@@ -185,7 +185,7 @@ public class ContractController {
                     for (MenuDetails detail : menuDetails) {
                         ContractDetail contractDetail = new ContractDetail();
                         contractDetail.setContractId(contract.getId());
-                        contractDetail.setMealId(detail.getMealId());
+                        contractDetail.setMenuId(detail.getMealId());
 
                         mealRepository.findById(detail.getMealId()).ifPresent(meal ->
                             contractDetail.setDescription("Món ăn từ menu " + meal.getMealName())
@@ -198,7 +198,7 @@ public class ContractController {
                         mealRepository.findById(mealId).ifPresent(meal -> {
                             ContractDetail contractDetail = new ContractDetail();
                             contractDetail.setContractId(contract.getId());
-                            contractDetail.setMealId(mealId);
+                            contractDetail.setMenuId(menuId);
                             contractDetail.setDescription("Món ăn tự chọn: " + meal.getMealName());
                             contractDetailRepository.saveContractDetail(contractDetail);
                         });

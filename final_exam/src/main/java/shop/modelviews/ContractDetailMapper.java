@@ -12,7 +12,7 @@ public class ContractDetailMapper implements RowMapper<ContractDetail> {
         ContractDetail contractDetail = new ContractDetail();
         contractDetail.setId(rs.getInt("id"));
         contractDetail.setContractId(rs.getInt("contract_id"));
-        contractDetail.setMealId(rs.getInt("meal_id"));
+        contractDetail.setMenuId(rs.getInt("menu_id"));
         contractDetail.setDescription(rs.getString("description"));
         return contractDetail;
     }

@@ -1,11 +1,13 @@
 package shop.model;
 
+import java.math.BigDecimal;
+
 public class MealRequestDetail {
     private int id;
     private int mealRequestId;
-    private int mealId;
+    private int menuId;
     private int quantity;
-    private double price; // Thêm thuộc tính price
+    private BigDecimal price; // Thêm thuộc tính price
     private Meal meal;
 
     // Getters và Setters
@@ -25,12 +27,12 @@ public class MealRequestDetail {
         this.mealRequestId = mealRequestId;
     }
 
-    public int getMealId() {
-        return mealId;
+    public int getMenuId() {
+        return menuId;
     }
 
-    public void setMealId(int mealId) {
-        this.mealId = mealId;
+    public void setMenuId(int mealId) {
+        this.menuId = mealId;
     }
 
     public int getQuantity() {
@@ -41,11 +43,11 @@ public class MealRequestDetail {
         this.quantity = quantity;
     }
 
-    public double getPrice() { // Thêm getter cho price
+    public BigDecimal getPrice() { // Thêm getter cho price
         return price;
     }
 
-    public void setPrice(double price) { // Thêm setter cho price
+    public void setPrice(BigDecimal price) { // Thêm setter cho price
         this.price = price;
     }
     public Meal getMeal() {

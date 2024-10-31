@@ -2,28 +2,67 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create Contract</title>
+    <title>Tạo Hợp Đồng</title>
     <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        div {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="date"],
+        input[type="number"],
+        input[type="text"],
+        button {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-    <h2>Create Contract</h2>
+    <h2>Tạo Hợp Đồng</h2>
     <form th:action="@{/user/create-contract}" method="post">
-
         <div>
-    <label for="startDate">Ngày bắt đầu:</label>
-    <input type="date" id="startDate" name="startDate" required>
-</div>
-<div>
-    <label for="contractDuration">Thời hạn hợp đồng (Tháng):</label>
-    <input type="number" id="contractDuration" name="contractDuration" required>
-</div>
-<div>
-    <label for="depositAmount">Số tiền đặt cọc:</label>
-    <input type="text" id="depositAmount" name="depositAmount" required>
-</div>
-
-        
-        <button type="submit">Submit</button>
+            <label for="startDate">Ngày bắt đầu:</label>
+            <input type="date" id="startDate" name="startDate" required>
+        </div>
+        <div>
+            <label for="contractDuration">Thời hạn hợp đồng (Tháng):</label>
+            <input type="number" id="contractDuration" name="contractDuration" required min="1">
+        </div>
+        <div>
+            <label for="depositAmount">Số tiền đặt cọc:</label>
+            <input type="text" id="depositAmount" name="depositAmount" required pattern="^\d+(\.\d{1,2})?$" title="Vui lòng nhập số tiền hợp lệ">
+        </div>
+        <button type="submit">Gửi</button>
     </form>
 </body>
 </html>

@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import shop.model.Contract;
-import shop.model.Meal;
+import shop.model.Menu; // Thay đổi từ Meal thành Menu
 import shop.modelviews.ContractRowMapper;
-import shop.modelviews.MealMapper;
+import shop.modelviews.MenuMapper; // Thay đổi từ MealMapper thành MenuMapper
 
 import java.util.List;
 
@@ -15,11 +15,13 @@ public class ContractRepositoryImpl implements ContractRepository {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
     @Override
     public List<Contract> findAll() {
         String sql = "SELECT * FROM tbl_contract";
         return jdbcTemplate.query(sql, new ContractRowMapper());
     }
+
     @Override
     public List<Contract> getAllContracts() {
         String sql = "SELECT * FROM tbl_contract";
@@ -31,17 +33,19 @@ public class ContractRepositoryImpl implements ContractRepository {
         String sql = "SELECT * FROM tbl_contract WHERE usr_id = ?";
         return jdbcTemplate.query(sql, new Object[]{usrId}, new ContractRowMapper());
     }
+    
     @Override
-    public List<Meal> findMealsByContractId(int contractId) {
-    	// Thêm meal_group_id vào câu truy vấn
-    	String sql = "SELECT m.id, m.meal_group_id, m.meal_name, m.price, m.description, mg.group_name " +
-    	             "FROM tbl_meal m " +
-    	             "JOIN contract_detail cd ON m.id = cd.meal_id " +
-    	             "JOIN tbl_meal_group mg ON m.meal_group_id = mg.id " +
-    	             "WHERE cd.contract_id = ?";
-
-        return jdbcTemplate.query(sql, new Object[]{contractId}, new MealMapper());
+    public List<Menu> findMenusByContractId(int contractId) {
+        String sql = "SELECT m.id, m.menu_name, m.menu_type, m.created_at " +
+                     "FROM tbl_menu m " +
+                     "JOIN tbl_menu_details md ON m.id = md.menu_id " +
+                     "JOIN contract_detail cd ON m.id = cd.menu_id " +
+                     "WHERE cd.contract_id = ?";
+        
+        return jdbcTemplate.query(sql, new Object[]{contractId}, new MenuMapper());
     }
+
+
 
 
     @Override
@@ -63,7 +67,6 @@ public class ContractRepositoryImpl implements ContractRepository {
         jdbcTemplate.update(sql, contract.getUsrId(), contract.getStartDate(), contract.getEndDate(),
                 contract.getTotalAmount(), contract.getDepositAmount(), contract.getStatus(), contract.getPaymentStatus(), contract.getId());
     }
-
 
     @Override
     public void deleteContract(int id) {
