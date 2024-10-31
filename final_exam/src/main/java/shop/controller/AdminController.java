@@ -130,7 +130,7 @@ public class AdminController {
         return "admin/index";
     }
 
-    // Kiểm tra đăng nhập
+
     @PostMapping("/chklogins")
     public String chkLogins(@RequestParam("email") String email, @RequestParam("pwd") String password,
                             HttpServletRequest request) {
