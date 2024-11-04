@@ -122,6 +122,7 @@ public class ContractAdminController {
 			return "redirect:/admin/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
 		}
 
+
 		// Cập nhật các thuộc tính của hợp đồng
 		existingContract.setUsrId(contract.getUsrId());
 		existingContract.setStartDate(contract.getStartDate());
@@ -129,15 +130,28 @@ public class ContractAdminController {
 		existingContract.setTotalAmount(contract.getTotalAmount());
 		existingContract.setDepositAmount(contract.getDepositAmount());
 		existingContract.setStatus(contract.getStatus());
-
+		
 		// Cập nhật trạng thái thanh toán
-		existingContract.setPaymentStatus(contract.getPaymentStatus());
+        existingContract.setPaymentStatus(contract.getPaymentStatus());
 
-		// Lưu hợp đồng đã cập nhật vào cơ sở dữ liệu
-		contractRepository.updateContract(existingContract);
+        // Lưu hợp đồng đã cập nhật vào cơ sở dữ liệu
+        contractRepository.updateContract(existingContract);
+        
+        return "redirect:/admin/contracts"; // Quay lại trang danh sách hợp đồng của admin
+    }
 
-		return "redirect:/admin/contracts"; // Quay lại trang danh sách hợp đồng của admin
-	}
+    // Xác nhận hợp đồng (POST) - đổi tên thành confirmContractPost
+    @PostMapping("/confirm/{id}")
+    public String confirmContractPost(@PathVariable("id") int id, Model model) {
+        Contract contract = contractRepository.getContractById(id);
+        if (contract == null) {
+            return "redirect:/admin/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
+        }
+        contract.setStatus(1); // Đặt trạng thái là đã xác nhận
+        contractRepository.updateContract(contract); // Cập nhật trạng thái trong cơ sở dữ liệu
+
+        return "redirect:/admin/contracts"; // Chuyển hướng về trang danh sách hợp đồng của admin
+    }
 
 	// Admin xóa hợp đồng
 	@GetMapping("/delete/{id}")

@@ -31,4 +31,5 @@ public interface MenuRepository {
     // Thêm phương thức để lấy giá món ăn theo ID
     BigDecimal getMenuPriceById(int menuId); // Lấy giá món ăn theo ID
     String getMenuNameById(int menuId);
+    BigDecimal getTotalPriceByMenuId(int menuId); // Lấy tổng giá trị của menu
 }

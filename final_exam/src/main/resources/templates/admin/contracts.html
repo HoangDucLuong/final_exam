@@ -190,9 +190,16 @@
 										th:text="${contractWithUser.contract.depositAmount}"></td>
 								<td><p class="text-sm"
 										th:text="${contractWithUser.contract.paymentStatus == 1 ? 'Đã Thanh Toán' : 'Chưa Thanh Toán'}"></td>
-								<td><p class="text-sm"
-										th:text="${contractWithUser.contract.status == 1 ? 'Kích Hoạt' : 'Đã Hủy'}"></td>
-
+								<td><span th:if="${contractWithUser.contract.status == 0}"
+									class="status" style="color: red;">Đang chờ</span> <span
+									th:if="${contractWithUser.contract.status == 1}" class="status"
+									style="color: green;">Đã xác nhận</span> <span
+									th:if="${contractWithUser.contract.status == 2}" class="status"
+									style="color: orange;">Đang thực hiện</span> <span
+									th:if="${contractWithUser.contract.status == 3}" class="status"
+									style="color: blue;">Đã hoàn thành</span> <span
+									th:if="${contractWithUser.contract.status == 4}" class="status"
+									style="color: grey;">Đã hủy</span></td>
 								<td>
 									<div class="action justify-content-center">
 										<!-- Nút Chỉnh Sửa -->
