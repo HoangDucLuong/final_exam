@@ -12,6 +12,7 @@ import shop.modelviews.MealMapper;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class MenuRepositoryImpl implements MenuRepository {
@@ -24,8 +25,16 @@ public class MenuRepositoryImpl implements MenuRepository {
     
     public BigDecimal getMenuPriceById(int menuId) {
         String sql = "SELECT price FROM tbl_menu_details WHERE menu_id = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{menuId}, (rs, rowNum) -> rs.getBigDecimal("price"));
+        
+        // Lấy tất cả các giá của món ăn thuộc menu
+        List<BigDecimal> prices = jdbcTemplate.queryForList(sql, BigDecimal.class, menuId);
+        
+        // Lọc các giá trị null và tính tổng giá
+        return prices.stream()
+                     .filter(Objects::nonNull) // Bỏ qua giá trị null
+                     .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
 
     @Override
     public List<Menu> findMenusByUserId(int userId) {
@@ -156,6 +165,12 @@ public class MenuRepositoryImpl implements MenuRepository {
     public String getMenuNameById(int menuId) {
         String sql = "SELECT menu_name FROM tbl_menu WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{menuId}, String.class);
+    }
+    
+    @Override
+    public BigDecimal getTotalPriceByMenuId(int menuId) {
+        String sql = "SELECT COALESCE(SUM(price), 0) FROM tbl_menu_details WHERE menu_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{menuId}, BigDecimal.class);
     }
 }
 

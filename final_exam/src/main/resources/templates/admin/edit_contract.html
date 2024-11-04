@@ -136,10 +136,17 @@
                             <label for="depositAmount" class="form-label">Số Tiền Đặt Cọc</label>
                             <input type="number" class="form-control" id="depositAmount" name="depositAmount" th:value="${contract.depositAmount}" required />
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="status" class="form-label">Trạng Thái</label>
-                            <input type="number" class="form-control" id="status" name="status" th:value="${contract.status}" required />
-                        </div>
+<div class="col-md-6 mb-3">
+    <label for="status" class="form-label">Trạng Thái</label>
+    <select class="form-select" id="status" name="status" required>
+        <option th:value="0" th:selected="${contract.status == 0}">Đang chờ</option>
+        <option th:value="1" th:selected="${contract.status == 1}" style="color: green;">Đã xác nhận</option>
+        <option th:value="2" th:selected="${contract.status == 2}" style="color: orange;">Đang thực hiện</option>
+        <option th:value="3" th:selected="${contract.status == 3}" style="color: blue;">Đã hoàn thành</option>
+        <option th:value="4" th:selected="${contract.status == 4}" style="color: grey;">Đã hủy</option>
+    </select>
+</div>
+
                         <div class="col-md-6 mb-3">
                             <label for="paymentStatus" class="form-label">Trạng Thái Thanh Toán</label>
                             <select class="form-select" id="paymentStatus" name="paymentStatus" required>

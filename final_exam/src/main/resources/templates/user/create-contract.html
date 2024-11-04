@@ -27,6 +27,7 @@
             display: block;
             margin-bottom: 5px;
         }
+        select,
         input[type="date"],
         input[type="number"],
         input[type="text"],
@@ -46,22 +47,83 @@
             background-color: #0056b3;
         }
     </style>
+    <script>
+        function updateMenuPrice() {
+            const menuSelect = document.getElementById("menuId");
+            const selectedPrice = menuSelect.options[menuSelect.selectedIndex].getAttribute("data-price");
+            const contractDuration = document.getElementById("contractDuration").value;
+
+            // Cập nhật tổng giá menu
+            document.getElementById("totalPrice").value = selectedPrice ? selectedPrice : "0.00";
+
+            // Cập nhật tổng giá hợp đồng
+            const totalMenuPrice = selectedPrice ? parseFloat(selectedPrice) : 0;
+            const totalContractPrice = totalMenuPrice * (contractDuration ? parseInt(contractDuration) : 1);
+            document.getElementById("contractTotalPrice").value = totalContractPrice.toFixed(2);
+
+            // Cập nhật tiền đặt cọc 10% của tổng giá hợp đồng
+            const depositAmount = totalContractPrice * 0.1;
+            document.getElementById("depositAmount").value = depositAmount.toFixed(2);
+        }
+
+        function updateContractTotalPrice() {
+            const contractDuration = document.getElementById("contractDuration").value;
+            const menuSelect = document.getElementById("menuId");
+            const selectedPrice = menuSelect.options[menuSelect.selectedIndex].getAttribute("data-price");
+
+            const totalMenuPrice = selectedPrice ? parseFloat(selectedPrice) : 0;
+            const totalContractPrice = totalMenuPrice * (contractDuration ? parseInt(contractDuration) : 1);
+            document.getElementById("contractTotalPrice").value = totalContractPrice.toFixed(2);
+
+            // Cập nhật tiền đặt cọc 10% của tổng giá hợp đồng
+            const depositAmount = totalContractPrice * 0.1;
+            document.getElementById("depositAmount").value = depositAmount.toFixed(2);
+        }
+    </script>
 </head>
 <body>
     <h2>Tạo Hợp Đồng</h2>
     <form th:action="@{/user/create-contract}" method="post">
         <div>
+            <label for="creator">Người tạo hợp đồng:</label>
+            <input type="text" id="creator" name="creator" th:value="${userName}" readonly>
+        </div>
+
+        <div>
             <label for="startDate">Ngày bắt đầu:</label>
             <input type="date" id="startDate" name="startDate" required>
         </div>
+        
         <div>
             <label for="contractDuration">Thời hạn hợp đồng (Tháng):</label>
-            <input type="number" id="contractDuration" name="contractDuration" required min="1">
+            <input type="number" id="contractDuration" name="contractDuration" required min="1" onchange="updateContractTotalPrice()">
         </div>
+
+        <div>
+            <label for="menuId">Chọn Menu:</label>
+            <select name="menuId" id="menuId" required onchange="updateMenuPrice()">
+                <option value="">Chọn menu</option>
+                <th:block th:each="menu : ${menus}">
+                    <option th:value="${menu.id}" th:text="${menu.menuName}" th:attr="data-price=${menuPrices[menu.id]}"></option>
+                </th:block>
+            </select>
+        </div>
+
+        <div>
+            <label for="totalPrice">Tổng giá của menu:</label>
+            <input type="text" id="totalPrice" name="totalPrice" readonly value="0.00">
+        </div>
+
+        <div>
+            <label for="contractTotalPrice">Tổng giá hợp đồng:</label>
+            <input type="text" id="contractTotalPrice" name="contractTotalPrice" readonly value="0.00">
+        </div>
+
         <div>
             <label for="depositAmount">Số tiền đặt cọc:</label>
-            <input type="text" id="depositAmount" name="depositAmount" required pattern="^\d+(\.\d{1,2})?$" title="Vui lòng nhập số tiền hợp lệ">
+            <input type="number" id="depositAmount" name="depositAmount" value="0" required step="0.01" readonly>
         </div>
+
         <button type="submit">Gửi</button>
     </form>
 </body>

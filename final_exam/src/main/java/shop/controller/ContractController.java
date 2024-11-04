@@ -82,6 +82,13 @@ public class ContractController {
                 List<ContractDetail> contractDetails = contractDetailRepository.getContractDetailsByContractId(id);
                 List<Menu> menus = contractRepository.findMenusByContractId(id);
                 Map<Integer, BigDecimal> menuPrices = new HashMap<>();
+                
+                // Đảm bảo ít nhất một menu được chọn để hiển thị
+                Menu selectedMenu = null;
+                if (!menus.isEmpty()) {
+                    selectedMenu = menus.get(0); // Chọn menu đầu tiên
+                }
+                
                 for (Menu menu : menus) {
                     BigDecimal price = menuRepository.getMenuPriceById(menu.getId());
                     menuPrices.put(menu.getId(), price);
@@ -89,14 +96,16 @@ public class ContractController {
 
                 model.addAttribute("contract", contract);
                 model.addAttribute("contractDetails", contractDetails);
-                model.addAttribute("menus", menus); 
+                model.addAttribute("menus", menus);
                 model.addAttribute("menuPrices", menuPrices);
-
+                model.addAttribute("menu", selectedMenu); // Thêm menu đã chọn vào model
+                
                 return "user/contract-details";
             }
         }
         return "redirect:/user/login";
     }
+
 
     @PostMapping("/cancel")
     public String cancelContract(@RequestParam("contractId") int contractId, HttpServletRequest request, Model model) {
@@ -117,15 +126,41 @@ public class ContractController {
     }
 
     @GetMapping("/create-contract")
-    public String showCreateContractForm() {
+    public String showCreateContractForm(HttpServletRequest request, Model model) {
+        String email = (String) request.getSession().getAttribute("user");
+        if (email != null) {
+            Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByEmail(email));
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                model.addAttribute("userName", user.getName());
+            }
+        }
+
+        // Lấy danh sách menu
+        List<Menu> menus = menuRepository.getAllMenus();
+        model.addAttribute("menus", menus);
+
+        // Tính và truyền giá của từng menu vào model
+        Map<Integer, BigDecimal> menuPrices = new HashMap<>();
+        for (Menu menu : menus) {
+            BigDecimal menuPrice = menuRepository.getMenuPriceById(menu.getId());
+            menuPrices.put(menu.getId(), menuPrice);
+        }
+        model.addAttribute("menuPrices", menuPrices);
+
+        // Log ra menuPrices và menus
+        System.out.println("Menus: " + menus);
+        System.out.println("Menu Prices: " + menuPrices);
+
         return "user/create-contract";
     }
 
+
     @PostMapping("/create-contract")
     public String createContract(
+            @RequestParam("menuId") int menuId,
             @RequestParam("startDate") String startDate,
             @RequestParam("contractDuration") Integer contractDuration,
-            @RequestParam("depositAmount") BigDecimal depositAmount,
             HttpServletRequest request,
             Model model) {
         String email = (String) request.getSession().getAttribute("user");
@@ -138,13 +173,29 @@ public class ContractController {
                     LocalDate start = LocalDate.parse(startDate);
                     LocalDate endDate = start.plusMonths(contractDuration);
 
+                    // Tính tổng giá của menu trong thời gian hợp đồng
+                    BigDecimal totalMenuPrice = BigDecimal.ZERO;
+                    List<MenuDetails> menuDetails = menuDetailsRepository.findByMenuId(menuId);
+                    for (MenuDetails detail : menuDetails) {
+                        BigDecimal mealPrice = detail.getPrice();
+                        totalMenuPrice = totalMenuPrice.add(mealPrice);
+                    }
+
+                    // Nhân tổng giá với thời gian hợp đồng để có tổng số tiền hợp đồng
+                    BigDecimal totalContractAmount = totalMenuPrice.multiply(BigDecimal.valueOf(contractDuration));
+
+                    // Tính tiền cọc là 10% của tổng số tiền hợp đồng
+                    BigDecimal depositAmount = totalContractAmount.multiply(BigDecimal.valueOf(0.1));
+
+                    // Tạo hợp đồng mới
                     Contract newContract = new Contract();
                     newContract.setUsrId(user.getId());
                     newContract.setStartDate(start);
                     newContract.setEndDate(endDate);
                     newContract.setDepositAmount(depositAmount);
-                    newContract.setStatus(0);
-                    newContract.setPaymentStatus(0);
+                    newContract.setTotalAmount(totalContractAmount);
+                    newContract.setStatus(2);  // Set trạng thái "In Progress"
+                    newContract.setPaymentStatus(0); // Set trạng thái "Unpaid"
 
                     contractRepository.addContract(newContract);
 
@@ -157,6 +208,7 @@ public class ContractController {
         }
         return "redirect:/user/login";
     }
+
 
     @PostMapping("/contracts/save")
     public String saveContract(

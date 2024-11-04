@@ -129,7 +129,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Menu Name</th>
-                        <th>Menu Type</th>
+                        <!-- <th>Menu Type</th> -->
                         <th>Created At</th>
                     </tr>
                 </thead>
@@ -138,7 +138,7 @@
                     <tr th:each="menu : ${userMenus}">
                         <td th:text="${menu.id}"></td>
                         <td><a th:href="@{/menu/details/{menuId}(menuId=${menu.id})}" th:text="${menu.menuName}"></a></td>
-                        <td th:text="${menu.menuType == 0 ? 'User-created' : 'Admin-created'}"></td>
+                        <!--<td th:text="${menu.menuType == 0 ? 'User-created' : 'Admin-created'}"></td>-->
                         <td th:text="${#temporals.format(menu.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                         <td>
                         <form th:action="@{/menu/delete}" method="post">
@@ -150,13 +150,13 @@
                 </tbody>
             </table>
 
-            <h3>All Menus</h3>
+            <h3>Admin Menus</h3>
             <table class="table">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Menu Name</th>
-                        <th>Menu Type</th>
+                        <!--<th>Menu Type</th>-->
                         <th>Created At</th>
                     </tr>
                 </thead>
@@ -165,15 +165,12 @@
                     <tr th:each="menu : ${allMenus}">
                         <td th:text="${menu.id}"></td>
                         <td><a th:href="@{/menu/details/{menuId}(menuId=${menu.id})}" th:text="${menu.menuName}"></a></td>
-                        <td th:text="${menu.menuType == 1 ? 'Admin-created' : 'Admin-created'}"></td>
+                        <!--<td th:text="${menu.menuType == 1 ? 'Admin-created' : 'Admin-created'}"></td>-->
                         <td th:text="${#temporals.format(menu.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                     </tr>
                 </tbody>
             </table>
         </div>
-
-
-
 		<!-- Footer Start -->
 		<div
 			class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn"
