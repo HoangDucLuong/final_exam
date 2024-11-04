@@ -33,7 +33,7 @@
             </svg>
 					</span> <span class="text">Dashboard</span>
 				</a></li>
-				<li class="nav-item"><a href="/admin/contracts/list"> <span
+				<li class="nav-item"><a href="/admin/contracts"> <span
 						class="lni lni-bookmark"> <svg width="20" height="20"
 								viewBox="0 0 20 20" fill="none"
 								xmlns="http://www.w3.org/2000/svg">
@@ -165,8 +165,13 @@
 											th:if="${mealRequest.status == 2}">Delivered</span></td>
 										<td><a
 											th:href="@{/admin/meal-request/detail(id=${mealRequest.id})}">Xem
-												chi tiết</a> <a href="#" class="btn btn-sm btn-primary">Approve</a>
-											<a href="#" class="btn btn-sm btn-danger">Reject</a></td>
+												chi tiết</a> <a
+											th:href="@{/admin/meal-request/approve/{id}(id=${mealRequest.id})}"
+											th:if="${mealRequest.status == 0}"
+											class="btn btn-sm btn-primary">Approve</a> <a
+											th:href="@{/admin/meal-request/reject/{id}(id=${mealRequest.id})}"
+											th:if="${mealRequest.status == 0}"
+											class="btn btn-sm btn-danger">Reject</a></td>
 									</tr>
 								</tbody>
 							</table>

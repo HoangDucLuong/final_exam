@@ -13,12 +13,17 @@
 	type="text/css" />
 <link rel="stylesheet" href="/assets/css/fullcalendar.css" />
 <link rel="stylesheet" href="/assets/css/main.css" />
+<style>
+.table-warning {
+	background-color: #fff3cd;
+}
+</style>
 </head>
 <body>
 	<div id="preloader">
 		<div class="spinner"></div>
 	</div>
-<aside class="sidebar-nav-wrapper">
+	<aside class="sidebar-nav-wrapper">
 		<div class="navbar-logo">
 			<a href="/admin/index"> <img src="/assets/images/logo/logo.svg"
 				alt="logo" />
@@ -26,14 +31,16 @@
 		</div>
 		<nav class="sidebar-nav">
 			<ul>
-				<li class="nav-item"><a href="/admin/index"> <span class="lni lni-dashboard">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+				<li class="nav-item"><a href="/admin/index"> <span
+						class="lni lni-dashboard"> <svg width="20" height="20"
+								viewBox="0 0 20 20" fill="none"
 								xmlns="http://www.w3.org/2000/svg">
             </svg>
 					</span> <span class="text">Dashboard</span>
 				</a></li>
-				<li class="nav-item"><a href="/admin/contracts/list"> <span class="lni lni-bookmark">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+				<li class="nav-item"><a href="/admin/contracts/list"> <span
+						class="lni lni-bookmark"> <svg width="20" height="20"
+								viewBox="0 0 20 20" fill="none"
 								xmlns="http://www.w3.org/2000/svg">
             </svg>
 					</span> <span class="text">Contracts</span>
@@ -93,7 +100,7 @@
 						class="lni lni-user"> <svg width="20" height="20"
 								viewBox="0 0 20 20" fill="none"
 								xmlns="http://www.w3.org/2000/svg">
-            </svg>         		
+            </svg>
 					</span> <span class="text">Customer</span>
 				</a></li>
 				<li class="nav-item"><a href="logout.html"> <span
@@ -109,88 +116,113 @@
 
 	<div class="overlay"></div>
 
-<main class="main-wrapper">
-    <header class="header">
-    <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-5 col-md-5 col-6">
-                    <div class="header-left d-flex align-items-center">
-                        <div class="menu-toggle-btn mr-15">
-                            <button id="menu-toggle" class="main-btn primary-btn btn-hover">
-                                <i class="lni lni-chevron-left me-2"></i> Menu
-                            </button>
-                        </div>
-                        <div class="header-search d-none d-md-flex">
-                            <form method="get" action="/admin/contracts/list">
-                                <input type="text" name="search" placeholder="Tìm kiếm..." />
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="lni lni-search-alt"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-           </div>
-        <div class="col-lg-12">
-            <div class="card-style mb-30">
-                <div class="title d-flex flex-wrap align-items-center justify-content-between">
+	<main class="main-wrapper">
+		<header class="header">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-lg-5 col-md-5 col-6">
+						<div class="header-left d-flex align-items-center">
+							<div class="menu-toggle-btn mr-15">
+								<button id="menu-toggle" class="main-btn primary-btn btn-hover">
+									<i class="lni lni-chevron-left me-2"></i> Menu
+								</button>
+							</div>
+							<div class="header-search d-none d-md-flex">
+								<form method="get" action="/admin/contracts/list">
+									<input type="text" name="search" placeholder="Tìm kiếm..." />
+									<button type="submit" class="btn btn-primary">
+										<i class="lni lni-search-alt"></i>
+									</button>
+								</form>
+							</div>
+						</div>
+					</div>
 				</div>
-				<div class="left">
-                    <h6 class="text-medium mb-30">Danh Sách Hợp Đồng</h6>
-                </div>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th><h6 class="text-sm text-medium text-center">ID</h6></th>
-                            <th class="max-width"><h6 class="text-sm text-medium text-center">Tên Người Dùng</h6></th>
-							<th class="max-width"><h6 class="text-sm text-medium text-center">Ngày Bắt Đầu</h6></th>
-							<th class="max-width"><h6 class="text-sm text-medium text-center">Ngày Kết Thúc</h6></th>
-							<th class="max-width"><h6 class="text-sm text-medium text-center">Tổng Số Tiền</h6></th>
-							<th class="max-width"><h6 class="text-sm text-medium text-center">Tiền Đặt Cọc</h6></th>
-							<th class="max-width"><h6 class="text-sm text-medium text-center">Trạng Thái Thanh Toán</h6></th>
-							<th class="max-width"><h6 class="text-sm text-medium text-center">Trạng Thái Hợp Đồng</h6></th>
-							<th class="max-width"><h6 class="text-sm text-medium text-center">Hành Động</h6></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="contractWithUser : ${contracts}" class="text-center">
-                        	<td><p class="text-sm" th:text="${contractWithUser.contract.id}"></p></td>
-                            <td><p class="text-sm" th:text="${contractWithUser.userName}"></td>
-                            <td><p class="text-sm" th:text="${contractWithUser.contract.startDate}"></td>
-                            <td><p class="text-sm" th:text="${contractWithUser.contract.endDate}"></td>
-                            <td><p class="text-sm" th:text="${contractWithUser.contract.totalAmount}"></td>
-                            <td><p class="text-sm" th:text="${contractWithUser.contract.depositAmount}"></td>
-                            <td><p class="text-sm" th:text="${contractWithUser.contract.paymentStatus == 1 ? 'Đã Thanh Toán' : 'Chưa Thanh Toán'}"></td>
-                            <td><p class="text-sm" th:text="${contractWithUser.contract.status == 1 ? 'Kích Hoạt' : 'Đã Hủy'}"></td>
-                            
-                            <td>
-                                <div class="action justify-content-center">
-                                    <!-- Nút Chỉnh Sửa -->
-                                    <a th:href="@{/admin/contracts/edit/{id}(id=${contractWithUser.contract.id})}" class="edit">
-                                        <i class="lni lni-pencil"></i>
-                                    </a>
-                                    <!-- Nút Xóa -->
-                                    <button class="more-btn ml-10 dropdown-toggle" data-bs-toggle="dropdown">
-                                        <i class="lni lni-more-alt"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li class="dropdown-item">
-                                            <a th:href="@{/admin/contracts/delete/{id}(id=${contractWithUser.contract.id})}" class="text-gray">Xóa</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </header>
-</main>
-<script src="/assets/js/bootstrap.bundle.min.js"></script>
+			</div>
+			<div class="col-lg-12">
+				<div class="card-style mb-30">
+					<div
+						class="title d-flex flex-wrap align-items-center justify-content-between">
+					</div>
+					<div class="left">
+						<h6 class="text-medium mb-30">Danh Sách Hợp Đồng</h6>
+					</div>
+				</div>
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th><h6 class="text-sm text-medium text-center">ID</h6></th>
+								<th class="max-width"><h6
+										class="text-sm text-medium text-center">Tên Người Dùng</h6></th>
+								<th class="max-width"><h6
+										class="text-sm text-medium text-center">Ngày Bắt Đầu</h6></th>
+								<th class="max-width"><h6
+										class="text-sm text-medium text-center">Ngày Kết Thúc</h6></th>
+								<th class="max-width"><h6
+										class="text-sm text-medium text-center">Tổng Số Tiền</h6></th>
+								<th class="max-width"><h6
+										class="text-sm text-medium text-center">Tiền Đặt Cọc</h6></th>
+								<th class="max-width"><h6
+										class="text-sm text-medium text-center">Trạng Thái Thanh
+										Toán</h6></th>
+								<th class="max-width"><h6
+										class="text-sm text-medium text-center">Trạng Thái Hợp
+										Đồng</h6></th>
+								<th class="max-width"><h6
+										class="text-sm text-medium text-center">Hành Động</h6></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="contractWithUser : ${contracts}" class="text-center"
+								th:classappend="${contractWithUser.contract.daysRemaining <= 10} ? 'table-warning' : ''">
+								<td><p class="text-sm"
+										th:text="${contractWithUser.contract.id}"></p></td>
+								<td><p class="text-sm"
+										th:text="${contractWithUser.userName}"></td>
+								<td><p class="text-sm"
+										th:text="${contractWithUser.contract.startDate}"></td>
+								<td><p class="text-sm"
+										th:text="${contractWithUser.contract.endDate}"></td>
+								<td><p class="text-sm"
+										th:text="${contractWithUser.contract.totalAmount}"></td>
+								<td><p class="text-sm"
+										th:text="${contractWithUser.contract.depositAmount}"></td>
+								<td><p class="text-sm"
+										th:text="${contractWithUser.contract.paymentStatus == 1 ? 'Đã Thanh Toán' : 'Chưa Thanh Toán'}"></td>
+								<td><p class="text-sm"
+										th:text="${contractWithUser.contract.status == 1 ? 'Kích Hoạt' : 'Đã Hủy'}"></td>
+
+								<td>
+									<div class="action justify-content-center">
+										<!-- Nút Chỉnh Sửa -->
+										<a
+											th:href="@{/admin/contracts/edit/{id}(id=${contractWithUser.contract.id})}"
+											class="edit"> <i class="lni lni-pencil"></i>
+										</a>
+										<button th:if="${contractWithUser.isExpiringSoon}"
+											th:onclick="'sendMail(' + ${contractWithUser.contract.id} + ')'">
+											Gửi Mail</button>
+										<!-- Nút Xóa -->
+										<button class="more-btn ml-10 dropdown-toggle"
+											data-bs-toggle="dropdown">
+											<i class="lni lni-more-alt"></i>
+										</button>
+										<ul class="dropdown-menu dropdown-menu-end">
+											<li class="dropdown-item"><a
+												th:href="@{/admin/contracts/delete/{id}(id=${contractWithUser.contract.id})}"
+												class="text-gray">Xóa</a></li>
+										</ul>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</header>
+	</main>
+	<script src="/assets/js/bootstrap.bundle.min.js"></script>
 	<script src="/assets/js/Chart.min.js"></script>
 	<script src="/assets/js/dynamic-pie-chart.js"></script>
 	<script src="/assets/js/moment.min.js"></script>
@@ -199,5 +231,23 @@
 	<script src="/assets/js/world-merc.js"></script>
 	<script src="/assets/js/polyfill.js"></script>
 	<script src="/assets/js/main.js"></script>
+	<script>
+function sendMail(contractId) {
+    fetch(`/admin/contracts/sendMail/${contractId}`, {
+        method: 'POST'
+    })
+    .then(response => {
+        if (response.ok) {
+            alert("Email đã được gửi thành công!");
+        } else {
+            alert("Gửi email thất bại.");
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("Có lỗi xảy ra.");
+    });
+}
+</script>
 </body>
 </html>

@@ -229,22 +229,20 @@ h1 {
 									</tr>
 								</tbody>
 							</table>
-
-							<!-- Phân trang -->
-							<div class="pagination">
-								<a th:href="@{/admin/menu/list(page=${currentPage - 1})}"
-									th:if="${currentPage > 0}">&laquo; Previous</a> <span
-									th:each="i : ${#numbers.sequence(0, totalPages - 1)}"> <a
-									th:href="@{/admin/menu/list(page=${i})}"
-									th:class="${currentPage == i} ? 'active' : ''"
-									th:text="${i + 1}"></a>
-								</span> <a th:href="@{/admin/menu/list(page=${currentPage + 1})}"
-									th:if="${currentPage < totalPages - 1}">Next &raquo;</a>
-							</div>
-
 						</div>
+
 					</div>
+					
 				</div>
+				<div class="pagination">
+						<a th:href="@{/admin/menu/list(page=${currentPage - 1})}"
+							th:if="${currentPage > 1}">&laquo; Previous</a> <span
+							th:each="i : ${#numbers.sequence(1, totalPages)}"> <a
+							th:href="@{/admin/menu/list(page=${i})}"
+							th:class="${currentPage == i} ? 'active' : ''" th:text="${i}"></a>
+						</span> <a th:href="@{/admin/menu/list(page=${currentPage + 1})}"
+							th:if="${currentPage < totalPages}">Next &raquo;</a>
+					</div>
 			</div>
 		</header>
 	</main>

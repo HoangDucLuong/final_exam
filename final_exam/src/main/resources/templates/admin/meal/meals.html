@@ -14,65 +14,84 @@
 <link rel="stylesheet" href="/assets/css/fullcalendar.css" />
 <link rel="stylesheet" href="/assets/css/main.css" />
 <style>
-	h1 {
-    text-align: center; /* Căn giữa tiêu đề */
-    margin-bottom: 20px; /* Khoảng cách dưới tiêu đề */
+h1 {
+	text-align: center; /* Căn giữa tiêu đề */
+	margin-bottom: 20px; /* Khoảng cách dưới tiêu đề */
 }
 
 .btn-add {
-    display: inline-block; /* Hiển thị dưới dạng inline block */
-    background-color: #007bff; /* Màu nền cho nút */
-    color: white; /* Màu chữ nút */
-    padding: 10px 15px; /* Padding cho nút */
-    border-radius: 4px; /* Bo góc cho nút */
-    text-decoration: none; /* Tắt gạch chân */
-    margin-bottom: 20px; /* Khoảng cách dưới nút */
+	display: inline-block; /* Hiển thị dưới dạng inline block */
+	background-color: #007bff; /* Màu nền cho nút */
+	color: white; /* Màu chữ nút */
+	padding: 10px 15px; /* Padding cho nút */
+	border-radius: 4px; /* Bo góc cho nút */
+	text-decoration: none; /* Tắt gạch chân */
+	margin-bottom: 20px; /* Khoảng cách dưới nút */
+}
+.pagination {
+	justify-content: center;
+	margin-top: 20px;
 }
 
+.pagination a {
+	margin: 0 5px;
+	padding: 8px 12px;
+	border: 1px solid #007bff;
+	color: #007bff;
+	text-decoration: none;
+	border-radius: 4px;
+}
+
+.pagination a:hover {
+	background-color: #007bff;
+	color: white;
+}
+
+.pagination .active a {
+	background-color: #007bff;
+	color: white;
+}
 .btn-add:hover {
-    background-color: #0056b3; /* Màu nền khi hover */
+	background-color: #0056b3; /* Màu nền khi hover */
 }
 
 .meal-table {
-    width: 100%; /* Chiều rộng bảng */
-    border-collapse: collapse; /* Gộp các viền của các ô */
-    margin-top: 20px; /* Khoảng cách trên bảng */
+	width: 100%; /* Chiều rộng bảng */
+	border-collapse: collapse; /* Gộp các viền của các ô */
+	margin-top: 20px; /* Khoảng cách trên bảng */
 }
 
-.meal-table th,
-.meal-table td {
-    padding: 10px; /* Padding cho ô */
-    text-align: left; /* Căn trái cho chữ */
-    border-bottom: 1px solid #ddd; /* Viền dưới mỗi ô */
+.meal-table th, .meal-table td {
+	padding: 10px; /* Padding cho ô */
+	text-align: left; /* Căn trái cho chữ */
+	border-bottom: 1px solid #ddd; /* Viền dưới mỗi ô */
 }
 
 .meal-table th {
-    background-color: #f2f2f2; /* Màu nền cho hàng tiêu đề */
-    font-weight: bold; /* Làm đậm chữ trong tiêu đề */
+	background-color: #f2f2f2; /* Màu nền cho hàng tiêu đề */
+	font-weight: bold; /* Làm đậm chữ trong tiêu đề */
 }
 
 .meal-table tr:hover {
-    background-color: #f9f9f9; /* Màu nền khi hover hàng */
+	background-color: #f9f9f9; /* Màu nền khi hover hàng */
 }
 
-.btn-edit,
-.btn-delete {
-    color: #007bff; /* Màu chữ cho các nút */
-    text-decoration: none; /* Tắt gạch chân */
+.btn-edit, .btn-delete {
+	color: #007bff; /* Màu chữ cho các nút */
+	text-decoration: none; /* Tắt gạch chân */
 }
 
 .btn-edit:hover {
-    color: #0056b3; /* Màu chữ khi hover */
+	color: #0056b3; /* Màu chữ khi hover */
 }
 
 .btn-delete {
-    color: #dc3545; /* Màu chữ đỏ cho nút xóa */
+	color: #dc3545; /* Màu chữ đỏ cho nút xóa */
 }
 
 .btn-delete:hover {
-    color: #c82333; /* Màu chữ khi hover */
+	color: #c82333; /* Màu chữ khi hover */
 }
-	
 </style>
 </head>
 <body>
@@ -87,14 +106,16 @@
 		</div>
 		<nav class="sidebar-nav">
 			<ul>
-				<li class="nav-item"><a href="/admin/index"> <span class="lni lni-dashboard">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+				<li class="nav-item"><a href="/admin/index"> <span
+						class="lni lni-dashboard"> <svg width="20" height="20"
+								viewBox="0 0 20 20" fill="none"
 								xmlns="http://www.w3.org/2000/svg">
             </svg>
 					</span> <span class="text">Dashboard</span>
 				</a></li>
-				<li class="nav-item"><a href="/admin/contracts/list"> <span class="lni lni-bookmark">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+				<li class="nav-item"><a href="/admin/contracts/list"> <span
+						class="lni lni-bookmark"> <svg width="20" height="20"
+								viewBox="0 0 20 20" fill="none"
 								xmlns="http://www.w3.org/2000/svg">
             </svg>
 					</span> <span class="text">Contracts</span>
@@ -154,7 +175,7 @@
 						class="lni lni-user"> <svg width="20" height="20"
 								viewBox="0 0 20 20" fill="none"
 								xmlns="http://www.w3.org/2000/svg">
-            </svg>         		
+            </svg>
 					</span> <span class="text">Customer</span>
 				</a></li>
 				<li class="nav-item"><a href="logout.html"> <span
@@ -181,9 +202,10 @@
 									<i class="lni lni-chevron-left me-2"></i> Menu
 								</button>
 							</div>
-							<div class="header-search d-none d-md-flex">
-								<form method="get" th:action="@{/admin/user-management}">
-									<input type="text" name="search" placeholder="Search..." />
+							<div class="header-search">
+								<form method="get" th:action="@{/admin/meal/list}">
+									<input type="text" name="search" th:value="${search}"
+										placeholder="Tìm kiếm món ăn..." />
 									<button type="submit" class="btn btn-primary">
 										<i class="lni lni-search-alt"></i>
 									</button>
@@ -225,6 +247,15 @@
 							</table>
 
 						</div>
+						<div class="pagination">
+						<a th:href="@{/admin/meal/list(page=${currentPage - 1})}"
+							th:if="${currentPage > 1}">&laquo; Previous</a> <span
+							th:each="i : ${#numbers.sequence(1, totalPages)}"> <a
+							th:href="@{/admin/meal/list(page=${i})}"
+							th:class="${currentPage == i} ? 'active' : ''" th:text="${i}"></a>
+						</span> <a th:href="@{/admin/meal/list(page=${currentPage + 1})}"
+							th:if="${currentPage < totalPages}">Next &raquo;</a>
+					</div>
 					</div>
 				</div>
 			</div>

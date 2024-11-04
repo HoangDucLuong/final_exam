@@ -1,8 +1,7 @@
-	package shop.controller;
+package shop.controller;
 
 import shop.model.Meal;
 import shop.model.MealGroup;
-import shop.model.Menu;
 import shop.repository.MealRepository;
 import shop.repository.MealGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +21,22 @@ public class MealController {
     @Autowired
     private MealGroupRepository mealGroupRepository;
 
-    // Hiển thị danh sách món ăn
+    // Hiển thị danh sách món ăn với phân trang và tìm kiếm
     @GetMapping("/list")
-    public String getAllMeals(Model model) {
-        List<Meal> meals = mealRepository.getAllMeals();
+    public String getAllMeals(@RequestParam(defaultValue = "1") int page,
+                               @RequestParam(defaultValue = "") String search, 
+                               Model model) {
+        int totalMeals = mealRepository.countAllMeals(search);
+        List<Meal> meals = mealRepository.findAllMeals(page, search);
+        int totalPages = (int) Math.ceil((double) totalMeals / 5); // 5 là số lượng món ăn trên mỗi trang
+
         model.addAttribute("meals", meals);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("search", search);
         return "admin/meal/meals"; // Đường dẫn view đã thay đổi
     }
+
 
     // Hiển thị form thêm món ăn
     @GetMapping("/add")

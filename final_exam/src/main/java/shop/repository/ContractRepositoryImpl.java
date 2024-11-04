@@ -88,4 +88,11 @@ public class ContractRepositoryImpl implements ContractRepository {
             updateContract(contract);
         }
     }
+    
+    @Override
+    public List<Contract> getContractsExpiringSoon() {
+        String sql = "SELECT * FROM tbl_contract WHERE DATEDIFF(day, GETDATE(), end_date) = 10";
+        return jdbcTemplate.query(sql, new ContractRowMapper());
+    }
+
 }

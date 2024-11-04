@@ -34,4 +34,6 @@ public interface ContractRepository {
     
     // Lưu hợp đồng (có thể là thêm mới hoặc cập nhật)
     void save(Contract contract);
+    
+    List<Contract> getContractsExpiringSoon();
 }

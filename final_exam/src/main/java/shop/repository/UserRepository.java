@@ -98,4 +98,12 @@ public class UserRepository {
         }
     }
     
+    public List<User> findUsersWithExpiringContracts() {
+        String sql = "SELECT u.* FROM tbl_user u " +
+                     "JOIN tbl_contract c ON u.id = c.usr_id " +
+                     "WHERE DATEDIFF(day, GETDATE(), c.end_date) = 10";
+        
+        return db.query(sql, new UserRowMapper());
+    }
+    
 }

@@ -140,13 +140,24 @@ public class MealRepositoryImpl implements MealRepository {
         return jdbcTemplate.query(sql, new Object[]{menuId}, new MealMapper());
     }
     @Override
-    public List<Menu> findAllMeals(int page, String search) {
-        int pageSize = 5; // Số lượng menu trên mỗi trang
+    public List<Meal> findAllMeals(int page, String search) {
+        int pageSize = 5; // Số lượng món ăn trên mỗi trang
         int offset = (page - 1) * pageSize;
 
-        String sql = "SELECT * FROM tbl_meal WHERE meal_name LIKE ? ORDER BY id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        String sql = "SELECT m.*, g.group_name FROM tbl_meal m " +
+                     "LEFT JOIN tbl_meal_group g ON m.meal_group_id = g.id " +
+                     "WHERE m.meal_name LIKE ? ORDER BY m.id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
-        return jdbcTemplate.query(sql, new Object[]{"%" + search + "%", offset, pageSize}, new MenuMapper());
+        return jdbcTemplate.query(sql, new Object[]{"%" + search + "%", offset, pageSize}, (rs, rowNum) -> {
+            Meal meal = new Meal(); // Khởi tạo đối tượng Meal
+            meal.setId(rs.getInt("id"));
+            meal.setMealGroupId(rs.getInt("meal_group_id"));
+            meal.setMealName(rs.getString("meal_name"));
+            meal.setPrice(rs.getBigDecimal("price"));
+            meal.setDescription(rs.getString("description"));
+            meal.setMealGroupName(rs.getString("group_name")); // Nếu bạn muốn thêm thông tin nhóm vào đối tượng Meal
+            return meal;
+        });
     }
 
     @Override
@@ -154,6 +165,7 @@ public class MealRepositoryImpl implements MealRepository {
         String sql = "SELECT COUNT(*) FROM tbl_meal WHERE meal_name LIKE ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{"%" + search + "%"}, Integer.class);
     }
+
     
     @Override
     public List<Meal> getMealsByContractId(int contractId) {

@@ -21,7 +21,8 @@ public interface MealRepository {
   
 
 
-    List<Menu> findAllMeals(int page, String search); // Tìm kiếm và phân trang menu
+    List<Meal> findAllMeals(int page, String search);
+ // Tìm kiếm và phân trang menu
     int countAllMeals(String search);
     List<Meal> getMealsByContractId(int contractId);
     double getMealPriceById(int mealId);

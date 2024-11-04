@@ -2,6 +2,7 @@ package shop.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class Contract {
     private int id;
@@ -12,6 +13,13 @@ public class Contract {
     private int status;
     private int paymentStatus; // Thêm trường payment_status
     private int usrId;
+    
+    public long getDaysRemaining() {
+        if (endDate != null) {
+            return ChronoUnit.DAYS.between(LocalDate.now(), endDate);
+        }
+        return Long.MAX_VALUE; // Trả về giá trị lớn nếu không có ngày hết hạn
+    }
 
     public Contract() {}
 

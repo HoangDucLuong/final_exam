@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -51,9 +52,8 @@ public class AdminController {
         List<MealRequest> mealRequests = mealRequestRepository.getAllMealRequests();
 
         // Lặp qua từng MealRequest để thiết lập thông tin người dùng và hợp đồng
-     // Lặp qua từng MealRequest để thiết lập thông tin người dùng và hợp đồng
         for (MealRequest mealRequest : mealRequests) {
-        	List<MealRequestDetail> details = mealRequestDetailRepository.getDetailsByMealRequestId(mealRequest.getId());
+            List<MealRequestDetail> details = mealRequestDetailRepository.getDetailsByMealRequestId(mealRequest.getId());
             mealRequest.setMealRequestDetails(details);
             Integer userId = mealRequest.getUserId(); // Lấy userId từ mealRequest
             if (userId != null) { // Kiểm tra userId không null
@@ -83,9 +83,28 @@ public class AdminController {
             }
         }
 
-
         model.addAttribute("mealRequests", mealRequests);
         return "admin/index"; // Trả về trang admin chính
+    }
+    @GetMapping("/meal-request/approve/{id}")
+    public String approveMealRequest(@PathVariable("id") int id) {
+        MealRequest mealRequest = mealRequestRepository.findById(id);
+        if (mealRequest != null) {
+            mealRequest.setStatus(1); // Cập nhật trạng thái thành Confirmed (1)
+            mealRequestRepository.updateMealRequest(mealRequest);
+        }
+        return "redirect:/admin/index"; // Quay lại danh sách yêu cầu
+    }
+
+    // Phương thức từ chối yêu cầu (Reject)
+    @GetMapping("/meal-request/reject/{id}")
+    public String rejectMealRequest(@PathVariable("id") int id) {
+        MealRequest mealRequest = mealRequestRepository.findById(id);
+        if (mealRequest != null) {
+            mealRequest.setStatus(2); // Cập nhật trạng thái thành Delivered (2)
+            mealRequestRepository.updateMealRequest(mealRequest);
+        }
+        return "redirect:/admin/index"; // Quay lại danh sách yêu cầu
     }
     @GetMapping("/meal-request/detail")
     public String getMealRequestDetail(@RequestParam("id") int id, Model model) {
