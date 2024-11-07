@@ -7,6 +7,12 @@ import shop.model.Contract;
 import shop.model.Menu; // Thay đổi từ Meal thành Menu
 import shop.modelviews.ContractRowMapper;
 import shop.modelviews.MenuMapper; // Thay đổi từ MealMapper thành MenuMapper
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 
 import java.util.List;
 
@@ -56,9 +62,27 @@ public class ContractRepositoryImpl implements ContractRepository {
 
     @Override
     public void addContract(Contract contract) {
-        String sql = "INSERT INTO tbl_contract (usr_id, start_date, end_date, total_amount, deposit_amount, status, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, contract.getUsrId(), contract.getStartDate(), contract.getEndDate(),
-                contract.getTotalAmount(), contract.getDepositAmount(), contract.getStatus(), contract.getPaymentStatus());
+        String sql = "INSERT INTO tbl_contract (usr_id, start_date, end_date, total_amount, deposit_amount, status, payment_status) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, contract.getUsrId());
+            ps.setDate(2, Date.valueOf(contract.getStartDate()));
+            ps.setDate(3, Date.valueOf(contract.getEndDate()));
+            ps.setBigDecimal(4, contract.getTotalAmount());
+            ps.setBigDecimal(5, contract.getDepositAmount());
+            ps.setInt(6, contract.getStatus());
+            ps.setInt(7, contract.getPaymentStatus());
+            return ps;
+        }, keyHolder);
+
+        // Gán ID vừa được tạo vào đối tượng Contract
+        if (keyHolder.getKey() != null) {
+            contract.setId(keyHolder.getKey().intValue());
+        }
     }
 
     @Override
