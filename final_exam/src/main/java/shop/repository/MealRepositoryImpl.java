@@ -146,7 +146,7 @@ public class MealRepositoryImpl implements MealRepository {
 
         String sql = "SELECT m.*, g.group_name FROM tbl_meal m " +
                      "LEFT JOIN tbl_meal_group g ON m.meal_group_id = g.id " +
-                     "WHERE m.meal_name LIKE ? ORDER BY m.id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+                     "WHERE m.meal_name LIKE ? ORDER BY m.id DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         return jdbcTemplate.query(sql, new Object[]{"%" + search + "%", offset, pageSize}, (rs, rowNum) -> {
             Meal meal = new Meal(); // Khởi tạo đối tượng Meal

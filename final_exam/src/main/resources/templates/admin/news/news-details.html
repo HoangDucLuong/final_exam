@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{admin_layout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head layout:fragment="head">
+    <title>News Details</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card-style mb-30">
+                    <div class="title">
+                        <h2 th:text="${news.title}"></h2>
+                    </div>
+                    <div class="details-content">
+                        <img th:src="@{'/uploads/' + ${news.thumbnail}}" alt="Thumbnail" width="200">
+                        <p><strong>Content:</strong></p>
+                        <p th:text="${news.content}"></p>
+                        <p><strong>Created At:</strong> <span th:text="${news.createdAt}"></span></p>
+                        <p><strong>Updated At:</strong> <span th:text="${news.updatedAt}"></span></p>
+                        <p><strong>Status:</strong> <span th:text="${news.status == 1 ? 'Active' : 'Inactive'}"></span></p>
+                    </div>
+                    <div class="actions mt-3">
+                        <a th:href="@{'/admin/news/edit/' + ${news.id}}" class="btn btn-warning">Edit</a>
+                        <a href="/admin/news" class="btn btn-secondary">Back to News List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

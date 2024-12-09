@@ -11,7 +11,6 @@
 <link rel="stylesheet" href="/assets/css/lineicons.css" type="text/css" />
 <link rel="stylesheet" href="/assets/css/materialdesignicons.min.css"
 	type="text/css" />
-<link rel="stylesheet" href="/assets/css/fullcalendar.css" />
 <link rel="stylesheet" href="/assets/css/main.css" />
 </head>
 <body>
@@ -27,20 +26,15 @@
 		<nav class="sidebar-nav">
 			<ul>
 				<li class="nav-item"><a href="/admin/index"> <span
-						class="lni lni-dashboard"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
+						class="lni lni-dashboard"> <svg width="20" height="20">
             </svg>
 					</span> <span class="text">Dashboard</span>
 				</a></li>
 				<li class="nav-item"><a href="/admin/contracts"> <span
-						class="lni lni-bookmark"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
+						class="lni lni-bookmark"> <svg width="20" height="20">
             </svg>
 					</span> <span class="text">Contracts</span>
 				</a></li>
-
 				<li class="nav-item"><a href="/admin/invoices"> <span
 						class="lni lni-stats-up"> <svg width="20" height="20"
 								viewBox="0 0 20 20" fill="none"
@@ -52,9 +46,7 @@
 					class="collapsed" data-bs-toggle="collapse"
 					data-bs-target="#ddmenu_3" aria-controls="ddmenu_3"
 					aria-expanded="false" aria-label="Toggle navigation"> <span
-						class="lni lni-menu"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
+						class="lni lni-menu"> <svg width="20" height="20">
             </svg>
 					</span> <span class="text">Menu</span>
 				</a>
@@ -66,9 +58,7 @@
 					class="collapsed" data-bs-toggle="collapse"
 					data-bs-target="#ddmenu_4" aria-controls="ddmenu_4"
 					aria-expanded="false" aria-label="Toggle navigation"> <span
-						class="lni lni-arrow-right"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
+						class="lni lni-arrow-right"> <svg width="20" height="20">
             </svg>
 					</span> <span class="text">Orders</span>
 				</a>
@@ -79,9 +69,7 @@
 					class="collapsed" data-bs-toggle="collapse"
 					data-bs-target="#ddmenu_5" aria-controls="ddmenu_5"
 					aria-expanded="false" aria-label="Toggle navigation"> <span
-						class="lni lni-arrow-right"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
+						class="lni lni-arrow-right"> <svg width="20" height="20">
             </svg>
 					</span> <span class="text">Meals</span>
 				</a>
@@ -91,17 +79,18 @@
 						<li><a href="/admin/meal-requests">Meal Request</a></li>
 						<li><a href="#">Meal Order</a></li>
 					</ul></li>
+				<li class="nav-item"><a href="/admin/news"> <span
+						class="lni lni-arrow-right"> <svg width="20" height="20">
+            </svg>
+					</span> <span class="text">News</span>
+				</a></li>
 				<li class="nav-item"><a href="user-management"> <span
-						class="lni lni-user"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
+						class="lni lni-user"> <svg width="20" height="20">
             </svg>
 					</span> <span class="text">Customer</span>
 				</a></li>
 				<li class="nav-item"><a href="logout.html"> <span
-						class="lni lni-exit"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
+						class="lni lni-exit"> <svg width="20" height="20">
             </svg>
 					</span> <span class="text">Logout</span>
 				</a></li>
@@ -142,8 +131,8 @@
 									<tr>
 										<th>ID</th>
 										<th>User Name</th>
+										<th>User Email</th>
 										<th>Contract ID</th>
-										<!-- Thêm cột hợp đồng -->
 										<th>Delivery Date</th>
 										<th>Total Meals</th>
 										<th>Status</th>
@@ -156,16 +145,19 @@
 										<td><span
 											th:text="${mealRequest.user != null ? mealRequest.user.name : 'N/A'}"></span>
 										</td>
-										<td th:text="${mealRequest.contract.id}"></td>
-										<!-- Hiển thị Contract ID -->
+										<td><span
+											th:text="${mealRequest.user != null ? mealRequest.user.email : 'N/A'}"></span>
+										</td>
+										<td
+											th:text="${mealRequest.contract != null ? mealRequest.contract.id : 'N/A'}"></td>
 										<td th:text="${mealRequest.deliveryDate}"></td>
 										<td th:text="${mealRequest.totalMeals}"></td>
 										<td><span th:if="${mealRequest.status == 0}">Pending</span>
 											<span th:if="${mealRequest.status == 1}">Confirmed</span> <span
 											th:if="${mealRequest.status == 2}">Delivered</span></td>
 										<td><a
-											th:href="@{/admin/meal-request/detail(id=${mealRequest.id})}">Xem
-												chi tiết</a> <a
+											th:href="@{/admin/meal-request/detail(id=${mealRequest.id}, userId=${mealRequest.user != null ? mealRequest.user.id : 0})}">
+												Xem chi tiết </a> <a
 											th:href="@{/admin/meal-request/approve/{id}(id=${mealRequest.id})}"
 											th:if="${mealRequest.status == 0}"
 											class="btn btn-sm btn-primary">Approve</a> <a
@@ -183,14 +175,6 @@
 		</header>
 	</main>
 	<script src="/assets/js/bootstrap.bundle.min.js"></script>
-	<script src="/assets/js/Chart.min.js"></script>
-	<script src="/assets/js/dynamic-pie-chart.js"></script>
-	<script src="/assets/js/moment.min.js"></script>
-	<script src="/assets/js/fullcalendar.js"></script>
-	<script src="/assets/js/jvectormap.min.js"></script>
-	<script src="/assets/js/world-merc.js"></script>
-	<script src="/assets/js/polyfill.js"></script>
 	<script src="/assets/js/main.js"></script>
-
 </body>
 </html>

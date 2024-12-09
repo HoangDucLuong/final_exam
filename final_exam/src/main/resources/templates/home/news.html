@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="utf-8">
-<title>Restoran - Bootstrap Restaurant Template</title>
+<title>Restoran - News</title>
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <meta content="" name="keywords">
 <meta content="" name="description">
@@ -60,7 +60,7 @@
 				<a href="" class="navbar-brand p-0">
 					<h1 class="text-primary m-0">
 						<i class="fa fa-utensils me-3"></i>Restoran
-					</h1> <!-- <img src="img/logo.png" alt="Logo"> -->
+					</h1>
 				</a>
 				<button class="navbar-toggler" type="button"
 					data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -71,106 +71,89 @@
 						<a href="/" class="nav-item nav-link active">Home</a> <a
 							href="/about" class="nav-item nav-link">About</a> <a
 							href="/service" class="nav-item nav-link">Service</a> <a
-							href="/menu" class="nav-item nav-link">Menu</a>
+							href="/menu" class="nav-item nav-link">Menu</a> <a href="/news"
+							class="nav-item nav-link">News</a>
 						<div class="nav-item dropdown">
 							<a href="#" class="nav-link dropdown-toggle"
 								data-bs-toggle="dropdown">Pages</a>
 							<div class="dropdown-menu m-0">
-								<a href="/booking" class="dropdown-item">Booking</a> <a
+								<a href="/user/contracts" class="dropdown-item">Contracts</a> <a
 									href="/team" class="dropdown-item">Our Team</a> <a
 									href="/testimonial" class="dropdown-item">Testimonial</a>
 							</div>
 						</div>
 						<a href="/contact" class="nav-item nav-link">Contact</a>
-					</div>
-					<div class="nav-item dropdown">
-						<a href="#" class="nav-link dropdown-toggle"
-							data-bs-toggle="dropdown"> <span
-							th:if="${session.name != null}" th:text="${session.name}">Auth</span>
-							<span th:if="${session.name == null}">Auth</span>
-						</a>
-						<div class="dropdown-menu dropdown-menu-end">
-							<a href="/user/login" class="dropdown-item"
-								th:if="${session.name == null}">Sign In</a> <a
-								href="/user/register" class="dropdown-item"
-								th:if="${session.name == null}">Sign Up</a> <a href="/profile"
-								class="dropdown-item" th:if="${session.name != null}">Profile</a>
-							<a href="/user/logout" class="dropdown-item"
-								th:if="${session.name != null}">Logout</a>
+						<div class="nav-item dropdown">
+							<a href="#" class="nav-link dropdown-toggle"
+								data-bs-toggle="dropdown"> <span
+								th:if="${session.name != null}" th:text="${session.name}">Auth</span>
+								<span th:if="${session.name == null}">Auth</span>
+							</a>
+							<div class="dropdown-menu dropdown-menu-end">
+								<a href="/user/login" class="dropdown-item"
+									th:if="${session.name == null}">Sign In</a> <a
+									href="/user/register" class="dropdown-item"
+									th:if="${session.name == null}">Sign Up</a> <a href="/profile"
+									class="dropdown-item" th:if="${session.name != null}">Profile</a>
+								<a href="/user/logout" class="dropdown-item"
+									th:if="${session.name != null}">Logout</a>
+							</div>
 						</div>
+
+
 					</div>
 					<a href="" class="btn btn-primary py-2 px-4">Book A Table</a>
 				</div>
 			</nav>
-
-			<div class="container-xxl py-5 bg-dark hero-header mb-5">
-				<div class="container text-center my-5 pt-5 pb-4">
-					<h1 class="display-3 text-white mb-3 animated slideInDown">Food
-						Menu</h1>
-					<nav aria-label="breadcrumb">
-						<ol class="breadcrumb justify-content-center text-uppercase">
-							<li class="breadcrumb-item"><a href="#">Home</a></li>
-							<li class="breadcrumb-item"><a href="#">Pages</a></li>
-							<li class="breadcrumb-item text-white active" aria-current="page">Menu</li>
-						</ol>
-					</nav>
-				</div>
-			</div>
 		</div>
 		<!-- Navbar & Hero End -->
 
+		<!-- Hero Header Start -->
+		<div class="container-xxl py-5 bg-dark hero-header mb-5">
+			<div class="container text-center my-5 pt-5 pb-4">
+				<h1 class="display-3 text-white mb-3">News</h1>
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb justify-content-center text-uppercase">
+						<li class="breadcrumb-item"><a href="/">Home</a></li>
+						<li class="breadcrumb-item active" aria-current="page">News</li>
+					</ol>
+				</nav>
+			</div>
+		</div>
+		<!-- Hero Header End -->
 
-		<!-- Menu Start -->
-		<div class="container-xxl py-5">
-			<div class="container">
-				<div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-					<h5
-						class="section-title ff-secondary text-center text-primary fw-normal">Food
-						Menu</h5>
-				</div>
-				<div class="tab-class text-center wow fadeInUp"
-					data-wow-delay="0.1s">
-					<ul
-						class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
-
-						<li class="nav-item"><i
-							class="fa fa-utensils fa-2x text-primary"></i>
-							<div class="ps-6">
-								<small class="text-body">Lovely</small>
-								<h6 class="mt-n1 mb-0">Meals</h6>
-							</div></li>
-					</ul>
-					<div class="tab-content">
-						<div id="tab-1" class="tab-pane fade show p-0 active">
-							<div class="row g-4">
-								<div class="col" th:each="menu : ${menus}">
-									<div class="d-flex align-items-center border-bottom pb-2">
-										<div class="w-100 d-flex flex-column text-start ps-4">
-											<h5 class="d-flex justify-content-between">
-												<!-- Hiển thị tên menu -->
-												<a th:href="@{/menu/detail/{id}(id=${menu.id})}"
-													th:text="${menu.menuName}"></a>
-											</h5>
-											
-											<!-- Nút để xem chi tiết menu -->
-											<form th:action="@{/menu/detail/{id}(id=${menu.id})}"
-												method="get">
-												<button type="submit" class="btn btn-primary mt-2">Xem
-													chi tiết</button>
-											</form>
-										</div>
-									</div>
-								</div>
+		<div class="container">
+			<h3>Latest News</h3>
+			<div class="row">
+				<!-- Loop through the news articles -->
+				<div class="col-md-4" th:each="news : ${newsList}">
+					<div class="card mb-4">
+						<img th:src="@{/uploads/{fileName}(fileName=${news.thumbnail})}"
+							class="card-img-top img-thumbnail" alt="Thumbnail" />
+						<div class="card-body">
+							<h5 class="card-title" th:text="${news.title}"></h5>
+							<p class="card-text"
+								th:text="${#strings.abbreviate(news.content, 100)}"></p>
+							<a th:href="@{/news/{id}(id=${news.id})}" class="btn btn-primary">Read
+								More</a>
+						</div>
+						<div class="card-footer text-muted">
+							<span th:text="${#dates.format(news.createdAt, 'yyyy-MM-dd')}"></span>
+							<div class="d-flex justify-content-between mt-2">
+								<!-- Display Like Count -->
+								<span> <i class="fas fa-thumbs-up"></i> <span
+									th:text="${news.likeCount} + ' Likes'">0 Likes</span>
+								</span>
+								<!-- Display Comment Count -->
+								<span> <i class="fas fa-comment"></i> <span
+									th:text="${news.commentCount} + ' Comments'">0 Comments</span>
+								</span>
 							</div>
 						</div>
 					</div>
-
-
 				</div>
 			</div>
 		</div>
-
-		<!-- Menu End -->
 
 
 		<!-- Footer Start -->

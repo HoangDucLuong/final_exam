@@ -39,33 +39,38 @@
 							href="/about" class="nav-item nav-link">About</a> <a
 							href="/service" class="nav-item nav-link">Service</a> <a
 							href="/menu" class="nav-item nav-link">Menu</a>
+							<a
+							href="/news" class="nav-item nav-link">News</a>
 						<div class="nav-item dropdown">
 							<a href="#" class="nav-link dropdown-toggle"
 								data-bs-toggle="dropdown">Pages</a>
 							<div class="dropdown-menu m-0">
-								<a href="/booking" class="dropdown-item">Booking</a> <a
+								<a href="/user/contracts" class="dropdown-item">Contracts</a> <a
 									href="/team" class="dropdown-item">Our Team</a> <a
 									href="/testimonial" class="dropdown-item">Testimonial</a>
 							</div>
 						</div>
 						<a href="/contact" class="nav-item nav-link">Contact</a>
-					</div>
-					<div class="nav-item dropdown">
-						<a href="#" class="nav-link dropdown-toggle"
-							data-bs-toggle="dropdown"> <span
-							th:if="${session.name != null}" th:text="${session.name}">Auth</span>
-							<span th:if="${session.name == null}">Auth</span>
-						</a>
-						<div class="dropdown-menu dropdown-menu-end">
-							<a href="/user/login" class="dropdown-item"
-								th:if="${session.name == null}">Sign In</a> <a
-								href="/user/register" class="dropdown-item"
-								th:if="${session.name == null}">Sign Up</a> <a href="/profile"
-								class="dropdown-item" th:if="${session.name != null}">Profile</a>
-							<a href="/user/logout" class="dropdown-item"
-								th:if="${session.name != null}">Logout</a>
+						<div class="nav-item dropdown">
+							<a href="#" class="nav-link dropdown-toggle"
+								data-bs-toggle="dropdown"> <span
+								th:if="${session.name != null}" th:text="${session.name}">Auth</span>
+								<span th:if="${session.name == null}">Auth</span>
+							</a>
+							<div class="dropdown-menu dropdown-menu-end">
+								<a href="/user/login" class="dropdown-item"
+									th:if="${session.name == null}">Sign In</a> <a
+									href="/user/register" class="dropdown-item"
+									th:if="${session.name == null}">Sign Up</a> <a href="/profile"
+									class="dropdown-item" th:if="${session.name != null}">Profile</a>
+								<a href="/user/logout" class="dropdown-item"
+									th:if="${session.name != null}">Logout</a>
+							</div>
 						</div>
+
+
 					</div>
+					<a href="" class="btn btn-primary py-2 px-4">Book A Table</a>
 				</div>
 			</nav>
 

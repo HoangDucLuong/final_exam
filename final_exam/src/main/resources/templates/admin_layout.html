@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="shortcut icon" href="/assets/images/favicon.svg"
+	type="image/x-icon" />
+<title>PlainAdmin Demo | Bootstrap 5 Admin Template</title>
+<link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/assets/css/lineicons.css" type="text/css" />
+<link rel="stylesheet" href="/assets/css/materialdesignicons.min.css"
+	type="text/css" />
+<link rel="stylesheet" href="/assets/css/main.css" />
+<link rel="stylesheet" href="/assets/css/custom.css" />
+</head>
+<body>
+	<div id="preloader">
+		<div class="spinner"></div>
+	</div>
+	<aside class="sidebar-nav-wrapper">
+		<div class="navbar-logo">
+			<a href="/admin/index"> <img src="/assets/images/logo/logo.svg"
+				alt="logo" />
+			</a>
+		</div>
+		<nav class="sidebar-nav">
+			<ul>
+				<li class="nav-item"><a href="/admin/index"> <span
+						class="lni lni-dashboard"> <svg width="20" height="20">
+            </svg>
+					</span> <span class="text">Dashboard</span>
+				</a></li>
+				<li class="nav-item"><a href="/admin/contracts"> <span
+						class="lni lni-bookmark"> <svg width="20" height="20">
+            </svg>
+					</span> <span class="text">Contracts</span>
+				</a></li>
+
+				<li class="nav-item"><a href=""> <span
+						class="lni lni-stats-up"> <svg width="20" height="20">
+            </svg>
+					</span> <span class="text">Invoice</span>
+				</a></li>
+				<li class="nav-item nav-item-has-children"><a href="#0"
+					class="collapsed" data-bs-toggle="collapse"
+					data-bs-target="#ddmenu_3" aria-controls="ddmenu_3"
+					aria-expanded="false" aria-label="Toggle navigation"> <span
+						class="lni lni-menu"> <svg width="20" height="20">
+            </svg>
+					</span> <span class="text">Menu</span>
+				</a>
+					<ul id="ddmenu_3" class="collapse">
+						<li><a href="/admin/menu/list">Menu List</a></li>
+						<li><a href="/admin/menu/add">Add Menu</a></li>
+					</ul></li>
+				<li class="nav-item nav-item-has-children"><a href="#0"
+					class="collapsed" data-bs-toggle="collapse"
+					data-bs-target="#ddmenu_4" aria-controls="ddmenu_4"
+					aria-expanded="false" aria-label="Toggle navigation"> <span
+						class="lni lni-arrow-right"> <svg width="20" height="20">
+            </svg>
+					</span> <span class="text">Orders</span>
+				</a>
+					<ul id="ddmenu_4" class="collapse">
+						<li><a href="orders.html">Orders List</a></li>
+					</ul></li>
+				<li class="nav-item nav-item-has-children"><a href="#0"
+					class="collapsed" data-bs-toggle="collapse"
+					data-bs-target="#ddmenu_5" aria-controls="ddmenu_5"
+					aria-expanded="false" aria-label="Toggle navigation"> <span
+						class="lni lni-arrow-right"> <svg width="20" height="20">
+            </svg>
+					</span> <span class="text">Meals</span>
+				</a>
+					<ul id="ddmenu_5" class="collapse">
+						<li><a href="/admin/meal/list">Meal List</a></li>
+						<li><a href="/admin/meal-groups">Meal Group</a></li>
+						<li><a href="/admin/meal-requests">Meal Request</a></li>
+						<li><a href="#">Meal Order</a></li>
+					</ul></li>
+				<li class="nav-item"><a href="/admin/news"> <span
+						class="lni lni-arrow-right"> <svg width="20" height="20">
+            </svg>
+					</span> <span class="text">News</span>
+				</a></li>
+				<li class="nav-item"><a href="user-management"> <span
+						class="lni lni-user"> <svg width="20" height="20">
+            </svg>
+					</span> <span class="text">Customer</span>
+				</a></li>
+				<li class="nav-item"><a href="logout.html"> <span
+						class="lni lni-exit"> <svg width="20" height="20">
+            </svg>
+					</span> <span class="text">Logout</span>
+				</a></li>
+			</ul>
+		</nav>
+	</aside>
+
+	<div class="overlay"></div>
+
+	<main class="main-wrapper">
+		<header class="header">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-lg-5 col-md-5 col-6">
+						<div class="header-left d-flex align-items-center">
+							<div class="menu-toggle-btn mr-15">
+								<button id="menu-toggle" class="main-btn primary-btn btn-hover">
+									<i class="lni lni-chevron-left me-2"></i> Menu
+								</button>
+							</div>
+							<div class="header-search d-none d-md-flex">
+								<form method="get" th:action="${searchAction}">
+									<input type="text" name="search" placeholder="Search..." />
+									<button type="submit" class="btn btn-primary">
+										<i class="lni lni-search-alt"></i>
+									</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div layout:fragment="content"></div>
+
+			</div>
+		</header>
+	</main>
+	<script src="/assets/js/bootstrap.bundle.min.js"></script>
+	<script src="/assets/js/main.js"></script>
+</body>
+</html>

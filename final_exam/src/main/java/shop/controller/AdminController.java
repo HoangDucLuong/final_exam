@@ -2,7 +2,10 @@ package shop.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -57,7 +60,7 @@ public class AdminController {
             mealRequest.setMealRequestDetails(details);
             Integer userId = mealRequest.getUserId(); // Lấy userId từ mealRequest
             if (userId != null) { // Kiểm tra userId không null
-                User user = repUser.findById(userId); // Lấy người dùng từ repository
+                User user = repUser.findById(userId); // Lấy người dùng từ repository	
                 mealRequest.setUser(user); // Thiết lập thông tin người dùng cho MealRequest
             }
             Contract contract = contractRepository.getContractById(mealRequest.getContractId()); // Lấy hợp đồng
@@ -86,6 +89,46 @@ public class AdminController {
         model.addAttribute("mealRequests", mealRequests);
         return "admin/index"; // Trả về trang admin chính
     }
+    @GetMapping("/meal-request/detail")
+    public String getMealRequestDetail(@RequestParam("id") int id, @RequestParam("userId") int userId, Model model) {
+        MealRequest mealRequest = mealRequestRepository.findById(id);
+
+        if (mealRequest == null) {
+            return "error/404";
+        }
+
+        // Lấy thông tin User dựa trên userId
+        if (userId != 0) {
+            User user = repUser.findById(userId);
+            mealRequest.setUser(user); // Gắn User vào MealRequest
+        }
+
+        // Lấy thông tin Contract
+        Contract contract = contractRepository.getContractById(mealRequest.getContractId());
+        if (contract != null) {
+            mealRequest.setContract(contract);
+        }
+
+        // Lấy chi tiết món ăn
+        List<MealRequestDetail> mealRequestDetails = mealRequestDetailRepository.getDetailsByMealRequestId(id);
+        for (MealRequestDetail detail : mealRequestDetails) {
+            Optional<Meal> optionalMeal = mealRepository.findById(detail.getMealId());
+            if (optionalMeal.isPresent()) {
+                detail.setMealName(optionalMeal.get().getMealName());
+            } else {
+                detail.setMealName("Unknown Meal");
+            }
+        }
+
+        // Đưa dữ liệu vào model
+        model.addAttribute("mealRequest", mealRequest);
+        model.addAttribute("mealRequestDetails", mealRequestDetails);
+
+        return "admin/meal-request-detail"; // Trả về giao diện chi tiết
+    }
+
+
+
     @GetMapping("/meal-request/approve/{id}")
     public String approveMealRequest(@PathVariable("id") int id) {
         MealRequest mealRequest = mealRequestRepository.findById(id);
@@ -106,36 +149,6 @@ public class AdminController {
         }
         return "redirect:/admin/index"; // Quay lại danh sách yêu cầu
     }
-    @GetMapping("/meal-request/detail")
-    public String getMealRequestDetail(@RequestParam("id") int id, Model model) {
-        // Tìm kiếm mealRequest dựa trên id
-        MealRequest mealRequest = mealRequestRepository.findById(id);
-        
-        // Kiểm tra nếu mealRequest không tồn tại
-        if (mealRequest == null) {
-            // Chuyển hướng đến trang thông báo lỗi
-            return "error/404"; // Hoặc bạn có thể dùng một trang thông báo không tìm thấy khác
-        }
-        
-        Contract contract = contractRepository.getContractById(mealRequest.getContractId()); // Lấy hợp đồng
-
-        // Kiểm tra xem hợp đồng có tồn tại không
-        if (contract != null) {
-            mealRequest.setContract(contract); // Thiết lập hợp đồng cho MealRequest
-        }
-
-        // Lấy các chi tiết của mealRequest
-        List<MealRequestDetail> mealRequestDetails = mealRequestDetailRepository.getDetailsByMealRequestId(id);
-        model.addAttribute("mealRequest", mealRequest);
-        model.addAttribute("mealRequestDetails", mealRequestDetails);
-        List<Meal> meals = mealRepository.getAllMeals(); // Giả sử bạn có phương thức này
-        model.addAttribute("meals", meals);
-        
-        return "admin/meal-request-detail"; // Trả về trang detail.html
-    }
-
-
-
 
     // Trang đăng nhập
     @GetMapping("/login")

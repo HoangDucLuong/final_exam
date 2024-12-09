@@ -77,9 +77,25 @@ public class MealRequestRepositoryImpl implements MealRequestRepository {
 
     @Override
     public List<MealRequest> getAllMealRequests() {
-        String sql = "SELECT * FROM tbl_meal_request";
-        return jdbcTemplate.query(sql, mealRequestRowMapper);
+        String sql = "SELECT mr.*, c.usr_id " + // Lấy thêm usr_id
+                     "FROM tbl_meal_request mr " +
+                     "JOIN tbl_contract c ON mr.contract_id = c.id"; // Kết nối với bảng contract
+        return jdbcTemplate.query(sql, new RowMapper<MealRequest>() {
+            @Override
+            public MealRequest mapRow(ResultSet rs, int rowNum) throws SQLException {
+                MealRequest mealRequest = new MealRequest();
+                mealRequest.setId(rs.getInt("id"));
+                mealRequest.setContractId(rs.getInt("contract_id"));
+                mealRequest.setRequestDate(rs.getObject("request_date", LocalDate.class));
+                mealRequest.setDeliveryDate(rs.getObject("delivery_date", LocalDate.class));
+                mealRequest.setTotalMeals(rs.getInt("total_meals"));
+                mealRequest.setStatus(rs.getInt("status"));
+                mealRequest.setUserId(rs.getInt("usr_id")); // Gán usr_id vào mealRequest
+                return mealRequest;
+            }
+        });
     }
+
 
     @Override
     public MealRequest getMealRequestById(int id) {
