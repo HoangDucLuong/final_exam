@@ -46,28 +46,46 @@ public class MealRequestDetailRepositoryImpl implements MealRequestDetailReposit
         jdbcTemplate.update(sql, id);
     }
 
-    // Thêm phương thức để lấy chi tiết yêu cầu suất ăn theo mealRequestId
     @Override
     public List<MealRequestDetail> getDetailsByMealRequestId(int mealRequestId) {
-        String sql = "SELECT mrd.*, m.menu_name " +
-                     "FROM meal_request_detail mrd " +
-                     "JOIN tbl_menu m ON mrd.menu_id = m.id " +
-                     "WHERE mrd.meal_request_id = ?";
-
+        String sql = "SELECT " +
+                     "    mrd.id AS detail_id, " +
+                     "    mrd.meal_request_id, " +
+                     "    mrd.menu_id, " +
+                     "    mrd.quantity, " +
+                     "    mrd.price AS detail_price, " +
+                     "    m.menu_name, " +
+                     "    me.id AS meal_id, " +
+                     "    me.meal_name, " +
+                     "    me.price AS meal_price " +
+                     "FROM " +
+                     "    meal_request_detail mrd " +
+                     "JOIN " +
+                     "    tbl_menu m ON mrd.menu_id = m.id " +
+                     "JOIN " +
+                     "    tbl_menu_details md ON m.id = md.menu_id " +
+                     "JOIN " +
+                     "    tbl_meal me ON md.meal_id = me.id " +
+                     "WHERE " +
+                     "    mrd.meal_request_id = ?";
+        
+        // Ánh xạ kết quả trả về vào đối tượng MealRequestDetail
         return jdbcTemplate.query(sql, new Object[]{mealRequestId}, (rs, rowNum) -> {
             MealRequestDetail detail = new MealRequestDetail();
-            detail.setId(rs.getInt("id"));
+            detail.setId(rs.getInt("detail_id"));
             detail.setMealRequestId(rs.getInt("meal_request_id"));
             detail.setMenuId(rs.getInt("menu_id"));
             detail.setQuantity(rs.getInt("quantity"));
-            detail.setPrice(rs.getBigDecimal("price"));
-            
-            // Lấy tên menu từ kết quả truy vấn
-            detail.setMenuName(rs.getString("menu_name")); // Đảm bảo rằng MealRequestDetail có trường menuName
-            
+            detail.setPrice(rs.getBigDecimal("detail_price"));
+
+            // Thêm thông tin món ăn
+            detail.setMenuName(rs.getString("menu_name"));
+            detail.setMealId(rs.getInt("meal_id"));
+            detail.setMealName(rs.getString("meal_name"));
+            detail.setMealPrice(rs.getBigDecimal("meal_price"));
+
             return detail;
         });
     }
-
 
 }

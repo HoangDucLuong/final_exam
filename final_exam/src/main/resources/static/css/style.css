@@ -5,6 +5,18 @@
     --dark: #0F172B;
 }
 
+.img-thumbnail {
+    width: 100%;         /* Điều chỉnh chiều rộng của hình ảnh */
+    height: 200px;       /* Đặt chiều cao cố định cho hình ảnh */
+    object-fit: contain;   /* Đảm bảo hình ảnh không bị méo và giữ tỷ lệ */
+}
+
+.card-img-top {
+    width: 100%;         /* Điều chỉnh chiều rộng của hình ảnh */
+    height: 200px;       /* Chiều cao cố định */
+    object-fit: contain; /* Giữ nguyên tỷ lệ mà không bị cắt */
+}
+
 
 .ff-secondary {
     font-family: 'Pacifico', cursive;

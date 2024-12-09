@@ -1,130 +1,241 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Tạo Hợp Đồng</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
+<meta charset="UTF-8">
+<title>Tạo Hợp Đồng</title>
+<link rel="stylesheet" href="/css/style.css">
+<style>
+body {
+	font-family: Arial, sans-serif;
+	background-color: #f4f4f4;
+	margin: 0;
+	padding: 20px;
+}
+
+h2 {
+	color: #333;
+}
+
+form {
+	background: white;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+div {
+	margin-bottom: 15px;
+}
+
+label {
+	display: block;
+	margin-bottom: 5px;
+}
+
+select, input[type="date"], input[type="number"], input[type="text"],
+	button {
+	width: 100%;
+	padding: 10px;
+	border-radius: 5px;
+	border: 1px solid #ccc;
+}
+
+button {
+	background-color: #007BFF;
+	color: white;
+	border: none;
+	cursor: pointer;
+}
+
+button:hover {
+	background-color: #0056b3;
+}
+
+/* Popup Modal Styles */
+.modal {
+	display: none; /* Popup hidden by default */
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.modal-content {
+	background-color: white;
+	padding: 20px;
+	width: 80%;
+	max-width: 500px;
+	border-radius: 8px;
+	position: relative;
+}
+
+.modal-header {
+	text-align: center;
+	font-size: 18px;
+	margin-bottom: 15px;
+}
+
+.menu-list {
+	max-height: 300px;
+	overflow-y: auto;
+	margin-bottom: 20px;
+}
+
+/* Close button for modal */
+.modal-close {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	font-size: 20px;
+	cursor: pointer;
+	color: #333;
+}
+
+.modal-close:hover {
+	color: red;
+}
+
+#contractDuration {
+	margin-bottom: 20px; /* Đảm bảo có khoảng cách hợp lý */
+}
+</style>
+<script>
+        function openMenuPopup() {
+            document.getElementById("menuModal").style.display = "flex"; // Show modal when button is clicked
         }
-        h2 {
-            color: #333;
+
+        function closeMenuPopup() {
+            document.getElementById("menuModal").style.display = "none"; // Hide modal
         }
-        form {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        div {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        select,
-        input[type="date"],
-        input[type="number"],
-        input[type="text"],
-        button {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        button {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-    <script>
-        function updateMenuPrice() {
-            const menuSelect = document.getElementById("menuId");
-            const selectedPrice = menuSelect.options[menuSelect.selectedIndex].getAttribute("data-price");
+
+        function updateMenuPrices() {
+            const selectedMenus = document.querySelectorAll('.menu-checkbox:checked');
+            let totalMenuPrice = 0;
+
+            // Calculate the total price for the selected menus
+            selectedMenus.forEach(menu => {
+                totalMenuPrice += parseFloat(menu.getAttribute("data-price"));
+            });
+
+            // Update contract total price
             const contractDuration = document.getElementById("contractDuration").value;
-
-            // Cập nhật tổng giá menu
-            document.getElementById("totalPrice").value = selectedPrice ? selectedPrice : "0.00";
-
-            // Cập nhật tổng giá hợp đồng
-            const totalMenuPrice = selectedPrice ? parseFloat(selectedPrice) : 0;
             const totalContractPrice = totalMenuPrice * (contractDuration ? parseInt(contractDuration) : 1);
             document.getElementById("contractTotalPrice").value = totalContractPrice.toFixed(2);
 
-            // Cập nhật tiền đặt cọc 10% của tổng giá hợp đồng
+            // Update deposit amount (10% of total contract price)
             const depositAmount = totalContractPrice * 0.1;
             document.getElementById("depositAmount").value = depositAmount.toFixed(2);
         }
 
-        function updateContractTotalPrice() {
-            const contractDuration = document.getElementById("contractDuration").value;
-            const menuSelect = document.getElementById("menuId");
-            const selectedPrice = menuSelect.options[menuSelect.selectedIndex].getAttribute("data-price");
+        function selectMenu() {
+            const selectedMenus = document.querySelectorAll('.menu-checkbox:checked');
+            const menuNames = Array.from(selectedMenus).map(menu => menu.nextElementSibling.textContent);
+            const menuIds = Array.from(selectedMenus).map(menu => menu.value);  // Collect menuIds
+            document.getElementById("selectedMenuNames").value = menuNames.join(", ");
 
-            const totalMenuPrice = selectedPrice ? parseFloat(selectedPrice) : 0;
-            const totalContractPrice = totalMenuPrice * (contractDuration ? parseInt(contractDuration) : 1);
-            document.getElementById("contractTotalPrice").value = totalContractPrice.toFixed(2);
+            // Insert menuId values into hidden input fields
+            const menuIdInput = document.getElementById("menuIds");
+            menuIdInput.value = menuIds.join(", ");
 
-            // Cập nhật tiền đặt cọc 10% của tổng giá hợp đồng
-            const depositAmount = totalContractPrice * 0.1;
-            document.getElementById("depositAmount").value = depositAmount.toFixed(2);
+            closeMenuPopup(); // Close the modal after selecting menus
+            updateMenuPrices(); // Update prices based on selected menus
         }
+
+        function setTodayDate() {
+            const today = new Date().toISOString().split("T")[0]; // Lấy ngày hiện tại dạng YYYY-MM-DD
+            document.getElementById("creationDate").value = today;
+            document.getElementById("startDate").value = today;
+        }
+        function validateForm() {
+            var contractDuration = document.getElementById("contractDuration").value;
+            
+            // Check if the contract duration is less than 6 months
+            if (contractDuration < 6) {
+                alert("Hợp đồng phải có thời hạn ít nhất 6 tháng.");
+                return false;  // Stop form submission
+            }
+
+            return true; // Allow form submission
+        }
+
+
     </script>
 </head>
-<body>
-    <h2>Tạo Hợp Đồng</h2>
-    <form th:action="@{/user/create-contract}" method="post">
-        <div>
-            <label for="creator">Người tạo hợp đồng:</label>
-            <input type="text" id="creator" name="creator" th:value="${userName}" readonly>
-        </div>
+<body onload="setTodayDate()">
+	<h2>Tạo Hợp Đồng</h2>
+	<form th:action="@{/user/create-contract}" method="post"
+		onsubmit="return validateForm()">
+		<div>
+			<label for="creator">Người tạo hợp đồng:</label> <input type="text"
+				id="creator" name="creator" th:value="${userName}" readonly>
+		</div>
 
-        <div>
-            <label for="startDate">Ngày bắt đầu:</label>
-            <input type="date" id="startDate" name="startDate" required>
-        </div>
-        
-        <div>
-            <label for="contractDuration">Thời hạn hợp đồng (Tháng):</label>
-            <input type="number" id="contractDuration" name="contractDuration" required min="1" onchange="updateContractTotalPrice()">
-        </div>
+		<div>
+			<input type="date" id="creationDate" name="creationDate" readonly
+				hidden>
+			<!-- Set as readonly -->
+		</div>
 
-        <div>
-            <label for="menuId">Chọn Menu:</label>
-            <select name="menuId" id="menuId" required onchange="updateMenuPrice()">
-                <option value="">Chọn menu</option>
-                <th:block th:each="menu : ${menus}">
-                    <option th:value="${menu.id}" th:text="${menu.menuName}" th:attr="data-price=${menuPrices[menu.id]}"></option>
-                </th:block>
-            </select>
-        </div>
+		<div>
+			<label for="startDate">Ngày bắt đầu:</label> <input type="date"
+				id="startDate" name="startDate" required readonly>
+			<!-- User can change start date if needed -->
+		</div>
+		<div>
+			<label for="contractDuration">Thời hạn hợp đồng (Tháng):</label> <input
+				type="number" id="contractDuration" name="contractDuration" required
+				min="1" onchange="updateMenuPrices()">
+		</div>
+		<div>
+			<input type="hidden" id="menuIds" name="menuIds"> <label
+				for="menuId">Chọn Menu:</label>
+			<button type="button" onclick="openMenuPopup()">Chọn Menu</button>
+			<input type="text" id="selectedMenuNames" name="selectedMenuNames"
+				readonly>
+		</div>
 
-        <div>
-            <label for="totalPrice">Tổng giá của menu:</label>
-            <input type="text" id="totalPrice" name="totalPrice" readonly value="0.00">
-        </div>
+		<!-- Modal for menu selection -->
+		<div id="menuModal" class="modal" style="display: none;">
+			<div class="modal-content">
+				<span class="modal-close" onclick="closeMenuPopup()">&times;</span>
+				<div class="modal-header">
+					<h3>Chọn Menu</h3>
+				</div>
+				<div class="menu-list">
+					<th:block th:each="menu : ${menus}">
+						<label> <input type="checkbox" class="menu-checkbox"
+							name="menuId" th:value="${menu.id}" th:text="${menu.menuName}"
+							th:attr="data-price=${menuPrices[menu.id]}"
+							onchange="updateMenuPrices()"> <span
+							th:text="${menu.menuName}"></span>
+						</label>
+						<br>
+					</th:block>
 
-        <div>
-            <label for="contractTotalPrice">Tổng giá hợp đồng:</label>
-            <input type="text" id="contractTotalPrice" name="contractTotalPrice" readonly value="0.00">
-        </div>
+				</div>
+				<button type="button" onclick="selectMenu()">Chọn</button>
+			</div>
+		</div>
 
-        <div>
-            <label for="depositAmount">Số tiền đặt cọc:</label>
-            <input type="number" id="depositAmount" name="depositAmount" value="0" required step="0.01" readonly>
-        </div>
+		<div>
+			<label for="contractTotalPrice">Tổng giá hợp đồng:</label> <input
+				type="text" id="contractTotalPrice" name="contractTotalPrice"
+				readonly value="0.00">
+		</div>
 
-        <button type="submit">Gửi</button>
-    </form>
+		<div>
+			<label for="depositAmount">Số tiền đặt cọc:</label> <input
+				type="number" id="depositAmount" name="depositAmount" value="0"
+				required step="0.01" readonly>
+		</div>
+
+		<button type="submit">Gửi</button>
+	</form>
 </body>
 </html>

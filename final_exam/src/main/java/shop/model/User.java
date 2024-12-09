@@ -12,6 +12,7 @@ public class User {
     private String address;
     private LocalDateTime createdAt;
     private int status;
+    
 
     // Constructors
     public User() {}

@@ -105,5 +105,14 @@ public class UserRepository {
         
         return db.query(sql, new UserRowMapper());
     }
+    public Integer findUserIdByEmail(String email) {
+        String sql = "SELECT id FROM tbl_user WHERE email = ?";
+        try {
+            return db.queryForObject(sql, new Object[]{email}, Integer.class);
+        } catch (EmptyResultDataAccessException e) {
+            return null; // Trả về null nếu không tìm thấy
+        }
+    }
+
     
 }

@@ -143,7 +143,7 @@ public class MenuRepositoryImpl implements MenuRepository {
         int pageSize = 5; // Số lượng menu trên mỗi trang
         int offset = (page - 1) * pageSize;
 
-        String sql = "SELECT * FROM tbl_menu WHERE menu_name LIKE ? ORDER BY id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        String sql = "SELECT * FROM tbl_menu WHERE menu_name LIKE ? ORDER BY id DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         return jdbcTemplate.query(sql, new Object[]{"%" + search + "%", offset, pageSize}, new MenuMapper());
     }

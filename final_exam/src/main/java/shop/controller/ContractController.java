@@ -68,42 +68,39 @@ public class ContractController {
 
 	@GetMapping("/contracts/{id}")
 	public String getContractById(@PathVariable("id") int id, HttpServletRequest request, Model model) {
-		String email = (String) request.getSession().getAttribute("user");
-		if (email != null) {
-			Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByEmail(email));
-			if (userOptional.isPresent()) {
-				User user = userOptional.get();
-				Contract contract = contractRepository.getContractById(id);
+	    String email = (String) request.getSession().getAttribute("user");
+	    if (email != null) {
+	        Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByEmail(email));
+	        if (userOptional.isPresent()) {
+	            User user = userOptional.get();
+	            Contract contract = contractRepository.getContractById(id);
 
-				if (contract == null || contract.getUsrId() != user.getId()) {
-					return "redirect:/user/contracts?error=notfound";
-				}
+	            if (contract == null || contract.getUsrId() != user.getId()) {
+	                return "redirect:/user/contracts?error=notfound";
+	            }
 
-				List<ContractDetail> contractDetails = contractDetailRepository.getContractDetailsByContractId(id);
-				List<Menu> menus = contractRepository.findMenusByContractId(id);
-				Map<Integer, BigDecimal> menuPrices = new HashMap<>();
+	            // Lấy tất cả chi tiết hợp đồng
+	            List<ContractDetail> contractDetails = contractDetailRepository.getContractDetailsByContractId(id);
 
-				// Đảm bảo ít nhất một menu được chọn để hiển thị
-				Menu selectedMenu = null;
-				if (!menus.isEmpty()) {
-					selectedMenu = menus.get(0); // Chọn menu đầu tiên
-				}
+	            // Lấy tất cả menu liên kết với hợp đồng này
+	            List<Menu> menus = contractRepository.findMenusByContractId(id);
 
-				for (Menu menu : menus) {
-					BigDecimal price = menuRepository.getMenuPriceById(menu.getId());
-					menuPrices.put(menu.getId(), price);
-				}
+	            // Lấy giá từng menu
+	            Map<Integer, BigDecimal> menuPrices = new HashMap<>();
+	            for (Menu menu : menus) {
+	                BigDecimal price = menuRepository.getMenuPriceById(menu.getId());
+	                menuPrices.put(menu.getId(), price);
+	            }
 
-				model.addAttribute("contract", contract);
-				model.addAttribute("contractDetails", contractDetails);
-				model.addAttribute("menus", menus);
-				model.addAttribute("menuPrices", menuPrices);
-				model.addAttribute("menu", selectedMenu); // Thêm menu đã chọn vào model
+	            model.addAttribute("contract", contract);
+	            model.addAttribute("contractDetails", contractDetails);
+	            model.addAttribute("menus", menus);
+	            model.addAttribute("menuPrices", menuPrices);
 
-				return "user/contract-details";
-			}
-		}
-		return "redirect:/user/login";
+	            return "user/contract-details";
+	        }
+	    }
+	    return "redirect:/user/login";
 	}
 
 	@PostMapping("/cancel")
@@ -155,11 +152,12 @@ public class ContractController {
 	}
 
 	@PostMapping("/create-contract")
-	public String createContract(@RequestParam("menuId") int menuId, 
+	public String createContract(@RequestParam("menuId") List<Integer> menuIds, 
 	                             @RequestParam("startDate") String startDate,
 	                             @RequestParam("contractDuration") Integer contractDuration, 
 	                             HttpServletRequest request, 
 	                             Model model) {
+		 System.out.println("Received menuIds: " + menuIds); 
 	    String email = (String) request.getSession().getAttribute("user");
 
 	    if (email != null) {
@@ -167,17 +165,33 @@ public class ContractController {
 	        if (userOptional.isPresent()) {
 	            User user = userOptional.get();
 	            try {
+	                if (contractDuration < 6) {
+	                    model.addAttribute("error", "Thời gian hợp đồng phải lớn hơn hoặc bằng 6 tháng.");
+	                    return "user/create-contract";  // Trả về form nếu thời gian không hợp lệ
+	                }
+	                if (menuIds == null || menuIds.isEmpty()) {
+	                    model.addAttribute("error", "Bạn phải chọn ít nhất một menu.");
+	                    return "user/create-contract"; // Quay lại form với thông báo lỗi
+	                }
+
 	                LocalDate start = LocalDate.parse(startDate);
 	                LocalDate endDate = start.plusMonths(contractDuration);
 
 	                // Tính tổng giá của menu
 	                BigDecimal totalMenuPrice = BigDecimal.ZERO;
-	                List<MenuDetails> menuDetails = menuDetailsRepository.findByMenuId(menuId);
-	                if (menuDetails.isEmpty()) {
-	                    model.addAttribute("error", "Menu không có chi tiết nào.");
-	                    return "user/create-contract";
+	                List<MenuDetails> menuDetails = new ArrayList<>();
+
+	                // Lấy chi tiết của tất cả menuId đã chọn
+	                for (Integer menuId : menuIds) {
+	                    List<MenuDetails> details = menuDetailsRepository.findByMenuId(menuId);
+	                    if (details.isEmpty()) {
+	                        model.addAttribute("error", "Một trong các menu không có chi tiết nào.");
+	                        return "user/create-contract";
+	                    }
+	                    menuDetails.addAll(details);
 	                }
-	                
+
+	                // Tính tổng giá hợp đồng
 	                for (MenuDetails detail : menuDetails) {
 	                    BigDecimal mealPrice = detail.getPrice();
 	                    totalMenuPrice = totalMenuPrice.add(mealPrice);
@@ -212,7 +226,7 @@ public class ContractController {
 
 	                return "redirect:/user/contracts";
 	            } catch (Exception e) {
-	            	e.printStackTrace();
+	                e.printStackTrace();
 	                model.addAttribute("error", "Đã có lỗi xảy ra khi tạo hợp đồng: " + e.getMessage());
 	                return "user/create-contract";
 	            }
@@ -220,6 +234,7 @@ public class ContractController {
 	    }
 	    return "redirect:/user/login";
 	}
+
 
 
 	@PostMapping("/contracts/save")

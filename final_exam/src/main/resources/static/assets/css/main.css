@@ -6575,6 +6575,8 @@ h6, .h6 {
 	font-weight: 900;
 }
 
+
+
 /* =========== Sidebar css =========== */
 #preloader {
 	position: fixed;
@@ -6598,7 +6600,7 @@ h6, .h6 {
 	animation: spinner 0.9s linear infinite;
 }
 
-@
+
 keyframes spinner {from { -webkit-transform:rotate(0deg);
 	-moz-transform: rotate(0deg);
 	-ms-transform: rotate(0deg);

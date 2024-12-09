@@ -63,4 +63,9 @@ public final class SecurityUtility{
 				return hex;
 			}
 		}
+		public static String generateOtp() {
+	        SecureRandom random = new SecureRandom();
+	        int otp = 100000 + random.nextInt(900000); // Tạo OTP 6 chữ số
+	        return String.valueOf(otp);
+	    }
 	} 

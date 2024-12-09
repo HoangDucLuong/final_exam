@@ -32,6 +32,22 @@ public class MailService {
             return false; // Gửi email thất bại
         }
     }
+    
+    public boolean sendOtpMail(String recipientEmail, String otpCode) {
+        try {
+            String subject = "OTP Verification Code";
+            String body = String.format("Your OTP code is: %s. It is valid for 5 minutes.", otpCode);
 
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(recipientEmail);
+            message.setSubject(subject);
+            message.setText(body);
+
+            mailSender.send(message);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
 }

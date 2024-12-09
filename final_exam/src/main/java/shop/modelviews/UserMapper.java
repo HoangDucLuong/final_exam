@@ -22,6 +22,7 @@ public class UserMapper implements RowMapper<User> {
         user.setAddress(rs.getString("address"));
         user.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
         user.setStatus(rs.getInt("status"));
+
         return user;
     }
 }

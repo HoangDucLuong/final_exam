@@ -42,7 +42,7 @@ public class ContractRepositoryImpl implements ContractRepository {
     
     @Override
     public List<Menu> findMenusByContractId(int contractId) {
-        String sql = "SELECT m.id, m.menu_name, m.menu_type, m.created_at " +
+        String sql = "SELECT DISTINCT m.id, m.menu_name, m.menu_type, m.created_at " +
                      "FROM tbl_menu m " +
                      "JOIN tbl_menu_details md ON m.id = md.menu_id " +
                      "JOIN contract_detail cd ON m.id = cd.menu_id " +
