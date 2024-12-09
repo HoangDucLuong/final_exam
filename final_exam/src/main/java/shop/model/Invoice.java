@@ -11,13 +11,22 @@ public class Invoice {
     private LocalDateTime dueDate;   // Có thể sử dụng LocalDate nếu chỉ cần ngày
     private int paymentStatus;
     private LocalDateTime createdAt;  // Sử dụng LocalDateTime
-
+    private boolean sent; // Thuộc tính mới
+    private String recipientEmail;
     // Getters and Setters
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public String getRecipientEmail() {
+		return recipientEmail;
+	}
+
+	public void setRecipientEmail(String recipientEmail) {
+		this.recipientEmail = recipientEmail;
+	}
+
+	public void setId(int id) {
         this.id = id;
     }
 
@@ -68,4 +77,21 @@ public class Invoice {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+	public boolean isSent() {
+		return sent;
+	}
+
+	public void setSent(boolean sent) {
+		this.sent = sent;
+	}
+
+//    public boolean isSent() { // Getter cho thuộc tính sent
+//        return sent;
+//    }
+//
+//    public void setSent(boolean sent) { // Setter cho thuộc tính sent
+//        this.sent = sent;
+//    }
+    
 }

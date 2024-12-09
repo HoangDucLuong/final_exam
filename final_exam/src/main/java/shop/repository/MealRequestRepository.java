@@ -37,4 +37,11 @@ public interface MealRequestRepository {
 	int countMealRequestsByUserId(int userId);
 
 	int countMealRequestsByContractId(int contractId);
+	
+	List<MealRequest> findByContractId(int contractId);
+	
+	List<MealRequest> getMealRequestsByContractId(int invoiceId);
+	
+	List<MealRequest> findMealRequestsByInvoiceId(int invoiceId);
+	List<MealRequest> getMealRequestsByInvoiceId(int invoiceId);
 }

@@ -2,6 +2,7 @@ package shop.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -16,7 +17,8 @@ import java.util.List;
 public class UserRepository {
     @Autowired
     JdbcTemplate db;
-
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
     // Phương thức tìm kiếm người dùng theo từ khóa và phân trang
     public List<User> findAllUsers(int page, String search) {
         int pageSize = 10; // Số lượng người dùng mỗi trang
@@ -115,4 +117,37 @@ public class UserRepository {
     }
 
     
+ // Phương thức lấy email của người dùng dựa trên contract_id (danh sách)
+    public String findEmailByContractId(int contractId) {
+        String sql = "SELECT TOP 1 u.email " +
+                     "FROM tbl_invoice i " +
+                     "JOIN tbl_contract c ON i.contract_id = c.id " +
+                     "JOIN tbl_user u ON c.usr_id = u.id " +
+                     "WHERE i.contract_id = ? " +  // Loại bỏ điều kiện payment_status
+                     "ORDER BY i.id"; // Thêm sắp xếp để đảm bảo kết quả nhất quán
+
+        try {
+            return db.queryForObject(sql, new Object[]{contractId}, String.class);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        } catch (IncorrectResultSizeDataAccessException e) {
+            // Ghi log lỗi hoặc xử lý nhiều kết quả
+            System.err.println("Tìm thấy nhiều email cho mã hợp đồng: " + contractId);
+            
+            // Hoặc lấy email đầu tiên
+            List<String> emails = db.queryForList(
+                "SELECT TOP 1 u.email " +
+                "FROM tbl_invoice i " +
+                "JOIN tbl_contract c ON i.contract_id = c.id " +
+                "JOIN tbl_user u ON c.usr_id = u.id " +
+                "WHERE i.contract_id = ? " +
+                "ORDER BY i.id", 
+                new Object[]{contractId}, 
+                String.class
+            );
+            
+            return emails.isEmpty() ? null : emails.get(0);
+        }
+    }
+
 }

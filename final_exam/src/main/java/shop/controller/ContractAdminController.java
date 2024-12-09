@@ -84,6 +84,7 @@ public class ContractAdminController {
 			contractWithUser.put("userName", user != null ? user.getName() : "N/A"); // Lấy tên người dùng
 			long daysToExpiry = java.time.temporal.ChronoUnit.DAYS.between(today, contract.getEndDate());
 			contractWithUser.put("isExpiringSoon", daysToExpiry <= 10 && daysToExpiry >= 0);
+
 			contractsWithUser.add(contractWithUser);
 		}
 
@@ -112,46 +113,49 @@ public class ContractAdminController {
 		model.addAttribute("contract", contract);
 		return "admin/edit_contract"; // Trả về trang chỉnh sửa hợp đồng
 	}
-
-	// Admin cập nhật hợp đồng
 	@PostMapping("/update/{id}")
-	public String updateContract(@PathVariable("id") int id, @ModelAttribute Contract contract) {
-		Contract existingContract = contractRepository.getContractById(id);
+	public String updateContract(@PathVariable("id") int id, @ModelAttribute Contract contract, Model model) {
+	    Contract existingContract = contractRepository.getContractById(id);
 
-		if (existingContract == null) {
-			return "redirect:/admin/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
-		}
+	    if (existingContract == null) {
+	        return "redirect:/admin/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
+	    }
 
+	    // Cập nhật các thuộc tính của hợp đồng
+	    existingContract.setUsrId(contract.getUsrId());
+	    existingContract.setStartDate(contract.getStartDate());
+	    existingContract.setEndDate(contract.getEndDate());
+	    existingContract.setTotalAmount(contract.getTotalAmount());
+	    existingContract.setDepositAmount(contract.getDepositAmount());
+	    existingContract.setStatus(contract.getStatus());
+	    existingContract.setPaymentStatus(contract.getPaymentStatus());
 
-		// Cập nhật các thuộc tính của hợp đồng
-		existingContract.setUsrId(contract.getUsrId());
-		existingContract.setStartDate(contract.getStartDate());
-		existingContract.setEndDate(contract.getEndDate());
-		existingContract.setTotalAmount(contract.getTotalAmount());
-		existingContract.setDepositAmount(contract.getDepositAmount());
-		existingContract.setStatus(contract.getStatus());
-		
-		// Cập nhật trạng thái thanh toán
-        existingContract.setPaymentStatus(contract.getPaymentStatus());
+	    // Lưu hợp đồng đã cập nhật vào cơ sở dữ liệu
+	    contractRepository.updateContract(existingContract);
 
-        // Lưu hợp đồng đã cập nhật vào cơ sở dữ liệu
-        contractRepository.updateContract(existingContract);
-        
-        return "redirect:/admin/contracts"; // Quay lại trang danh sách hợp đồng của admin
-    }
+	    // Lấy thông tin người dùng từ hợp đồng và gửi email
+	    User user = userRepository.findById(contract.getUsrId());
+	    if (user != null) {
+	        mailService.sendContractUpdateMail(user.getEmail(), existingContract);
+	    }
+
+	    return "redirect:/admin/contracts"; // Quay lại trang danh sách hợp đồng của admin
+	}
+
 
     // Xác nhận hợp đồng (POST) - đổi tên thành confirmContractPost
-    @PostMapping("/confirm/{id}")
-    public String confirmContractPost(@PathVariable("id") int id, Model model) {
-        Contract contract = contractRepository.getContractById(id);
-        if (contract == null) {
-            return "redirect:/admin/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
-        }
-        contract.setStatus(1); // Đặt trạng thái là đã xác nhận
-        contractRepository.updateContract(contract); // Cập nhật trạng thái trong cơ sở dữ liệu
+	@RequestMapping(value = "/confirm/{id}", method = {RequestMethod.GET, RequestMethod.POST})
+	public String confirmContract(@PathVariable("id") int id, Model model) {
+	    Contract contract = contractRepository.getContractById(id);
+	    if (contract == null) {
+	        return "redirect:/admin/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
+	    }
+	    contract.setStatus(1); // Đặt trạng thái là đã xác nhận
+	    contractRepository.updateContract(contract); // Cập nhật trạng thái trong cơ sở dữ liệu
 
-        return "redirect:/admin/contracts"; // Chuyển hướng về trang danh sách hợp đồng của admin
-    }
+	    return "redirect:/user/contracts"; // Chuyển hướng về trang danh sách hợp đồng của admin
+	}
+
 
 	// Admin xóa hợp đồng
 	@GetMapping("/delete/{id}")

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hóa đơn theo tháng</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">Danh sách hóa đơn theo tháng</h1>
+
+    <form method="get" action="/admin/invoices/grouped-by-month" class="mb-4">
+        <label for="year">Năm:</label>
+        <input type="number" name="year" id="year" class="form-control d-inline-block w-auto" placeholder="VD: 2023">
+        <button type="submit" class="btn btn-primary">Lọc</button>
+    </form>
+
+    <div th:each="entry : ${summaryByMonth}">
+        <h3>Tháng <span th:text="${entry.key}"></span></h3>
+
+        <p><strong>Tổng tiền:</strong> <span th:text="${entry.value['totalAmount']}"></span></p>
+        <p><strong>Đang nợ:</strong> <span th:text="${entry.value['unpaidAmount']}"></span></p>
+
+        <table class="table table-bordered">
+            <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Mã hợp đồng</th>
+                <th>Ngày tạo</th>
+                <th>Ngày đến hạn</th>
+                <th>Tổng tiền</th>
+                <th>Đã thanh toán</th>
+                <th>Trạng thái thanh toán</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="invoice : ${entry.value['invoices']}">
+                <td th:text="${invoice.id}"></td>
+                <td th:text="${invoice.contractId}"></td>
+                <td th:text="${#temporals.format(invoice.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                <td th:text="${#temporals.format(invoice.dueDate, 'yyyy-MM-dd')}"></td>
+                <td th:text="${invoice.totalAmount}"></td>
+                <td th:text="${invoice.paidAmount}"></td>
+                <td>
+                    <span th:if="${invoice.paymentStatus == 1}" class="badge bg-success">Đã thanh toán</span>
+                    <span th:if="${invoice.paymentStatus == 0}" class="badge bg-danger">Chưa thanh toán</span>
+                </td>
+                <td>
+                    <a th:href="@{'/admin/invoices/' + ${invoice.id}}" class="btn btn-primary btn-sm">Chi tiết</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -36,4 +36,6 @@ public interface ContractRepository {
     void save(Contract contract);
     
     List<Contract> getContractsExpiringSoon();
+    List<Contract> findActiveContracts();
+    Contract findById(int id);  // Thêm dòng này
 }
