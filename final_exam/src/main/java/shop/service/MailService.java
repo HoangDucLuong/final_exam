@@ -104,7 +104,6 @@ public class MailService {
             helper.setTo(recipientEmail);
             helper.setSubject(subject);
             helper.setText(body);
-
             mailSender.send(message);
             System.out.println("Email đã được gửi tới: " + recipientEmail);
             return true;
