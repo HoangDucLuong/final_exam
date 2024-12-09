@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Details</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .nested-table { width: 95%; margin: auto; border: 1px solid #ddd; }
+        .nested-table th { background-color: #e9e9e9; }
+        .no-data { text-align: center; font-style: italic; color: #888; }
+        h1, h2 { color: #333; }
+        .total-row { font-weight: bold; text-align: right; }
+    </style>
+</head>
+<body>
+<h1>Invoice Details</h1>
+
+<!-- Invoice Summary Section -->
+<h2>Invoice Summary</h2>
+<table>
+    <tr>
+        <th>Invoice ID</th>
+        <td th:text="${invoice.id}">11</td>
+    </tr>
+    <tr>
+        <th>Contract ID</th>
+        <td th:text="${invoice.contractId}">22</td>
+    </tr>
+    <tr>
+        <th>Total Amount</th>
+        <td th:text="${invoice.totalAmount}">975.00</td>
+    </tr>
+    <tr>
+        <th>Paid Amount</th>
+        <td th:text="${invoice.paidAmount}">0.00</td>
+    </tr>
+    <tr>
+        <th>Due Date</th>
+        <td th:text="${invoice.dueDate}">2025-01-05</td>
+    </tr>
+    <tr>
+        <th>Payment Status</th>
+        <td th:text="${invoice.paymentStatus == 0 ? 'Unpaid' : (invoice.paymentStatus == 1 ? 'Paid' : 'Partially Paid')}">Unpaid</td>
+    </tr>
+</table>
+
+<!-- Meal Requests Section -->
+<h2>Meal Requests</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Request Date</th>
+            <th>Delivery Date</th>
+            <th>Total Meals</th>
+            <th>Status</th>
+            <th>Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Check if mealRequests is empty -->
+        <tr th:if="${mealRequests == null || mealRequests.isEmpty()}">
+            <td colspan="5" class="no-data">No meal requests found for this invoice.</td>
+        </tr>
+
+        <!-- Loop through mealRequests -->
+        <tr th:each="mealRequest : ${mealRequests}">
+            <td th:text="${mealRequest.requestDate}">2024-11-14</td>
+            <td th:text="${mealRequest.deliveryDate}">2024-11-14</td>
+            <td th:text="${mealRequest.totalMeals}">4</td>
+            <td th:text="${mealRequest.status == 0 ? 'Pending' : (mealRequest.status == 1 ? 'Confirmed' : 'Delivered')}">Pending</td>
+            <td>
+                <!-- Nested Table for Meal Details -->
+                <table class="nested-table">
+                    <thead>
+                        <tr>
+                            <th>Menu Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Check if mealRequestDetails is empty -->
+                        <tr th:if="${mealRequest.mealRequestDetails == null || mealRequest.mealRequestDetails.isEmpty()}">
+                            <td colspan="4" class="no-data">No details available.</td>
+                        </tr>
+
+                        <!-- Loop through mealRequestDetails -->
+                        <tr th:each="detail : ${mealRequest.mealRequestDetails}">
+                            <td th:text="${detail.menuName}">Sample Menu</td>
+                            <td th:text="${detail.quantity}">1</td>
+                            <td th:text="${detail.price}">25.00</td>
+                            <td th:text="${detail.price.multiply(new java.math.BigDecimal(detail.quantity))}">25.00</td>
+                        </tr>
+
+                        <!-- Total for each mealRequest -->
+                        <tr class="total-row">
+                            <td colspan="3"><strong>Total</strong></td>
+                            <td th:text="${mealRequest.totalAmount}">100.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</body>
+</html>

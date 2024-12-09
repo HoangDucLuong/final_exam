@@ -71,55 +71,72 @@
 
 			
 		</div>
-
-        <!-- Hero Header Start -->
-        <div class="container-xxl py-5 bg-dark hero-header mb-5">
-            <div class="container text-center my-5 pt-5 pb-4">
-                <h1 class="display-3 text-white mb-3">Contracts</h1>
-            </div>
-        </div>
-<div class="contract-container text-center">
-    <a href="/user/create-contract" class="btn btn-primary mb-3">Tạo Hợp Đồng Mới</a>
-
-    <div class="contracts mx-auto" style="max-width: 80%;">
-        <h3 class="mb-4">Danh sách hợp đồng</h3>
-        <table class="table table-bordered table-hover mx-auto">
-            <thead class="table-dark">
-                <tr>
-                    <th class="text-center">Mã hợp đồng</th>
-                    <th class="text-center">Ngày bắt đầu</th>
-                    <th class="text-center">Ngày kết thúc</th>
-                    <th class="text-center">Trạng thái</th>
-                    <th class="text-center">Thao tác</th>
-                    <th class="text-center">Xem Hóa Đơn</th> <!-- Thêm cột mới -->
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="contract : ${contracts}">
-                    <td th:text="${contract.id}" class="text-center"></td>
-                    <td th:text="${contract.startDate}" class="text-center"></td>
-                    <td th:text="${contract.endDate}" class="text-center"></td>
-                    <td class="text-center">
-                        <span th:if="${contract.status == 0}" style="color: red;">Đang chờ</span>
-                        <span th:if="${contract.status == 1}" style="color: green;">Đã xác nhận</span>
-                        <span th:if="${contract.status == 2}" style="color: orange;">Đang thực hiện</span>
-                        <span th:if="${contract.status == 3}" style="color: blue;">Đã hoàn thành</span>
-                        <span th:if="${contract.status == 4}" style="color: grey;">Đã hủy</span>
-                    </td>
-                    <td class="text-center">
-                        <a th:href="@{/user/contracts/{id}(id=${contract.id})}" class="btn btn-info btn-sm">Chi tiết</a>
-                        <a th:href="@{/mealRequest/create(contractId=${contract.id})}" class="btn btn-warning btn-sm">Tạo phiếu yêu cầu suất ăn</a>
-                    </td>
-                    <!-- Thêm nút Xem hóa đơn -->
-                    <td class="text-center">
-                        <a th:href="@{/user/invoices/{contractId}(contractId=${contract.id})}" class="btn btn-success btn-sm">Xem Hóa Đơn</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+<div class="container-xxl py-5 bg-dark hero-header mb-5">
+    <div class="container text-center my-5 pt-5 pb-4">
+        <h1 class="text-light">Hóa Đơn cho Mã Hợp Đồng: <span th:text="${contractId}"></span></h1>
     </div>
 </div>
 
+<div class="container">
+
+    <!-- Hiển thị thông báo nếu không tìm thấy hóa đơn -->
+    <div th:if="${#lists.isEmpty(invoicesByMonth)}" class="text-center my-4">
+        <p>Không tìm thấy hóa đơn nào cho hợp đồng này.</p>
+    </div>
+
+    <!-- Hiển thị danh sách hóa đơn nếu có -->
+    <div th:unless="${#lists.isEmpty(invoicesByMonth)}">
+        <div th:each="entry : ${invoicesByMonth}" class="mb-5">
+            <h2 class="mb-3">Tháng: <span th:text="${entry.key}"></span></h2>
+
+            <div th:if="${unpaidAmountsByMonth[entry.key] > 0}" class="mb-3">
+                <p th:text="'Hóa Đơn tháng ' + ${entry.key} + ' đang nợ ' + ${unpaidAmountsByMonth[entry.key]} + 'đ'"></p>
+            </div>
+
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Mã Hóa Đơn</th>
+                        <th>Ngày Tạo</th>
+                        <th>Ngày Đến Hạn</th>
+                        <th>Tổng Số Tiền</th>
+                        <th>Số Tiền Đã Thanh Toán</th>
+                        <th>Trạng Thái Thanh Toán</th>
+                        <th>Thanh Toán</th>
+                        <th>Chi Tiết</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="invoice : ${entry.value}">
+                        <td th:text="${invoice.id}"></td>
+                        <td th:text="${#temporals.format(invoice.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td> <!-- Hiển thị Ngày Tạo -->
+                        <td th:text="${#temporals.format(invoice.dueDate, 'yyyy-MM-dd')}"></td>
+                        <td th:text="${invoice.totalAmount}"></td>
+                        <td th:text="${invoice.paidAmount}"></td>
+                        <td th:text="${invoice.paymentStatus == 0 ? 'Chưa thanh toán' : 'Đã thanh toán'}"></td>
+                        <td>
+                            <form th:action="@{/user/invoices/paySingle}" method="post">
+                                <input type="hidden" th:value="${contractId}" name="contractId" />
+                                <input type="hidden" th:value="${invoice.id}" name="invoiceId" />
+                                <button type="submit" class="btn btn-primary" th:disabled="${invoice.paymentStatus == 1}">Thanh Toán</button>
+                            </form>
+                        </td>
+                        <td>
+                		<!-- Nút Chi Tiết -->
+                			<a th:href="@{/user/invoices/detail/{invoiceId}(invoiceId=${invoice.id})}" class="btn btn-info">Chi Tiết</a>
+            			</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <form th:action="@{/user/invoices/pay}" method="post">
+                <input type="hidden" th:value="${contractId}" name="contractId" />
+                <input type="hidden" th:value="${entry.key}" name="month" />
+                <button type="submit" class="btn btn-success">Thanh Toán Tất Cả Hóa Đơn</button>
+            </form>
+        </div>
+    </div>
+</div>
 
         <!-- Footer Start -->
         <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">

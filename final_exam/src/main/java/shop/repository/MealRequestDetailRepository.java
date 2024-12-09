@@ -11,4 +11,5 @@ public interface MealRequestDetailRepository {
     void updateMealRequestDetail(MealRequestDetail mealRequestDetail); // Cập nhật chi tiết yêu cầu suất ăn
     void deleteMealRequestDetail(int id); // Xóa chi tiết yêu cầu suất ăn
     List<MealRequestDetail> getDetailsByMealRequestId(int mealRequestId);
+    List<MealRequestDetail> findByMealRequestId(int mealRequestId);
 }

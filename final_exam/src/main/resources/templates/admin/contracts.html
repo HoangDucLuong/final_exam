@@ -165,7 +165,7 @@
 										class="text-sm text-medium text-center">Tiền Đặt Cọc</h6></th>
 								<th class="max-width"><h6
 										class="text-sm text-medium text-center">Trạng Thái Thanh
-										Toán</h6></th>
+										Toán Hợp Đồng</h6></th>
 								<th class="max-width"><h6
 										class="text-sm text-medium text-center">Trạng Thái Hợp
 										Đồng</h6></th>
@@ -201,27 +201,35 @@
 									th:if="${contractWithUser.contract.status == 4}" class="status"
 									style="color: grey;">Đã hủy</span></td>
 								<td>
-									<div class="action justify-content-center">
-										<!-- Nút Chỉnh Sửa -->
-										<a
-											th:href="@{/admin/contracts/edit/{id}(id=${contractWithUser.contract.id})}"
-											class="edit"> <i class="lni lni-pencil"></i>
-										</a>
-										<button th:if="${contractWithUser.isExpiringSoon}"
-											th:onclick="'sendMail(' + ${contractWithUser.contract.id} + ')'">
-											Gửi Mail</button>
-										<!-- Nút Xóa -->
-										<button class="more-btn ml-10 dropdown-toggle"
-											data-bs-toggle="dropdown">
-											<i class="lni lni-more-alt"></i>
-										</button>
-										<ul class="dropdown-menu dropdown-menu-end">
-											<li class="dropdown-item"><a
-												th:href="@{/admin/contracts/delete/{id}(id=${contractWithUser.contract.id})}"
-												class="text-gray">Xóa</a></li>
-										</ul>
-									</div>
-								</td>
+    <div class="action justify-content-center">
+        <!-- Nút Chỉnh Sửa -->
+        <a th:href="@{/admin/contracts/edit/{id}(id=${contractWithUser.contract.id})}" class="edit">
+            <i class="lni lni-pencil"></i>
+        </a>
+
+        <!-- Nút Gửi Mail -->
+        <button th:if="${contractWithUser.isExpiringSoon}" th:onclick="'sendMail(' + ${contractWithUser.contract.id} + ')'">
+            Gửi Mail
+        </button>
+
+        <!-- Nút Xóa -->
+        <button class="more-btn ml-10 dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="lni lni-more-alt"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li class="dropdown-item">
+                <a th:href="@{/admin/contracts/delete/{id}(id=${contractWithUser.contract.id})}" class="text-gray">Xóa</a>
+                        <!-- Nút Xem Hóa Đơn -->
+        <a th:href="@{/admin/invoices/contract/{contractId}(contractId=${contractWithUser.contract.id})}"
+           class="text-gray">
+            Xem Hóa Đơn
+        </a>
+                
+            </li>
+        </ul>
+    </div>
+</td>
+
 							</tr>
 						</tbody>
 					</table>

@@ -1,6 +1,7 @@
 package shop.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import shop.model.Contract;
@@ -117,6 +118,20 @@ public class ContractRepositoryImpl implements ContractRepository {
     public List<Contract> getContractsExpiringSoon() {
         String sql = "SELECT * FROM tbl_contract WHERE DATEDIFF(day, GETDATE(), end_date) = 10";
         return jdbcTemplate.query(sql, new ContractRowMapper());
+    }
+    @Override
+    public List<Contract> findActiveContracts() {
+        String sql = "SELECT * FROM tbl_contract WHERE status = 1";
+        return jdbcTemplate.query(sql, new ContractRowMapper());
+    }
+    @Override
+    public Contract findById(int id) {
+        String sql = "SELECT * FROM tbl_contract WHERE id = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new Object[]{id}, new ContractRowMapper());
+        } catch (EmptyResultDataAccessException e) {
+            return null; // Trả về null nếu không tìm thấy hợp đồng
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package shop.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,8 @@ public class MealRequest {
     private Contract contract; // Thuộc tính Contract cho thông tin hợp đồng
     private List<MealRequestDetail> mealRequestDetails = new ArrayList<>(); // Danh sách chi tiết yêu cầu suất ăn
     private Integer userId;
+    private BigDecimal totalAmount;
+
     
     // Getters và Setters
     
@@ -104,5 +107,13 @@ public class MealRequest {
 
     public void setMealRequestDetails(List<MealRequestDetail> mealRequestDetails) {
         this.mealRequestDetails = mealRequestDetails;
+    }
+    
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
     }
 }

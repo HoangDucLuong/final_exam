@@ -1,11 +1,13 @@
 package shop.controller;
 
 import shop.model.Contract;
+import shop.model.Invoice;
 import shop.model.Menu; // Đổi từ Meal thành Menu
 import shop.model.MealRequest;
 import shop.model.MealRequestDetail;
 import shop.model.User;
 import shop.repository.ContractRepository;
+import shop.repository.InvoiceRepository;
 import shop.repository.MenuRepository; // Thay đổi repository
 import shop.repository.MealRequestDetailRepository;
 import shop.repository.MealRequestRepository;
@@ -24,6 +26,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +50,8 @@ public class MealRequestController {
     
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private InvoiceRepository invoiceRepository;
 
     @GetMapping("/create")
     public String showCreateForm(@RequestParam("contractId") int contractId, Model model) {
@@ -63,47 +68,60 @@ public class MealRequestController {
 
     @PostMapping("/create")
     public String createMealRequest(@ModelAttribute MealRequest mealRequest, 
-                                     @RequestParam List<Integer> menuIds, // Thay đổi để lấy menuIds
+                                     @RequestParam List<Integer> menuIds, 
                                      @RequestParam List<Integer> quantities) {
-        // Thiết lập giá trị mặc định cho requestDate nếu chưa có
         if (mealRequest.getRequestDate() == null) {
             mealRequest.setRequestDate(LocalDate.now());
         }
-        
-        // Thiết lập giá trị cho deliveryDate nếu chưa có
         if (mealRequest.getDeliveryDate() == null) {
-            mealRequest.setDeliveryDate(mealRequest.getRequestDate().plusDays(1)); // Ví dụ: ngày giao hàng là ngày sau
+            mealRequest.setDeliveryDate(mealRequest.getRequestDate().plusDays(1));
         }
 
         // Lưu yêu cầu suất ăn vào cơ sở dữ liệu và lấy ID của yêu cầu vừa được tạo
-        int mealRequestId = mealRequestRepository.addMealRequest(mealRequest); // Cập nhật để lưu ID
+        int mealRequestId = mealRequestRepository.addMealRequest(mealRequest);
 
-        int totalMeals = 0; // Khởi tạo biến tổng số suất ăn
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        int totalMeals = 0;
 
-        // Thêm chi tiết món ăn vào yêu cầu suất ăn
+        // Lưu chi tiết của yêu cầu suất ăn
         for (int i = 0; i < menuIds.size(); i++) {
             MealRequestDetail detail = new MealRequestDetail();
-            detail.setMenuId(menuIds.get(i)); // Giả sử bạn có phương thức để lấy mealId từ menuId
+            detail.setMenuId(menuIds.get(i));
             detail.setQuantity(quantities.get(i));
-            detail.setMealRequestId(mealRequestId); // Sử dụng ID từ yêu cầu vừa tạo
+            detail.setMealRequestId(mealRequestId);
 
-            // Lấy giá món ăn từ cơ sở dữ liệu
-            BigDecimal price = menuRepository.getMenuPriceById(menuIds.get(i)); // Cần thêm phương thức này trong MenuRepository
-            detail.setPrice(price); // Lưu giá vào detail
-
-            // Cộng dồn số lượng món ăn vào totalMeals
+            BigDecimal price = menuRepository.getMenuPriceById(menuIds.get(i));
+            detail.setPrice(price);
+            totalAmount = totalAmount.add(price.multiply(BigDecimal.valueOf(quantities.get(i))));
             totalMeals += quantities.get(i);
 
-            // Lưu chi tiết món ăn
-            mealRequestDetailRepository.addMealRequestDetail(detail); // Thêm dòng này để lưu chi tiết vào cơ sở dữ liệu
+            mealRequestDetailRepository.addMealRequestDetail(detail);
         }
 
-        // Cập nhật trường total_meals trong yêu cầu suất ăn
+        // Cập nhật tổng số suất ăn của MealRequest
         mealRequest.setTotalMeals(totalMeals);
-        mealRequestRepository.updateTotalMeals(mealRequestId, totalMeals); // Bạn cần tạo phương thức này trong repository để cập nhật tổng suất ăn
+        mealRequestRepository.updateTotalMeals(mealRequestId, totalMeals);
+
+     // Tạo và lưu một hóa đơn mới
+        Invoice invoice = new Invoice();
+        invoice.setContractId(mealRequest.getContractId());
+        invoice.setTotalAmount(totalAmount);
+        invoice.setPaidAmount(BigDecimal.ZERO); // Đặt giá trị thanh toán ban đầu là 0
+
+        // Tính toán ngày thanh toán là ngày 5 của tháng sau ngày giao hàng
+        LocalDate deliveryDate = mealRequest.getDeliveryDate();
+        LocalDateTime dueDate = deliveryDate.plusMonths(1).withDayOfMonth(5).atStartOfDay();
+
+        invoice.setDueDate(dueDate); // Đặt ngày thanh toán
+        invoice.setPaymentStatus(0); // 0 nghĩa là chưa thanh toán
+        invoice.setCreatedAt(LocalDateTime.now());
+        // Lưu hóa đơn vào cơ sở dữ liệu
+        invoiceRepository.save(invoice);
+
 
         return "redirect:/mealRequest/list"; // Chuyển hướng đến danh sách yêu cầu sau khi lưu
     }
+
 
     @GetMapping("/list")
     public String listMealRequests(
