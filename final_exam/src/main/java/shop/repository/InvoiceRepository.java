@@ -19,5 +19,7 @@ public interface InvoiceRepository {
     List<Invoice> findByYear(int year);
     List<Invoice> findByContractIdAndSent(int contractId, int isSent);
     List<Invoice> findByPaymentStatus(int paymentStatus);
+    Invoice findFirstByContractIdAndTotalAmount(int contractId, double totalAmount);
+    List<Invoice> findByContractIdAndPaymentStatus(int contractId, int paymentStatus);
 
 }

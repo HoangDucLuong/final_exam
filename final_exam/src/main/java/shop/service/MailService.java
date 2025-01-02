@@ -80,20 +80,6 @@ public class MailService {
 		}
 	}
 
-<<<<<<< HEAD
-            helper.setTo(recipientEmail);
-            helper.setSubject(subject);
-            helper.setText(body);
-            mailSender.send(message);
-            System.out.println("Email đã được gửi tới: " + recipientEmail);
-            return true;
-        } catch (Exception e) {
-            System.err.println("Lỗi khi gửi email: " + e.getMessage());
-            e.printStackTrace(); // Log lỗi chi tiết
-            return false;
-        }
-    }
-=======
 	private String getStatusDescription(int status) {
 		return switch (status) {
 		case 0 -> "Đang chờ";
@@ -109,7 +95,6 @@ public class MailService {
 		try {
 			MimeMessage message = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(message);
->>>>>>> branch 'main' of https://github.com/HoangDucLuong/final_exam
 
 			helper.setTo(recipientEmail);
 			helper.setSubject("Hóa đơn thanh toán #" + invoice.getId());
@@ -145,14 +130,38 @@ public class MailService {
 		}
 	}
 
-	public boolean sendGroupedInvoiceNotification(String recipientEmail, BigDecimal totalAmount) {
-		String subject = "Thông báo tổng số tiền cần thanh toán";
-		String body = String
-				.format("Kính gửi quý khách,\n\n" + "Tổng số tiền cần thanh toán của quý khách là: %s VND.\n"
-						+ "Vui lòng thanh toán trước thời hạn để tránh phát sinh phí phạt.\n\n"
-						+ "Trân trọng,\nĐội ngũ hỗ trợ khách hàng.", totalAmount);
+	public boolean sendGroupedInvoiceNotification(String recipientEmail, List<Invoice> invoices) {
+	    try {
+	        StringBuilder invoiceDetails = new StringBuilder();
+	        BigDecimal totalAmount = BigDecimal.ZERO;
 
-		return sendEmail(recipientEmail, subject, body);
+	        for (Invoice invoice : invoices) {
+	            invoiceDetails.append(String.format("#%d: %s VND, tạo ngày %s, đến hạn ngày %s\n",
+	                    invoice.getId(),
+	                    invoice.getTotalAmount(),
+	                    invoice.getCreatedAt(),
+	                    invoice.getDueDate()));
+	            totalAmount = totalAmount.add(invoice.getTotalAmount().subtract(invoice.getPaidAmount()));
+	        }
+
+	        String emailBody = String.format(
+	                "Kính chào quý khách,\n\nTổng số tiền cần thanh toán hóa đơn của bạn là %s VND.\n\nChi tiết hóa đơn:\n%s\nXin cảm ơn!",
+	                totalAmount, invoiceDetails.toString());
+
+	        MimeMessage message = mailSender.createMimeMessage();
+	        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+	        helper.setTo(recipientEmail);
+	        helper.setSubject("Thông báo hóa đơn thanh toán");
+	        helper.setText(emailBody);
+
+	        mailSender.send(message);
+	        System.out.println("Đã gửi thông báo hóa đơn thành công tới: " + recipientEmail);
+	        return true;
+	    } catch (Exception e) {
+	        System.err.println("Lỗi khi gửi email thông báo hóa đơn: " + e.getMessage());
+	        return false;
+	    }
 	}
 
 }

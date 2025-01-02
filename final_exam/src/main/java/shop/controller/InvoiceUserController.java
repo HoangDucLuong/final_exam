@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,7 +17,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import jakarta.servlet.http.HttpServletRequest;
+import shop.Config.VNPayService;
 import shop.model.Contract;
 import shop.model.Invoice;
 import shop.model.MealRequest;
@@ -27,6 +29,7 @@ import shop.repository.ContractRepository;
 import shop.repository.InvoiceRepository;
 import shop.repository.MealRequestDetailRepository;
 import shop.repository.MealRequestRepository;
+import shop.repository.PaymentRepository;
 
 @Controller
 @RequestMapping("/user/invoices")
@@ -43,6 +46,11 @@ public class InvoiceUserController {
     
     @Autowired
     private MealRequestDetailRepository mealRequestDetailRepository;
+    @Autowired
+    private VNPayService vnPayService;
+    @Autowired
+    private PaymentRepository paymentRepository;
+
     /**
      * Xem danh sách hóa đơn của hợp đồng theo contractId
      */
@@ -140,36 +148,63 @@ public class InvoiceUserController {
     /**
      * Thanh toán tất cả các hóa đơn trong tháng (Cập nhật trạng thái thành đã thanh toán)
      */
-    @PostMapping("/pay")
-    public String payInvoices(@RequestParam("contractId") int contractId, @RequestParam("month") String month) {
+    @PostMapping("/{contractId}/pay")
+    public String payInvoices(@PathVariable("contractId") int contractId,
+                              @RequestParam("month") String month,
+                              HttpServletRequest request) {
+        // Kiểm tra giá trị contractId
+        if (contractId <= 0) {
+            throw new IllegalArgumentException("Invalid contractId: " + contractId);
+        }
+
+        // Kiểm tra giá trị month
+        if (month == null || !month.matches("\\d{4}-\\d{2}")) {
+            throw new IllegalArgumentException("Invalid month format. Expected yyyy-MM, but received: " + month);
+        }
+
+        System.out.println("Received contractId: " + contractId);
+        System.out.println("Received month: " + month);
+
         // Lấy hợp đồng theo contractId
         Contract contract = contractRepository.getContractById(contractId);
         if (contract == null) {
             return "redirect:/user/contracts"; // Quay lại trang hợp đồng nếu không tìm thấy hợp đồng
         }
 
-        LocalDateTime monthStart = LocalDate.parse(month + "-01").atStartOfDay();  // Tạo LocalDateTime cho ngày đầu tháng
-        LocalDateTime monthEnd = monthStart.plusMonths(1).minusNanos(1);  // Tạo LocalDateTime cho ngày cuối tháng
+        try {
+            LocalDateTime monthStart = LocalDate.parse(month + "-01").atStartOfDay();
+            LocalDateTime monthEnd = monthStart.plusMonths(1).minusNanos(1);
 
-        // Lấy danh sách hóa đơn trong tháng đó
-        List<Invoice> invoices = invoiceRepository.findByContractIdAndDueDateBetween(contractId, Timestamp.valueOf(monthStart), Timestamp.valueOf(monthEnd));
+            // Lấy danh sách hóa đơn trong tháng đó
+            List<Invoice> invoices = invoiceRepository.findByContractIdAndDueDateBetween(
+                contractId,
+                Timestamp.valueOf(monthStart),
+                Timestamp.valueOf(monthEnd)
+            );
 
-        BigDecimal totalAmountToPay = BigDecimal.ZERO;
+            BigDecimal totalAmountToPay = invoices.stream()
+                .filter(invoice -> invoice.getPaymentStatus() == 0) // Chỉ thanh toán các hóa đơn chưa thanh toán
+                .map(Invoice::getTotalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        for (Invoice invoice : invoices) {
-            invoice.setPaymentStatus(1); // Đánh dấu là đã thanh toán
-            invoice.setPaidAmount(invoice.getTotalAmount()); // Số tiền đã thanh toán bằng tổng số tiền
-            totalAmountToPay = totalAmountToPay.add(invoice.getTotalAmount());
-            invoiceRepository.save(invoice); // Cập nhật lại hóa đơn
+            if (totalAmountToPay.compareTo(BigDecimal.ZERO) <= 0) {
+                return "redirect:/user/invoices/" + contractId; // Không có hóa đơn cần thanh toán
+            }
+
+            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            String vnpayUrl = vnPayService.createOrder(request, totalAmountToPay.intValue(), contractId, baseUrl);
+
+            return "redirect:" + vnpayUrl;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/user/invoices/" + contractId; // Chuyển về danh sách hóa đơn nếu có lỗi
         }
-
-        // Thực hiện thanh toán (có thể lưu lại tổng số tiền đã thanh toán hoặc thông báo)
-        // Chuyển hướng về trang danh sách hóa đơn của hợp đồng
-        return "redirect:/user/invoices/" + contractId;
     }
-    
+
+
     @PostMapping("/paySingle")
-    public String paySingleInvoice(@RequestParam("contractId") int contractId, @RequestParam("invoiceId") int invoiceId) {
+    public String paySingleInvoice(@RequestParam("contractId") int contractId, 
+                                   @RequestParam("invoiceId") int invoiceId) {
         // Lấy hợp đồng theo contractId
         Contract contract = contractRepository.getContractById(contractId);
         if (contract == null) {
@@ -191,6 +226,7 @@ public class InvoiceUserController {
         // Chuyển hướng về trang danh sách hóa đơn của hợp đồng
         return "redirect:/user/invoices/" + contractId;
     }
+
     @GetMapping("/detail/{invoiceId}")
     public String viewInvoiceDetail(@PathVariable int invoiceId, Model model) {
         Invoice invoice = invoiceRepository.findById(invoiceId);

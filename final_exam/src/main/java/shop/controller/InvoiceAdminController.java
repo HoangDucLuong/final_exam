@@ -79,13 +79,32 @@ public class InvoiceAdminController {
                     .collect(Collectors.toList());
         }
 
-        model.addAttribute("invoices", invoices);
+        // Nhóm hóa đơn theo người dùng
+        Map<Integer, Map<String, Object>> groupedInvoices = invoices.stream()
+                .collect(Collectors.groupingBy(
+                        invoice -> {
+                            Contract contract = contractRepository.findById(invoice.getContractId());
+                            return (contract != null) ? contract.getUsrId() : null;
+                        },
+                        LinkedHashMap::new,
+                        Collectors.collectingAndThen(Collectors.toList(), list -> {
+                            BigDecimal totalUnpaid = list.stream()
+                                    .filter(i -> i.getPaymentStatus() == 0)
+                                    .map(i -> i.getTotalAmount().subtract(i.getPaidAmount()))
+                                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("invoices", list);
+                            data.put("unpaidAmount", totalUnpaid);
+                            return data;
+                        })
+                ));
+
+        model.addAttribute("groupedInvoices", groupedInvoices);
         model.addAttribute("unpaid", unpaid);
         model.addAttribute("year", year);
         model.addAttribute("month", month);
-        return "admin/invoice/invoice_list";
+        return "admin/invoice/invoices_grouped_by_user";
     }
-
 
     /**
      * Hiển thị danh sách hóa đơn theo contractId.
@@ -194,6 +213,63 @@ public class InvoiceAdminController {
 
         return "admin/invoice/invoice"; // Tên template view
     }
+    @GetMapping("/grouped-by-user")
+    public String getInvoicesGroupedByUser(
+            @RequestParam(required = false) Integer userId,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month,
+            Model model
+    ) {
+        // Lấy danh sách hóa đơn từ repository
+        List<Invoice> invoices = invoiceRepository.findAll();
+
+        // Lọc hóa đơn theo userId, năm, tháng nếu có
+        invoices = invoices.stream()
+                .filter(invoice -> {
+                    boolean match = true;
+                    if (userId != null) {
+                        Contract contract = contractRepository.findById(invoice.getContractId());
+                        match &= (contract != null && contract.getUsrId() == userId);
+                    }
+                    if (year != null) {
+                        match &= invoice.getDueDate().getYear() == year;
+                    }
+                    if (month != null) {
+                        match &= invoice.getDueDate().getMonthValue() == month;
+                    }
+                    return match;
+                })
+                .collect(Collectors.toList());
+
+        // Nhóm hóa đơn theo userId
+        Map<Integer, Map<String, Object>> groupedInvoices = invoices.stream()
+                .collect(Collectors.groupingBy(
+                        invoice -> {
+                            Contract contract = contractRepository.findById(invoice.getContractId());
+                            return (contract != null) ? contract.getUsrId() : null;
+                        },
+                        LinkedHashMap::new,
+                        Collectors.collectingAndThen(Collectors.toList(), list -> {
+                            BigDecimal totalUnpaid = list.stream()
+                                    .filter(i -> i.getPaymentStatus() == 0)
+                                    .map(i -> i.getTotalAmount().subtract(i.getPaidAmount()))
+                                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("invoices", list);
+                            data.put("unpaidAmount", totalUnpaid);
+                            return data;
+                        })
+                ));
+
+        // Gửi danh sách đã nhóm và các tham số lọc vào model
+        model.addAttribute("groupedInvoices", groupedInvoices);
+        model.addAttribute("userId", userId);
+        model.addAttribute("year", year);
+        model.addAttribute("month", month);
+
+        return "admin/invoice/invoices_grouped_by_user"; // Tên template view
+    }
+
     @PostMapping("/send")
     public String sendInvoiceNotification(
             @RequestParam("invoiceId") int invoiceId,
@@ -258,7 +334,7 @@ public class InvoiceAdminController {
 
         if (recipientEmail != null && !recipientEmail.isEmpty()) {
             // Gửi email tổng số tiền chưa thanh toán
-            boolean sent = mailService.sendGroupedInvoiceNotification(recipientEmail, totalUnpaid);
+        	boolean sent = mailService.sendGroupedInvoiceNotification(recipientEmail, invoices);
             if (sent) {
                 invoices.forEach(invoice -> {
                     invoice.setSent(true); // Đánh dấu hóa đơn đã gửi
@@ -273,6 +349,57 @@ public class InvoiceAdminController {
             redirectAttributes.addFlashAttribute("error", "Không tìm thấy email người nhận!");
         }
 
+        return referer != null ? "redirect:" + referer : "redirect:/admin/invoices";
+    }
+    @PostMapping("/sendAll")
+    public String sendNotificationsToAllUsers(
+            @RequestHeader(value = "Referer", required = false) String referer,
+            RedirectAttributes redirectAttributes) {
+
+        // Lấy danh sách tất cả hóa đơn chưa thanh toán
+        List<Invoice> unpaidInvoices = invoiceRepository.findByPaymentStatus(0);
+
+        // Nhóm hóa đơn theo userId dựa trên Contract
+        Map<Integer, List<Invoice>> invoicesGroupedByUser = unpaidInvoices.stream()
+                .collect(Collectors.groupingBy(invoice -> {
+                    Contract contract = contractRepository.findById(invoice.getContractId());
+                    return (contract != null) ? contract.getUsrId() : null;
+                }));
+
+        // Duyệt qua từng nhóm và gửi thông báo
+        for (Map.Entry<Integer, List<Invoice>> entry : invoicesGroupedByUser.entrySet()) {
+            Integer userId = entry.getKey();
+            List<Invoice> invoices = entry.getValue();
+
+            // Tính tổng nợ cho người dùng
+            BigDecimal totalUnpaid = invoices.stream()
+                    .map(i -> i.getTotalAmount().subtract(i.getPaidAmount()))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            // Lấy email người dùng
+            User user = userRepository.findById(userId);
+            if (user != null && user.getEmail() != null) {
+                String recipientEmail = user.getEmail();
+
+                // Gửi email thông báo tổng nợ
+                boolean sent = mailService.sendGroupedInvoiceNotification(recipientEmail, invoices);
+
+                if (sent) {
+                    // Đánh dấu tất cả hóa đơn đã gửi
+                    invoices.forEach(invoice -> {
+                        invoice.setSent(true);
+                        invoiceRepository.save(invoice);
+                    });
+                    System.out.println("Đã gửi thông báo cho User ID: " + userId + ", Tổng nợ: " + totalUnpaid);
+                } else {
+                    System.err.println("Không thể gửi email cho User ID: " + userId);
+                }
+            } else {
+                System.err.println("Không tìm thấy email cho User ID: " + userId);
+            }
+        }
+
+        redirectAttributes.addFlashAttribute("message", "Đã gửi thông báo cho tất cả người dùng có hóa đơn chưa thanh toán.");
         return referer != null ? "redirect:" + referer : "redirect:/admin/invoices";
     }
 
