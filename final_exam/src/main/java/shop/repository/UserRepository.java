@@ -21,7 +21,7 @@ public class UserRepository {
     private JdbcTemplate jdbcTemplate;
     // Phương thức tìm kiếm người dùng theo từ khóa và phân trang
     public List<User> findAllUsers(int page, String search) {
-        int pageSize = 10; // Số lượng người dùng mỗi trang
+        int pageSize = 5; // Số lượng người dùng mỗi trang
         int offset = (page - 1) * pageSize;
 
         // Sử dụng OFFSET và FETCH NEXT để phân trang trên SQL Server
@@ -149,5 +149,10 @@ public class UserRepository {
             return emails.isEmpty() ? null : emails.get(0);
         }
     }
+    public int countUsers(String search) {
+        String sql = "SELECT COUNT(*) FROM tbl_user WHERE name LIKE ? OR email LIKE ?";
+        return db.queryForObject(sql, new Object[]{"%" + search + "%", "%" + search + "%"}, Integer.class);
+    }
+
 
 }

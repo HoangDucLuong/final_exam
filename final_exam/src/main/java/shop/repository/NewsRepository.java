@@ -10,5 +10,7 @@ public interface NewsRepository {
     void updateNews(News news);
     void deleteNews(int id);
     List<News> findAllActive();
+    List<News> findAllNews(int page, String search);
+    int countNews(String search);
 
 }

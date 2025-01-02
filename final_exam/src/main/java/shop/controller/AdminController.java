@@ -156,12 +156,6 @@ public class AdminController {
         return "admin/login"; // Trả về trang đăng nhập admin
     }
 
-    // Quản lý người dùng
-    @GetMapping("/admin/user-management") 
-    public String usermanagement(){
-        return "admin/index";
-    }
-
 
     @PostMapping("/chklogins")
     public String chkLogins(@RequestParam("email") String email, @RequestParam("pwd") String password,

@@ -16,7 +16,7 @@
                     <div class="details-content">
                         <img th:src="@{'/uploads/' + ${news.thumbnail}}" alt="Thumbnail" width="200">
                         <p><strong>Content:</strong></p>
-                        <p th:text="${news.content}"></p>
+                        <p th:utext="${news.content}"></p>
                         <p><strong>Created At:</strong> <span th:text="${news.createdAt}"></span></p>
                         <p><strong>Updated At:</strong> <span th:text="${news.updatedAt}"></span></p>
                         <p><strong>Status:</strong> <span th:text="${news.status == 1 ? 'Active' : 'Inactive'}"></span></p>

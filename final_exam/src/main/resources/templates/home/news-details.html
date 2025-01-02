@@ -139,7 +139,7 @@
 							class="card-img-top img-fluid" alt="Thumbnail" />
 						<div class="card-body">
 							<h2 class="card-title" th:text="${news.title}"></h2>
-							<p class="card-text" th:text="${news.content}"></p>
+							<p class="card-text" th:utext="${news.content}"></p>
 						</div>
 						<div class="card-footer text-muted">
 							<span th:text="${#dates.format(news.createdAt, 'yyyy-MM-dd')}"></span>

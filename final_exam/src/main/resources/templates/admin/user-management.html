@@ -1,79 +1,176 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{admin_layout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	layout:decorate="~{admin_layout}"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head layout:fragment="head">
-    <title>User Management</title>
+<title>User Management</title>
+<style>
+.badge {
+	padding: 0.5em 1em;
+	font-size: 0.875rem;
+	font-weight: 600;
+	border-radius: 0.5rem;
+	text-transform: uppercase;
+}
+
+.badge.bg-success {
+	background-color: #28a745;
+	color: #fff;
+}
+
+.badge.bg-danger {
+	background-color: #dc3545;
+	color: #fff;
+}
+/* Kiểu dáng dấu ba chấm */
+.more-btn {
+    background-color: transparent;
+    border: none;
+    color: #6c757d; /* Màu xám mặc định */
+    font-size: 1.25rem;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.more-btn:hover {
+    background-color: #007bff; /* Nền xanh khi hover */
+    color: #fff; /* Chuyển thành màu trắng */
+}
+
+.more-btn:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Kiểu dáng menu con */
+.dropdown-menu {
+    background-color: #f8f9fa; /* Nền sáng */
+    border: 1px solid #dee2e6; /* Viền mỏng */
+    border-radius: 0.25rem;
+}
+
+.dropdown-menu .dropdown-item {
+    color: #343a40; /* Màu chữ mặc định */
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-menu .dropdown-item i {
+    margin-right: 8px; /* Khoảng cách giữa icon và text */
+    font-size: 1rem;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: #e9ecef; /* Nền sáng khi hover */
+    color: #007bff;
+
+}
+</style>
 </head>
 <body>
 
-<div layout:fragment="content">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card-style mb-30">
-                    <div class="title d-flex flex-wrap align-items-center justify-content-between">
-                        <div class="left">
-                            <h6 class="text-medium mb-30">Quản lý người dùng</h6>
-                        </div>
-                        <div class="right">
-                            <a href="/admin/user/add" class="btn btn-primary">Thêm người dùng</a>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table user-management-table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Tên</th>
-                                    <th>Email</th>
-                                    <th>Số điện thoại</th>
-                                    <th>Địa chỉ</th>
-                                    <th>Loại người dùng</th>
-                                    <th>Ngày tạo</th>
-                                    <th>Trạng thái</th>
-                                    <th>Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="user : ${users}">
-                                    <td th:text="${user.id}"></td>
-                                    <td th:text="${user.name}"></td>
-                                    <td th:text="${user.email}"></td>
-                                    <td th:text="${user.phone}"></td>
-                                    <td th:text="${user.address}"></td>
-                                    <td th:text="${user.usrType == 1 ? 'Admin' : 'User'}"></td>
-                                    <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd')}"></td>
-                                    <td>
-                                        <span th:classappend="${user.status == 1 ? 'success-btn' : 'danger-btn'}" 
-                                              th:text="${user.status == 1 ? 'Hoạt động' : 'Không hoạt động'}">
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="action justify-content-end">
-                                            <a th:href="@{/admin/user/edit/{id}(id=${user.id})}" class="edit">
-                                                <i class="lni lni-pencil"></i>
-                                            </a>
-                                            <button class="more-btn ml-10 dropdown-toggle" data-bs-toggle="dropdown">
-                                                <i class="lni lni-more-alt"></i>
-                                            </button>
-                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                <li class="dropdown-item">
-                                                    <a th:href="@{/admin/user/delete/{id}(id=${user.id})}">Xóa</a>
-                                                </li>
-                                                <li class="dropdown-item">
-                                                    <a th:href="@{/admin/contracts/create(usrId=${user.id})}">Tạo hợp đồng</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+	<div layout:fragment="content">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card-style mb-30">
+						<div
+							class="title d-flex flex-wrap align-items-center justify-content-between">
+							<div class="left">
+								<h6 class="text-medium mb-30">User Management</h6>
+							</div>
+							<div class="right">
+								<a href="/admin/user/add" class="btn btn-primary">Add User</a>
+							</div>
+						</div>
+						<div class="table-responsive">
+							<table class="table user-management-table">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>Name</th>
+										<th>Email</th>
+										<th>Phone Number</th>
+										<th>Address</th>
+										<th>User Type</th>
+										<th>Created Date</th>
+										<th>Status</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="user : ${users}">
+										<td th:text="${user.id}"></td>
+										<td th:text="${user.name}"></td>
+										<td th:text="${user.email}"></td>
+										<td th:text="${user.phone}"></td>
+										<td th:text="${user.address}"></td>
+										<td th:text="${user.usrType == 1 ? 'Admin' : 'User'}"></td>
+										<td
+											th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd')}"></td>
+										<td><span
+											th:classappend="${user.status == 1 ? 'badge bg-success' : 'badge bg-danger'}"
+											th:text="${user.status == 1 ? 'Active' : 'Inactive'}">
+										</span></td>
+										<td>
+											<div class="action justify-content-end">
+												<button class="more-btn dropdown-toggle"
+													data-bs-toggle="dropdown" aria-expanded="false">
+													<i class="lni lni-more-alt"></i>
+												</button>
+												<ul class="dropdown-menu dropdown-menu-end">
+													<li class="dropdown-item"><a
+														th:href="@{/admin/user/edit/{id}(id=${user.id})}"> <i
+															class="lni lni-pencil"></i> Edit
+													</a></li>
+													<li class="dropdown-item"><a
+														th:href="@{/admin/user/delete/{id}(id=${user.id})}"> <i
+															class="lni lni-trash"></i> Delete
+													</a></li>
+													<li class="dropdown-item"><a
+														th:href="@{/admin/contracts/create(usrId=${user.id})}">
+															<i class="lni lni-file"></i> Create Contract
+													</a></li>
+												</ul>
+											</div>
+										</td>
 
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="pagination-container">
+							<nav aria-label="Page navigation">
+								<ul class="pagination justify-content-center">
+									<li class="page-item"
+										th:classappend="${currentPage == 1} ? 'disabled'"><a
+										class="page-link"
+										th:href="@{/admin/user-management(page=${currentPage - 1}, search=${search})}"
+										aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+									</a></li>
+									<li class="page-item"
+										th:each="page : ${#numbers.sequence(1, totalPages)}"
+										th:classappend="${page == currentPage} ? 'active'"><a
+										class="page-link"
+										th:href="@{/admin/user-management(page=${page}, search=${search})}"
+										th:text="${page}"></a></li>
+									<li class="page-item"
+										th:classappend="${currentPage == totalPages} ? 'disabled'">
+										<a class="page-link"
+										th:href="@{/admin/user-management(page=${currentPage + 1}, search=${search})}"
+										aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+									</a>
+									</li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
