@@ -126,5 +126,16 @@ public class InvoiceRepositoryImpl implements InvoiceRepository {
         String sql = "SELECT * FROM tbl_invoice WHERE payment_status = ?";
         return jdbcTemplate.query(sql, invoiceRowMapper, paymentStatus);
     }
+    @Override
+    public Invoice findFirstByContractIdAndTotalAmount(int contractId, double totalAmount) {
+        String sql = "SELECT * FROM tbl_invoice WHERE contract_id = ? AND total_amount = ? LIMIT 1";
+        List<Invoice> invoices = jdbcTemplate.query(sql, invoiceRowMapper, contractId, totalAmount);
+        return invoices.isEmpty() ? null : invoices.get(0);
+    }
+    @Override
+    public List<Invoice> findByContractIdAndPaymentStatus(int contractId, int paymentStatus) {
+        String sql = "SELECT * FROM tbl_invoice WHERE contract_id = ? AND payment_status = ?";
+        return jdbcTemplate.query(sql, invoiceRowMapper, contractId, paymentStatus);
+    }
 
 }

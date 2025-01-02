@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hóa đơn theo người dùng</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Danh sách hóa đơn</h1>
+
+    <!-- Thông báo -->
+    <div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${message}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Lọc hóa đơn -->
+    <form th:action="@{/admin/invoices}" method="get" class="mb-4">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3">
+                <label for="year" class="form-label">Năm</label>
+                <input type="number" name="year" id="year" class="form-control" placeholder="VD: 2023" th:value="${year}"/>
+            </div>
+            <div class="col-md-3">
+                <label for="month" class="form-label">Tháng</label>
+                <select name="month" id="month" class="form-select">
+                    <option value="">Tất cả</option>
+                    <option th:each="i : ${#numbers.sequence(1,12)}" th:value="${i}" th:text="${i}" th:selected="${i == month}"></option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="unpaid" class="form-label">Trạng thái</label>
+                <div class="form-check">
+                    <input type="checkbox" name="unpaid" value="true" id="unpaid" class="form-check-input" th:checked="${unpaid}"/>
+                    <label for="unpaid" class="form-check-label">Chưa thanh toán</label>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Lọc</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Nút Gửi thông báo cho tất cả -->
+    <div class="mb-4 text-end">
+        <form method="POST" action="/admin/invoices/sendAll">
+            <button type="submit" class="btn btn-danger">Gửi Thông Báo Cho Tất Cả</button>
+        </form>
+    </div>
+
+    <!-- Danh sách hóa đơn -->
+    <div th:each="entry : ${groupedInvoices}" class="mb-4 border p-3 rounded">
+        <!-- Thông tin người dùng và Tổng nợ -->
+        <div class="mb-3">
+            <h5>Người dùng ID: <span th:text="${entry.key}"></span></h5>
+            <p class="fw-bold mb-0">Tổng nợ: <span class="text-danger" th:text="${entry.value.unpaidAmount}"></span></p>
+        </div>
+
+        <!-- Bảng chi tiết hóa đơn -->
+        <table class="table table-striped table-bordered align-middle">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>Mã Hóa Đơn</th>
+                    <th>Mã Hợp Đồng</th>
+                    <th>Ngày Tạo</th>
+                    <th>Ngày Đến Hạn</th>
+                    <th>Tổng Số Tiền</th>
+                    <th>Số Tiền Đã Thanh Toán</th>
+                    <th>Trạng Thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="invoice : ${entry.value.invoices}">
+                    <td class="text-center" th:text="${invoice.id}"></td>
+                    <td class="text-center" th:text="${invoice.contractId}"></td>
+                    <td class="text-center" th:text="${#temporals.format(invoice.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <td class="text-center" th:text="${#temporals.format(invoice.dueDate, 'yyyy-MM-dd')}"></td>
+                    <td class="text-end" th:text="${#numbers.formatDecimal(invoice.totalAmount, 1, 'DEFAULT', 2, 'COMMA')}"></td>
+                    <td class="text-end" th:text="${#numbers.formatDecimal(invoice.paidAmount, 1, 'DEFAULT', 2, 'COMMA')}"></td>
+                    <td class="text-center">
+                        <span th:if="${invoice.paymentStatus == 1}" class="badge bg-success">Đã thanh toán</span>
+                        <span th:if="${invoice.paymentStatus == 0}" class="badge bg-danger">Chưa thanh toán</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

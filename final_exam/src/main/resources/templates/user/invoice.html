@@ -129,11 +129,12 @@
                 </tbody>
             </table>
 
-            <form th:action="@{/user/invoices/pay}" method="post">
-                <input type="hidden" th:value="${contractId}" name="contractId" />
-                <input type="hidden" th:value="${entry.key}" name="month" />
-                <button type="submit" class="btn btn-success">Thanh Toán Tất Cả Hóa Đơn</button>
-            </form>
+           <form th:action="@{/user/invoices/{contractId}/pay(contractId=${contractId})}" method="post">
+    <input type="hidden" th:value="${contractId}" name="contractId" />
+    <input type="hidden" th:value="${entry.key}" name="month" />
+    <button type="submit" class="btn btn-success">Thanh Toán Tất Cả Hóa Đơn</button>
+</form>
+
         </div>
     </div>
 </div>
