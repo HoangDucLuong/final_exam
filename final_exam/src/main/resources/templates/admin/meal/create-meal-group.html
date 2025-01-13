@@ -1,176 +1,123 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="shortcut icon" href="/assets/images/favicon.svg"
-	type="image/x-icon" />
-<title th:block="title">Dashboard</title>
-<link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
-<link rel="stylesheet" href="/assets/css/lineicons.css" type="text/css" />
-<link rel="stylesheet" href="/assets/css/materialdesignicons.min.css"
-	type="text/css" />
-<link rel="stylesheet" href="/assets/css/fullcalendar.css" />
-<link rel="stylesheet" href="/assets/css/main.css" />
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	layout:decorate="~{admin_layout}"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head layout:fragment="head">
+<title>Create Meal Groups</title>
+<style>
+.badge {
+	padding: 0.5em 1em;
+	font-size: 0.875rem;
+	font-weight: 600;
+	border-radius: 0.5rem;
+	text-transform: uppercase;
+}
+
+.badge.bg-success {
+	background-color: #28a745;
+	color: #fff;
+}
+
+.badge.bg-danger {
+	background-color: #dc3545;
+	color: #fff;
+}
+
+.more-btn {
+	background-color: transparent;
+	border: none;
+	color: #6c757d; 
+	font-size: 1.25rem;
+	padding: 5px;
+	border-radius: 50%;
+	transition: all 0.3s ease;
+}
+
+.more-btn:hover {
+	background-color: #007bff; 
+	color: #fff; 
+}
+
+.more-btn:focus {
+	outline: none;
+	box-shadow: none;
+}
+
+
+.dropdown-menu {
+	background-color: #f8f9fa; 
+	border: 1px solid #dee2e6;
+	border-radius: 0.25rem;
+}
+
+.dropdown-menu .dropdown-item {
+	color: #343a40;
+	font-size: 0.875rem;
+	font-weight: 500;
+	display: flex;
+	align-items: center;
+}
+
+.dropdown-menu .dropdown-item i {
+	margin-right: 8px;
+	font-size: 1rem;
+}
+
+.dropdown-menu .dropdown-item:hover {
+	background-color: #e9ecef;
+	color: #007bff;
+}
+</style>
+<script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
 </head>
 <body>
-	<div id="preloader">
-		<div class="spinner"></div>
-	</div>
-	<aside class="sidebar-nav-wrapper">
-		<div class="navbar-logo">
-			<a href="/admin/index"> <img src="/assets/images/logo/logo.svg"
-				alt="logo" />
-			</a>
-		</div>
-		<nav class="sidebar-nav">
-			<ul>
-				<li class="nav-item"><a href="/admin/index"> <span class="lni lni-dashboard">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>
-					</span> <span class="text">Dashboard</span>
-				</a></li>
-				<li class="nav-item"><a href="/admin/contracts/list"> <span class="lni lni-bookmark">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>
-					</span> <span class="text">Contracts</span>
-				</a></li>
 
-				<li class="nav-item"><a href=""> <span
-						class="lni lni-stats-up"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>
-					</span> <span class="text">Invoice</span>
-				</a></li>
-				<li class="nav-item nav-item-has-children"><a href="#0"
-					class="collapsed" data-bs-toggle="collapse"
-					data-bs-target="#ddmenu_3" aria-controls="ddmenu_3"
-					aria-expanded="false" aria-label="Toggle navigation"> <span
-						class="lni lni-menu"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>
-					</span> <span class="text">Menu</span>
-				</a>
-					<ul id="ddmenu_3" class="collapse">
-						<li><a href="/admin/menu/list">Menu List</a></li>
-						<li><a href="/admin/menu/add">Add Menu</a></li>
-					</ul></li>
-				<li class="nav-item nav-item-has-children"><a href="#0"
-					class="collapsed" data-bs-toggle="collapse"
-					data-bs-target="#ddmenu_4" aria-controls="ddmenu_4"
-					aria-expanded="false" aria-label="Toggle navigation"> <span
-						class="lni lni-arrow-right"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>
-					</span> <span class="text">Orders</span>
-				</a>
-					<ul id="ddmenu_4" class="collapse">
-						<li><a href="orders.html">Orders List</a></li>
-					</ul></li>
-				<li class="nav-item nav-item-has-children"><a href="#0"
-					class="collapsed" data-bs-toggle="collapse"
-					data-bs-target="#ddmenu_5" aria-controls="ddmenu_5"
-					aria-expanded="false" aria-label="Toggle navigation"> <span
-						class="lni lni-arrow-right"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>
-					</span> <span class="text">Meals</span>
-				</a>
-					<ul id="ddmenu_5" class="collapse">
-						<li><a href="/admin/meal/list">Meal List</a></li>
-						<li><a href="/admin/meal-groups">Meal Group</a></li>
-						<li><a href="/admin/meal-requests">Meal Request</a></li>
-						<li><a href="#">Meal Order</a></li>
-					</ul></li>
-					<li class="nav-item"><a href="/admin/news"> <span
-						class="lni lni-arrow-right"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>
-					</span> <span class="text">News</span>
-				</a></li>	
-				<li class="nav-item"><a href="user-management"> <span
-						class="lni lni-user"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>         		
-					</span> <span class="text">Customer</span>
-				</a></li>
-				<li class="nav-item"><a href="logout.html"> <span
-						class="lni lni-exit"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>
-					</span> <span class="text">Logout</span>
-				</a></li>
-			</ul>
-		</nav>
-	</aside>
-
-	<div class="overlay"></div>
-
-	<main class="main-wrapper">
-		<header class="header">
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-lg-5 col-md-5 col-6">
-						<div class="header-left d-flex align-items-center">
-							<div class="menu-toggle-btn mr-15">
-								<button id="menu-toggle" class="main-btn primary-btn btn-hover">
-									<i class="lni lni-chevron-left me-2"></i> Menu
-								</button>
-							</div>
-							<div class="header-search d-none d-md-flex">
-								<form method="get" th:action="@{/admin/user-management}">
-									<input type="text" name="search" placeholder="Search..." />
-									<button type="submit" class="btn btn-primary">
-										<i class="lni lni-search-alt"></i>
-									</button>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
+	<div layout:fragment="content">
+		<div class="container-fluid">
+			<div class="row">
 				<div class="col-lg-12">
 					<div class="card-style mb-30">
-						<div class="table-responsive">
-							<h2>Thêm Nhóm Món Ăn Mới</h2>
-
-							<form th:action="@{/admin/meal-groups/save}"
-								th:object="${mealGroup}" method="post" class="meal-group-form">
-								<label for="groupName">Tên Nhóm:</label> <input type="text"
-									id="groupName" th:field="*{groupName}"
-									placeholder="Nhập tên nhóm" required /> <label
-									for="description">Mô Tả:</label> <input type="text"
-									id="description" th:field="*{description}"
-									placeholder="Nhập mô tả nhóm" required />
-
-								<button type="submit">Lưu</button>
-							</form>
-
-							<a href="/admin/meal-groups">Quay lại danh sách</a>
+						<div
+							class="title d-flex flex-wrap align-items-center justify-content-between">
+							<div class="left">
+								<h6 class="text-medium mb-30">Add New Meal Group</h6>
+							</div>
+							<div class="right">
+								<a href="/admin/meal-groups" class="btn btn-secondary">Back
+									to Meal G List</a>
+							</div>
 						</div>
+						<form th:action="@{/admin/meal-groups/save}"
+							th:object="${mealGroup}" method="post" class="group-form">
+							<label for="groupName">Group Name:</label> <input type="text"
+								id="groupName" th:field="*{groupName}"
+								placeholder="Enter group name" required /> <label
+								for="description">Description:</label> <input type="text"
+								id="description" th:field="*{description}"
+								placeholder="Enter group description" required />
+
+							<button type="submit">Save</button>
+						</form>
+						<script>
+							CKEDITOR.replace('description', {
+								height : 300,
+								extraPlugins: '',
+								on: {
+							        instanceReady: function () {
+							            this.config.disableAutoInline = true;
+							            this.config.disableNativeSpellChecker = false;
+							            this.config.dialog_backgroundCoverColor = 'rgba(255,255,255,0.95)';
+							            this.config.removePlugins = 'notification';
+							        }
+							    }
+							});
+						</script>
+						<a href="/admin/meal-groups">Back to List</a>
+
 					</div>
 				</div>
 			</div>
-		</header>
-	</main>
-
-	<script src="/assets/js/bootstrap.bundle.min.js"></script>
-	<script src="/assets/js/Chart.min.js"></script>
-	<script src="/assets/js/dynamic-pie-chart.js"></script>
-	<script src="/assets/js/moment.min.js"></script>
-	<script src="/assets/js/fullcalendar.js"></script>
-	<script src="/assets/js/jvectormap.min.js"></script>
-	<script src="/assets/js/world-merc.js"></script>
-	<script src="/assets/js/polyfill.js"></script>
-	<script src="/assets/js/main.js"></script>
+		</div>
+	</div>
 </body>
 </html>

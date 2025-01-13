@@ -27,8 +27,8 @@ public class UserRepository {
         // Sử dụng OFFSET và FETCH NEXT để phân trang trên SQL Server
         String sql = "SELECT * FROM tbl_user WHERE name LIKE ? OR email LIKE ? ORDER BY id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
-        return db.query(sql, new Object[]{"%" + search + "%", "%" + search + "%", offset, pageSize},
-                new UserRowMapper());
+        return db.query(sql, new UserRowMapper(), new Object[]{"%" + search + "%", "%" + search + "%", offset, pageSize}
+                );
     }
 
     // Phương thức thêm người dùng
@@ -45,7 +45,7 @@ public class UserRepository {
     public User findById(int id) {
         String sql = "SELECT * FROM tbl_user WHERE id = ?";
         try {
-            return db.queryForObject(sql, new Object[]{id}, new UserRowMapper());
+            return db.queryForObject(sql, new UserRowMapper(), new Object[]{id});
         } catch (EmptyResultDataAccessException e) {
             return null; // Trả về null nếu không tìm thấy người dùng
         }
@@ -55,7 +55,7 @@ public class UserRepository {
     // Phương thức lấy tên người dùng theo email
     public String findNameByUid(String email) {
         String sql = "SELECT name FROM tbl_user WHERE email = ?";
-        return db.queryForObject(sql, new Object[]{email}, String.class);
+        return db.queryForObject(sql, String.class, new Object[]{email});
     }
 
     // Phương thức lấy thông tin người dùng theo email
@@ -131,10 +131,8 @@ public class UserRepository {
         } catch (EmptyResultDataAccessException e) {
             return null;
         } catch (IncorrectResultSizeDataAccessException e) {
-            // Ghi log lỗi hoặc xử lý nhiều kết quả
             System.err.println("Tìm thấy nhiều email cho mã hợp đồng: " + contractId);
-            
-            // Hoặc lấy email đầu tiên
+          
             List<String> emails = db.queryForList(
                 "SELECT TOP 1 u.email " +
                 "FROM tbl_invoice i " +
@@ -142,8 +140,8 @@ public class UserRepository {
                 "JOIN tbl_user u ON c.usr_id = u.id " +
                 "WHERE i.contract_id = ? " +
                 "ORDER BY i.id", 
-                new Object[]{contractId}, 
-                String.class
+                String.class,
+                new Object[]{contractId}
             );
             
             return emails.isEmpty() ? null : emails.get(0);

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	layout:decorate="~{admin_layout}"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head layout:fragment="head">
+<title>News Details</title>
+<style>
+.table-warning {
+	background-color: #fff3cd;
+}
+</style>
+<style>
+.badge {
+	padding: 0.5em 1em;
+	font-size: 0.875rem;
+	font-weight: 600;
+	border-radius: 0.5rem;
+	text-transform: uppercase;
+}
+
+.badge.bg-success {
+	background-color: #28a745;
+	color: #fff;
+}
+
+.badge.bg-warning {
+	background-color: #ffc107;
+	color: #212529;
+}
+
+.badge.bg-danger {
+	background-color: #dc3545;
+	color: #fff;
+}
+
+.badge.bg-info {
+	background-color: #17a2b8;
+	color: #fff;
+}
+
+.badge.bg-secondary {
+	background-color: #6c757d;
+	color: #fff;
+}
+
+.more-btn {
+	background-color: transparent;
+	border: none;
+	color: #6c757d;
+	font-size: 1.25rem;
+	padding: 5px;
+	border-radius: 50%;
+	transition: all 0.3s ease;
+}
+
+.more-btn:hover {
+	background-color: #007bff;
+	color: #fff;
+}
+</style>
+</head>
+<body>
+
+	<div layout:fragment="content">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card-style mb-30">
+						<div class="title"></div>
+						<div class="left">
+							<h6 class="text-medium mb-30">Contract Management</h6>
+						</div>
+					</div>
+					<div class="table-responsive">
+						<table class="table contract-table">
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>User Name</th>
+									<th>Start Date</th>
+									<th>End Date</th>
+									<th>Total Amount</th>
+									<th>Deposit</th>
+									<th>Payment Status</th>
+									<th>Contract Status</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+                                    <tr th:each="contractWithUser : ${contracts}"
+                                        th:classappend="${contractWithUser.contract.daysRemaining <= 10} ? 'table-warning' : ''">
+                                        <td th:text="${contractWithUser.contract.id}"></td>
+                                        <td th:text="${contractWithUser.userName}"></td>
+                                        <td th:text="${contractWithUser.contract.startDate}"></td>
+                                        <td th:text="${contractWithUser.contract.endDate}"></td>
+                                        <td th:text="${contractWithUser.contract.totalAmount}"></td>
+                                        <td th:text="${contractWithUser.contract.depositAmount}"></td>
+                                        <td>
+                                            <span th:classappend="${contractWithUser.contract.paymentStatus == 1 ? 'badge bg-success' : 'badge bg-danger'}"
+                                                  th:text="${contractWithUser.contract.paymentStatus == 1 ? 'Paid' : 'Unpaid'}"></span>
+                                        </td>
+                                        <td>
+                                            <span th:if="${contractWithUser.contract.status == 0}" class="badge bg-secondary">Pending</span>
+                                            <span th:if="${contractWithUser.contract.status == 1}" class="badge bg-success">Confirmed</span>
+                                            <span th:if="${contractWithUser.contract.status == 2}" class="badge bg-warning">In Progress</span>
+                                            <span th:if="${contractWithUser.contract.status == 3}" class="badge bg-info">Completed</span>
+                                            <span th:if="${contractWithUser.contract.status == 4}" class="badge bg-danger">Canceled</span>
+                                        </td>
+                                        <td>
+                                            <div class="action justify-content-center">
+                                                <button class="more-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="lni lni-more-alt"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li class="dropdown-item">
+                                                        <a th:href="@{/admin/contracts/edit/{id}(id=${contractWithUser.contract.id})}">
+                                                            <i class="lni lni-pencil"></i> Edit
+                                                        </a>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <a th:href="@{/admin/contracts/delete/{id}(id=${contractWithUser.contract.id})}">
+                                                            <i class="lni lni-trash-can"></i> Delete
+                                                        </a>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <a th:href="@{/admin/invoices/contract/{contractId}(contractId=${contractWithUser.contract.id})}">
+                                                            <i class="lni lni-stats-up"></i> View Invoice
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+    function sendMail(contractId) {
+        fetch(`/admin/contracts/sendMail/${contractId}`, {
+            method: 'POST'
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("Email đã được gửi thành công!");
+            } else {
+                alert("Gửi email thất bại.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("Có lỗi xảy ra.");
+        });
+    }
+    </script>
+</body>
+</html>

@@ -3,9 +3,9 @@
 	layout:decorate="~{admin_layout}"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head layout:fragment="head">
-	<title>Edit News</title>
-	<!-- CKEditor CDN -->
-	<script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+<title>Edit News</title>
+<script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+
 </head>
 <body>
 
@@ -22,8 +22,7 @@
 							enctype="multipart/form-data">
 							<input type="hidden" name="id" th:value="${news.id}">
 							<div class="form-group">
-								<label for="title">Title:</label> 
-								<input type="text" id="title"
+								<label for="title">Title:</label> <input type="text" id="title"
 									name="title" th:value="${news.title}" class="form-control"
 									required>
 							</div>
@@ -35,8 +34,7 @@
 							</div>
 
 							<div class="form-group">
-								<label for="thumbnailFile">Thumbnail:</label> 
-								<input type="file"
+								<label for="thumbnailFile">Thumbnail:</label> <input type="file"
 									id="thumbnailFile" name="thumbnailFile" class="form-control"
 									accept="image/*">
 								<div class="mt-2">
@@ -47,8 +45,7 @@
 							</div>
 
 							<div class="form-group">
-								<label for="status">Status:</label> 
-								<select id="status"
+								<label for="status">Status:</label> <select id="status"
 									name="status" class="form-control">
 									<option value="1" th:selected="${news.status == 1}">Active</option>
 									<option value="0" th:selected="${news.status == 0}">Inactive</option>
@@ -56,23 +53,23 @@
 							</div>
 
 							<div class="form-group mt-4">
-								<button type="submit" class="btn btn-primary">Update News</button>
+								<button type="submit" class="btn btn-primary">Update
+									News</button>
 								<a href="/admin/news" class="btn btn-secondary">Cancel</a>
 							</div>
 						</form>
+						<script>
+							CKEDITOR.replace('content', {
+								height : 300,
+								extraPlugins: ''  // Ensure no extra plugins are enabled
+							});
+						</script>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<!-- Initialize CKEditor -->
-	<script>
-		ClassicEditor
-			.create(document.querySelector('#content'))
-			.catch(error => {
-				console.error(error);
-			});
-	</script>
 </body>
 </html>
+	

@@ -63,7 +63,9 @@ public class MenuController {
 	@GetMapping("/add")
 	public String showAddMenuForm(Model model) {
 		model.addAttribute("menu", new Menu());
-		List<MealGroup> mealGroups = mealGroupRepository.getAllMealGroups();
+		int page = 1; // Trang mặc định
+		String search = ""; // Chuỗi tìm kiếm trống
+		List<MealGroup> mealGroups = mealGroupRepository.getAllMealGroups(page, search);
 		model.addAttribute("mealGroups", mealGroups);
 
 		return "admin/menu/add-menu";
@@ -104,8 +106,9 @@ public class MenuController {
 	public String showEditMenuForm(@PathVariable int id, Model model) {
 		Menu menu = menuRepository.getMenuById(id);
 		model.addAttribute("menu", menu);
-
-		List<MealGroup> mealGroups = mealGroupRepository.getAllMealGroups();
+		int page = 1; // Trang mặc định
+		String search = ""; // Chuỗi tìm kiếm trống
+		List<MealGroup> mealGroups = mealGroupRepository.getAllMealGroups(page, search);
 		model.addAttribute("mealGroups", mealGroups);
 
 		return "admin/menu/edit-menu";

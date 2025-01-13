@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+    layout:decorate="~{admin_layout}"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head layout:fragment="head">
+    <title>Edit Meal</title>
+    <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card-style mb-30">
+                        <div class="title d-flex flex-wrap align-items-center justify-content-between">
+                            <div class="left">
+                                <h6 class="text-medium mb-30">Edit Meal Group</h6>
+                            </div>
+                            <div class="right">
+                                <a href="/admin/meal-groups" class="btn btn-secondary">Back to Meal Group</a>
+                            </div>
+                        </div>
+                        <form action="/admin/meal-groups/update" method="post">
+							<!-- ID hidden field -->
+							<input type="hidden" name="id" th:value="${mealGroup.id}" />
+				
+							<!-- Group Name -->
+							<div class="form-group">
+								<label for="groupName">Group Name:</label>
+								<input type="text" id="groupName" name="groupName" th:value="${mealGroup.groupName}" class="form-control" required />
+							</div>
+				
+							<!-- Description -->
+							<div class="form-group">
+								<label for="description">Description:</label>
+								<textarea id="description" name="description" class="form-control" rows="3" required th:text="${mealGroup.description}"></textarea>
+							</div>
+				
+							<!-- Submit Button -->
+							<div class="form-group">
+								<button type="submit" class="btn btn-primary">Save Changes</button>
+								<a href="/admin/meal-groups" class="btn btn-secondary">Cancel</a>
+							</div>
+						</form>
+						<script>
+							CKEDITOR.replace('description', {
+								height : 300,
+								extraPlugins : ''
+							});
+						</script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

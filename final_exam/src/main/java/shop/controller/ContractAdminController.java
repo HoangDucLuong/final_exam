@@ -32,44 +32,6 @@ public class ContractAdminController {
 	@Autowired
 	private MailService mailService;
 
-	@GetMapping("/list")
-	public String getAllUsers(Model model, @RequestParam(value = "page", defaultValue = "1") int page,
-			@RequestParam(value = "search", required = false, defaultValue = "") String search) {
-		// Lấy toàn bộ danh sách người dùng từ repository (không phân trang)
-		List<User> allUsers = userRepository.findAll();
-
-		// Lọc người dùng dựa trên từ khóa tìm kiếm
-		List<User> filteredUsers = allUsers.stream()
-				.filter(user -> user.getName().toLowerCase().contains(search.toLowerCase())
-						|| user.getEmail().toLowerCase().contains(search.toLowerCase()))
-				.toList();
-
-		// Tính tổng số trang dựa trên số lượng người dùng đã lọc
-		int pageSize = 10;
-		int totalUsers = filteredUsers.size();
-		int totalPages = (int) Math.ceil((double) totalUsers / pageSize);
-
-		// Đảm bảo giá trị page không vượt quá số trang thực tế
-		if (page < 1)
-			page = 1;
-		if (page > totalPages)
-			page = totalPages;
-
-		// Lấy danh sách người dùng cho trang hiện tại
-		int fromIndex = (page - 1) * pageSize;
-		int toIndex = Math.min(fromIndex + pageSize, totalUsers);
-		List<User> pagedUsers = filteredUsers.subList(fromIndex, toIndex);
-
-		// Thêm các thông tin cần thiết vào model
-		model.addAttribute("users", pagedUsers);
-		model.addAttribute("currentPage", page);
-		model.addAttribute("totalPages", totalPages);
-		model.addAttribute("search", search); // Truyền từ khóa tìm kiếm vào model
-
-		return "admin/contracts"; // Trả về giao diện HTML
-	}
-
-	// Lấy danh sách tất cả hợp đồng cho admin
 	@GetMapping("")
 	public String getAllContractsForAdmin(Model model) {
 		List<Contract> contracts = contractRepository.getAllContracts();
@@ -89,7 +51,7 @@ public class ContractAdminController {
 		}
 
 		model.addAttribute("contracts", contractsWithUser);
-		return "admin/contracts"; // Trả về trang danh sách hợp đồng cho admin
+		return "admin/contract/contracts"; // Trả về trang danh sách hợp đồng cho admin
 	}
 
 	// Chi tiết hợp đồng cho admin
@@ -100,7 +62,7 @@ public class ContractAdminController {
 			return "redirect:/admin/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
 		}
 		model.addAttribute("contract", contract);
-		return "admin/contract-details"; // Trả về trang chi tiết hợp đồng cho admin
+		return "admin/contract/contract-details"; // Trả về trang chi tiết hợp đồng cho admin
 	}
 
 	// Hiển thị trang chỉnh sửa hợp đồng
@@ -111,14 +73,14 @@ public class ContractAdminController {
 			return "redirect:/admin/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
 		}
 		model.addAttribute("contract", contract);
-		return "admin/edit_contract"; // Trả về trang chỉnh sửa hợp đồng
+		return "admin/contract/edit_contract"; // Trả về trang chỉnh sửa hợp đồng
 	}
 	@PostMapping("/update/{id}")
 	public String updateContract(@PathVariable("id") int id, @ModelAttribute Contract contract, Model model) {
 	    Contract existingContract = contractRepository.getContractById(id);
 
 	    if (existingContract == null) {
-	        return "redirect:/admin/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
+	        return "redirect:/admin/contract/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
 	    }
 
 	    // Cập nhật các thuộc tính của hợp đồng
@@ -139,7 +101,7 @@ public class ContractAdminController {
 	        mailService.sendContractUpdateMail(user.getEmail(), existingContract);
 	    }
 
-	    return "redirect:/admin/contracts"; // Quay lại trang danh sách hợp đồng của admin
+	    return "redirect:/admin/contract/contracts"; // Quay lại trang danh sách hợp đồng của admin
 	}
 
 
@@ -148,7 +110,7 @@ public class ContractAdminController {
 	public String confirmContract(@PathVariable("id") int id, Model model) {
 	    Contract contract = contractRepository.getContractById(id);
 	    if (contract == null) {
-	        return "redirect:/admin/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
+	        return "redirect:/admin/contract/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
 	    }
 	    contract.setStatus(1); // Đặt trạng thái là đã xác nhận
 	    contractRepository.updateContract(contract); // Cập nhật trạng thái trong cơ sở dữ liệu
@@ -164,7 +126,7 @@ public class ContractAdminController {
 		if (existingContract != null) {
 			contractRepository.deleteContract(id);
 		}
-		return "redirect:/admin/contracts"; // Quay lại trang danh sách hợp đồng của admin
+		return "redirect:/admin/contract/contracts"; // Quay lại trang danh sách hợp đồng của admin
 	}
 
 	// Admin tạo hợp đồng mới
@@ -175,7 +137,7 @@ public class ContractAdminController {
 
 		// Kiểm tra xem người dùng có tồn tại không
 		if (user == null) {
-			return "redirect:/admin/contracts?error=usernotfound"; // Nếu không tìm thấy người dùng
+			return "redirect:/admin/contract/contracts?error=usernotfound"; // Nếu không tìm thấy người dùng
 		}
 
 		// Tạo đối tượng hợp đồng và gán thông tin người dùng
@@ -186,7 +148,7 @@ public class ContractAdminController {
 		model.addAttribute("user", user);
 		model.addAttribute("contract", contract);
 
-		return "admin/create-contract"; // Trả về trang tạo hợp đồng cho admin
+		return "admin/contract/create-contract"; // Trả về trang tạo hợp đồng cho admin
 	}
 
 	@PostMapping("/create")
@@ -209,12 +171,12 @@ public class ContractAdminController {
 			// Lưu hợp đồng vào cơ sở dữ liệu
 			contractRepository.addContract(newContract);
 
-			return "redirect:/admin/contracts"; // Chuyển hướng về trang danh sách hợp đồng của admin sau khi tạo hợp
+			return "redirect:/admin/contract/contracts"; // Chuyển hướng về trang danh sách hợp đồng của admin sau khi tạo hợp
 												// đồng
 		} catch (Exception e) {
 			// Xử lý lỗi (nếu có)
 			model.addAttribute("error", "Đã có lỗi xảy ra khi tạo hợp đồng: " + e.getMessage());
-			return "admin/create-contract"; // Trả về trang tạo hợp đồng để admin có thể thử lại
+			return "admin/contract/create-contract"; // Trả về trang tạo hợp đồng để admin có thể thử lại
 		}
 	}
 
@@ -238,7 +200,7 @@ public class ContractAdminController {
 	        model.addAttribute("mailStatus", "failure");
 	        model.addAttribute("errorMessage", "Hợp đồng không tồn tại.");
 	    }
-	    return "redirect:/admin/contracts"; // Quay lại trang danh sách hợp đồng
+	    return "redirect:/admin/contract/contracts"; // Quay lại trang danh sách hợp đồng
 	}
 
 }

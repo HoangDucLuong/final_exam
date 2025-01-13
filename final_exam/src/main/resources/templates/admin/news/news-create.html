@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{admin_layout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head layout:fragment="head">
     <title>Create News</title>
+    <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
 </head>
 <body>
 
@@ -46,6 +47,12 @@
                             <button type="submit" class="btn btn-primary">Create News</button>
                         </div>
                     </form>
+                    <script>
+							CKEDITOR.replace('content', {
+								height : 300,
+								extraPlugins: ''  // Ensure no extra plugins are enabled
+							});
+						</script>
                 </div>
             </div>
         </div>
