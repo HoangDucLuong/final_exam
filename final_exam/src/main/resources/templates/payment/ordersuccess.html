@@ -21,10 +21,10 @@
             <!-- Bảng hiển thị thông tin đơn hàng -->
             <table class="table table-bordered">
                 <tbody>
-                    <tr>
+                    <!-- <tr>
                         <td>Tổng tiền:</td>
                         <td><span th:text="${totalPrice}">[total price]</span> VND</td>
-                    </tr>
+                    </tr> -->
                     <tr>
                         <td>Thời gian thanh toán:</td>
                         <td><span th:text="${paymentTime}">[payment time]</span></td>
@@ -37,6 +37,8 @@
             </table>
             <!-- Nút quay lại trang chủ -->
             <a href="/" class="btn btn-primary">Về trang chủ</a>
+            <a th:href="@{'/user/invoices/' + ${contractId} + '/payment-history'}" class="btn btn-secondary mt-3">Xem lịch sử thanh toán</a>
+            
         </div>
     </div>
 </div>
