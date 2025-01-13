@@ -6,12 +6,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
 import shop.Config.VNPayService;
@@ -139,5 +144,53 @@ public class VNpayController {
             return "payment/orderfail";
         }
     }
-    
+    @GetMapping("/{contractId}/payment-history")
+    public String getPaymentHistory(
+            @PathVariable("contractId") int contractId,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "sortField", defaultValue = "paymentDate") String sortField,
+            @RequestParam(value = "sortDir", defaultValue = "desc") String sortDir,
+            @RequestParam(value = "search", required = false) String search,
+            Model model) {
+
+        int totalRecords = (search != null && !search.isEmpty()) 
+            ? paymentRepository.countPaymentsByContractIdAndTransactionRef(contractId, search)
+            : paymentRepository.countPaymentsByContractId(contractId);
+        
+        int totalPages = (int) Math.ceil((double) totalRecords / size);
+
+        // Chọn kiểu sắp xếp cho Sort
+        Sort sort = Sort.by(Sort.Order.by(sortField));
+        if ("desc".equalsIgnoreCase(sortDir)) {
+            sort = sort.descending();
+        } else {
+            sort = sort.ascending();
+        }
+
+        // Tạo Pageable với phân trang và sắp xếp
+        Pageable pageable = PageRequest.of(page, size, sort);
+        List<Payment> payments;
+        
+        if (search != null && !search.isEmpty()) {
+            payments = paymentRepository.findByContractIdAndTransactionRefWithPagination(contractId, search, page * size, size);
+        } else {
+            payments = paymentRepository.findByContractIdWithPagination(contractId, page * size, size);
+        }
+
+        model.addAttribute("payments", payments);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalItems", totalRecords);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("search", search);
+
+        // Đảm bảo rằng sortDir là đảo ngược trong các liên kết phân trang
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
+        return "payment/history";
+    }
+
+
 }

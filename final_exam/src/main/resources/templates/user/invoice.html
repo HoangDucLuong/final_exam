@@ -102,7 +102,7 @@
                         <th>Tổng Số Tiền</th>
                         <th>Số Tiền Đã Thanh Toán</th>
                         <th>Trạng Thái Thanh Toán</th>
-                        <th>Thanh Toán</th>
+                        
                         <th>Chi Tiết</th>
                     </tr>
                 </thead>
@@ -114,13 +114,7 @@
                         <td th:text="${invoice.totalAmount}"></td>
                         <td th:text="${invoice.paidAmount}"></td>
                         <td th:text="${invoice.paymentStatus == 0 ? 'Chưa thanh toán' : 'Đã thanh toán'}"></td>
-                        <td>
-                            <form th:action="@{/user/invoices/paySingle}" method="post">
-                                <input type="hidden" th:value="${contractId}" name="contractId" />
-                                <input type="hidden" th:value="${invoice.id}" name="invoiceId" />
-                                <button type="submit" class="btn btn-primary" th:disabled="${invoice.paymentStatus == 1}">Thanh Toán</button>
-                            </form>
-                        </td>
+                        
                         <td>
                 		<!-- Nút Chi Tiết -->
                 			<a th:href="@{/user/invoices/detail/{invoiceId}(invoiceId=${invoice.id})}" class="btn btn-info">Chi Tiết</a>
@@ -132,10 +126,15 @@
            <form th:action="@{/user/invoices/{contractId}/pay(contractId=${contractId})}" method="post">
     <input type="hidden" th:value="${contractId}" name="contractId" />
     <input type="hidden" th:value="${entry.key}" name="month" />
-    <button type="submit" class="btn btn-success">Thanh Toán Tất Cả Hóa Đơn</button>
+    <button type="submit" class="btn btn-success">Thanh Toán Hóa Đơn</button>
 </form>
 
         </div>
+         <div class="text-center mt-5">
+        <a th:href="@{/user/invoices/{contractId}/payment-history(contractId=${contractId})}" class="btn btn-primary">
+            Xem Lịch Sử Thanh Toán
+        </a>
+    </div>
     </div>
 </div>
 

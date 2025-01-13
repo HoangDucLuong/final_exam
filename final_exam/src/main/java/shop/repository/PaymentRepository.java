@@ -87,5 +87,45 @@ public class PaymentRepository {
             return payment;
         });
     }
+ // Modify the findByContractIdWithPagination method to handle pagination correctly for SQL Server
+    public List<Payment> findByContractIdWithPagination(int contractId, int offset, int limit) {
+        String query = "SELECT * FROM tbl_payment WHERE contract_id = ? ORDER BY payment_date DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        return jdbcTemplate.query(query, new Object[]{contractId, offset, limit}, (rs, rowNum) -> {
+            Payment payment = new Payment();
+            payment.setId(rs.getInt("id"));
+            payment.setContractId(rs.getInt("contract_id"));
+            payment.setPaymentAmount(rs.getBigDecimal("payment_amount"));
+            payment.setPaymentDate(rs.getTimestamp("payment_date").toLocalDateTime());
+            payment.setPaymentStatus(rs.getInt("payment_status"));
+            payment.setPaymentMethod(rs.getString("payment_method"));
+            payment.setTransactionRef(rs.getString("transaction_ref"));
+            return payment;
+        });
+    }
+ // Add a countPaymentsByContractId method to count the number of payments
+    public int countPaymentsByContractId(int contractId) {
+        String query = "SELECT COUNT(*) FROM tbl_payment WHERE contract_id = ?";
+        return jdbcTemplate.queryForObject(query, new Object[]{contractId}, Integer.class);
+    }
+    public List<Payment> findByContractIdAndTransactionRefWithPagination(int contractId, String transactionRef, int offset, int limit) {
+        String query = "SELECT * FROM tbl_payment WHERE contract_id = ? AND transaction_ref LIKE ? " +
+                       "ORDER BY payment_date DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        return jdbcTemplate.query(query, new Object[]{contractId, "%" + transactionRef + "%", offset, limit}, (rs, rowNum) -> {
+            Payment payment = new Payment();
+            payment.setId(rs.getInt("id"));
+            payment.setContractId(rs.getInt("contract_id"));
+            payment.setPaymentAmount(rs.getBigDecimal("payment_amount"));
+            payment.setPaymentDate(rs.getTimestamp("payment_date").toLocalDateTime());
+            payment.setPaymentStatus(rs.getInt("payment_status"));
+            payment.setPaymentMethod(rs.getString("payment_method"));
+            payment.setTransactionRef(rs.getString("transaction_ref"));
+            return payment;
+        });
+    }
+
+    public int countPaymentsByContractIdAndTransactionRef(int contractId, String transactionRef) {
+        String query = "SELECT COUNT(*) FROM tbl_payment WHERE contract_id = ? AND transaction_ref LIKE ?";
+        return jdbcTemplate.queryForObject(query, new Object[]{contractId, "%" + transactionRef + "%"}, Integer.class);
+    }
 
 }
