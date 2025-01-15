@@ -33,7 +33,7 @@ import shop.utils.SecurityUtility;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-
+//controller
 	@Autowired
 	AuthRepository repAuth;
 	@Autowired
