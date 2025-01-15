@@ -22,51 +22,63 @@
 	background-color: #dc3545;
 	color: #fff;
 }
-/* Kiểu dáng dấu ba chấm */
+
 .more-btn {
-    background-color: transparent;
-    border: none;
-    color: #6c757d; /* Màu xám mặc định */
-    font-size: 1.25rem;
-    padding: 5px;
-    border-radius: 50%;
-    transition: all 0.3s ease;
+	background-color: transparent;
+	border: none;
+	color: #6c757d;
+	font-size: 1.25rem;
+	padding: 5px;
+	border-radius: 50%;
+	transition: all 0.3s ease;
 }
 
 .more-btn:hover {
-    background-color: #007bff; /* Nền xanh khi hover */
-    color: #fff; /* Chuyển thành màu trắng */
+	background-color: #007bff;
+	color: #fff;
 }
 
 .more-btn:focus {
-    outline: none;
-    box-shadow: none;
+	outline: none;
+	box-shadow: none;
 }
 
-/* Kiểu dáng menu con */
 .dropdown-menu {
-    background-color: #f8f9fa; /* Nền sáng */
-    border: 1px solid #dee2e6; /* Viền mỏng */
-    border-radius: 0.25rem;
+	background-color: #f8f9fa;
+	border: 1px solid #dee2e6;
+	border-radius: 0.25rem;
 }
 
 .dropdown-menu .dropdown-item {
-    color: #343a40; /* Màu chữ mặc định */
-    font-size: 0.875rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
+	color: #343a40;
+	font-size: 0.875rem;
+	font-weight: 500;
+	display: flex;
+	align-items: center;
 }
 
 .dropdown-menu .dropdown-item i {
-    margin-right: 8px; /* Khoảng cách giữa icon và text */
-    font-size: 1rem;
+	margin-right: 8px;
+	font-size: 1rem;
 }
 
 .dropdown-menu .dropdown-item:hover {
-    background-color: #e9ecef; /* Nền sáng khi hover */
-    color: #007bff;
+	background-color: #e9ecef;
+	color: #007bff;
+}
 
+.table.user-management-table {
+	table-layout: fixed;
+	width: 100%;
+}
+
+.table.user-management-table th, .table.user-management-table td {
+	text-align: center;
+	vertical-align: middle;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 150px;
 }
 </style>
 </head>
@@ -116,7 +128,8 @@
 											th:text="${user.status == 1 ? 'Active' : 'Inactive'}">
 										</span></td>
 										<td>
-											<div class="action justify-content-end">
+											<div
+												class="action d-flex justify-content-center align-items-center">
 												<button class="more-btn dropdown-toggle"
 													data-bs-toggle="dropdown" aria-expanded="false">
 													<i class="lni lni-more-alt"></i>
@@ -125,10 +138,6 @@
 													<li class="dropdown-item"><a
 														th:href="@{/admin/user/edit/{id}(id=${user.id})}"> <i
 															class="lni lni-pencil"></i> Edit
-													</a></li>
-													<li class="dropdown-item"><a
-														th:href="@{/admin/user/delete/{id}(id=${user.id})}"> <i
-															class="lni lni-trash-can"></i> Delete
 													</a></li>
 													<li class="dropdown-item"><a
 														th:href="@{/admin/contracts/create(usrId=${user.id})}">

@@ -29,17 +29,19 @@ public class UserManagementController {
 		int totalUsers = userRepository.countUsers(search); 
 		int totalPages = totalUsers > 0 ? (int) Math.ceil((double) totalUsers / pageSize) : 1;
 		
-		List<User> users = userRepository.findAllUsers(page, search);
+		List<User> users = userRepository.findAllUsers(page, search).stream()
+                .filter(user -> user.getUsrType() != 1)
+                .toList();
 		model.addAttribute("users", users);
 		model.addAttribute("currentPage", page);
 		model.addAttribute("totalPages", totalPages);
 		model.addAttribute("search", search);
-		return "admin/user-management";
+		return "admin/user/user-management";
 	}
 
 	@GetMapping("/admin/user/add")
 	public String addUserPage() {
-		return "admin/add_user";
+		return "admin/user/add_user";
 	}
 
 	@PostMapping("/admin/user/add")
@@ -57,14 +59,14 @@ public class UserManagementController {
 
 		userRepository.addUser(user);
 
-		return "redirect:/admin/user-management";
+		return "redirect:/admin/user/user-management";
 	}
 
 	@GetMapping("/admin/user/edit/{id}")
 	public String editUserPage(@PathVariable("id") int id, Model model) {
 		User user = userRepository.findById(id);
 		model.addAttribute("user", user);
-		return "admin/edit_user";
+		return "admin/user/edit_user";
 	}
 
 	@PostMapping("/admin/user/edit")
@@ -79,12 +81,7 @@ public class UserManagementController {
 			user.setStatus(status);
 			userRepository.updateUser(user);
 		}
-		return "redirect:/admin/user-management";
+		return "redirect:/admin/user/user-management";
 	}
 
-	@GetMapping("/admin/user/delete/{id}")
-	public String deleteUser(@PathVariable("id") int id) {
-		userRepository.deleteUser(id);
-		return "redirect:/admin/user-management";
-	}
 }
