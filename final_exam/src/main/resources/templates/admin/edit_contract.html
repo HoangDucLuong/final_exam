@@ -139,10 +139,10 @@
 <div class="col-md-6 mb-3">
     <label for="status" class="form-label">Trạng Thái</label>
     <select class="form-select" id="status" name="status" required>
-        <option th:value="0" th:selected="${contract.status == 0}">Đang chờ</option>
+        <option th:value="0" th:selected="${contract.status == 0}" style="color: red;">Duyệt</option>
         <option th:value="1" th:selected="${contract.status == 1}" style="color: green;">Đã xác nhận</option>
-        <option th:value="2" th:selected="${contract.status == 2}" style="color: orange;">Đang thực hiện</option>
-        <option th:value="3" th:selected="${contract.status == 3}" style="color: blue;">Đã hoàn thành</option>
+        <option th:value="2" th:selected="${contract.status == 2}" style="color: orange;">Đang chờ duyệt</option>
+        <option th:value="3" th:selected="${contract.status == 3}" style="color: blue;">Đang hoạt động</option>
         <option th:value="4" th:selected="${contract.status == 4}" style="color: grey;">Đã hủy</option>
     </select>
 </div>

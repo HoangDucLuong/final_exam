@@ -95,9 +95,15 @@ public class ContractRepositoryImpl implements ContractRepository {
 
     @Override
     public void deleteContract(int id) {
-        String sql = "DELETE FROM tbl_contract WHERE id = ?";
-        jdbcTemplate.update(sql, id);
+        // Xóa tất cả các chi tiết hợp đồng liên quan trước
+        String deleteContractDetailsSql = "DELETE FROM contract_detail WHERE contract_id = ?";
+        jdbcTemplate.update(deleteContractDetailsSql, id);
+
+        // Xóa hợp đồng sau khi các chi tiết đã được xóa
+        String deleteContractSql = "DELETE FROM tbl_contract WHERE id = ?";
+        jdbcTemplate.update(deleteContractSql, id);
     }
+
 
     @Override
     public void updateContractStatus(int contractId, int status) {

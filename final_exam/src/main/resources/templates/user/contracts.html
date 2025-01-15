@@ -96,7 +96,8 @@
                     <th class="text-center">Ngày kết thúc</th>
                     <th class="text-center">Trạng thái</th>
                     <th class="text-center">Thao tác</th>
-                    <th class="text-center">Xem Hóa Đơn</th> <!-- Thêm cột mới -->
+                    <th class="text-center">Xem Hóa Đơn</th>
+                    <th class="text-center">Xem hợp đồng</th> <!-- Thêm cột mới -->
                 </tr>
             </thead>
             <tbody>
@@ -105,10 +106,10 @@
                     <td th:text="${contract.startDate}" class="text-center"></td>
                     <td th:text="${contract.endDate}" class="text-center"></td>
                     <td class="text-center">
-                        <span th:if="${contract.status == 0}" style="color: red;">Đang chờ</span>
+                        <span th:if="${contract.status == 0}" style="color: red;">Đang chờ xác nhận</span>
                         <span th:if="${contract.status == 1}" style="color: green;">Đã xác nhận</span>
-                        <span th:if="${contract.status == 2}" style="color: orange;">Đang thực hiện</span>
-                        <span th:if="${contract.status == 3}" style="color: blue;">Đã hoàn thành</span>
+                        <span th:if="${contract.status == 2}" style="color: orange;">Đang chờ duyệt</span>
+                        <span th:if="${contract.status == 3}" style="color: blue;">Đang hoạt động</span>
                         <span th:if="${contract.status == 4}" style="color: grey;">Đã hủy</span>
                     </td>
                     <td class="text-center">
@@ -119,6 +120,9 @@
                     <td class="text-center">
                         <a th:href="@{/user/invoices/{contractId}(contractId=${contract.id})}" class="btn btn-success btn-sm">Xem Hóa Đơn</a>
                     </td>
+                    <td>
+                <a th:href="@{'/user/contracts/pdf/' + ${contract.id}}" target="_blank" class="btn btn-primary">Xem PDF</a>
+            </td>
                 </tr>
             </tbody>
         </table>

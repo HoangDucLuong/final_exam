@@ -125,7 +125,7 @@ button:hover {
 
             // Update contract total price
             const contractDuration = document.getElementById("contractDuration").value;
-            const totalContractPrice = totalMenuPrice * (contractDuration ? parseInt(contractDuration) : 1);
+            const totalContractPrice = totalMenuPrice * (contractDuration ? parseInt(contractDuration) * 31 : 31);
             document.getElementById("contractTotalPrice").value = totalContractPrice.toFixed(2);
 
             // Update deposit amount (10% of total contract price)
