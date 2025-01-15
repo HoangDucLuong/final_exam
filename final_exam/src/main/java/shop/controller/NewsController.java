@@ -22,11 +22,22 @@ public class NewsController {
 
     // Hiển thị tất cả tin tức
     @GetMapping
-    public String listNews(Model model) {
-        List<News> newsList = newsRepository.findAll();
+    public String listNews(Model model, @RequestParam(value = "page", defaultValue = "1") int page,
+			@RequestParam(value = "search", required = false, defaultValue = "") String search) {
+    	
+        int pageSize = 5;     
+        int totalNews = newsRepository.countNews(search);
+        int totalPages = (int) Math.ceil((double) totalNews / pageSize);
+        
+        List<News> newsList = newsRepository.findAllNews(page, search);
         model.addAttribute("newsList", newsList);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("search", search);
+
         return "admin/news/news-list";
     }
+
 
     // Hiển thị form tạo tin tức mới
     @GetMapping("/create")

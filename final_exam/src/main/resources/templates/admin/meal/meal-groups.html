@@ -1,247 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="shortcut icon" href="/assets/images/favicon.svg"
-	type="image/x-icon" />
-<title>PlainAdmin Demo | Bootstrap 5 Admin Template</title>
-<link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
-<link rel="stylesheet" href="/assets/css/lineicons.css" type="text/css" />
-<link rel="stylesheet" href="/assets/css/materialdesignicons.min.css"
-	type="text/css" />
-<link rel="stylesheet" href="/assets/css/fullcalendar.css" />
-<link rel="stylesheet" href="/assets/css/main.css" />
-<style>
-	h1 {
-    text-align: center; /* Căn giữa tiêu đề */
-    margin-bottom: 20px; /* Khoảng cách dưới tiêu đề */
-}
-
-.btn-add {
-    display: inline-block; /* Hiển thị dưới dạng inline block */
-    background-color: #007bff; /* Màu nền cho nút */
-    color: white; /* Màu chữ nút */
-    padding: 10px 15px; /* Padding cho nút */
-    border-radius: 4px; /* Bo góc cho nút */
-    text-decoration: none; /* Tắt gạch chân */
-    margin-bottom: 20px; /* Khoảng cách dưới nút */
-}
-
-.btn-add:hover {
-    background-color: #0056b3; /* Màu nền khi hover */
-}
-
-.meal-group-table {
-    width: 100%; /* Chiều rộng bảng */
-    border-collapse: collapse; /* Gộp các viền của các ô */
-    margin-top: 20px; /* Khoảng cách trên bảng */
-}
-
-.meal-group-table th,
-.meal-group-table td {
-    padding: 10px; /* Padding cho ô */
-    text-align: left; /* Căn trái cho chữ */
-    border-bottom: 1px solid #ddd; /* Viền dưới mỗi ô */
-}
-
-.meal-group-table th {
-    background-color: #f2f2f2; /* Màu nền cho hàng tiêu đề */
-    font-weight: bold; /* Làm đậm chữ trong tiêu đề */
-}
-
-.meal-group-table tr:hover {
-    background-color: #f9f9f9; /* Màu nền khi hover hàng */
-}
-
-.btn-edit,
-.btn-delete {
-    color: #007bff; /* Màu chữ cho các nút */
-    text-decoration: none; /* Tắt gạch chân */
-}
-
-.btn-edit:hover {
-    color: #0056b3; /* Màu chữ khi hover */
-}
-
-.btn-delete {
-    color: #dc3545; /* Màu chữ đỏ cho nút xóa */
-}
-
-.btn-delete:hover {
-    color: #c82333; /* Màu chữ khi hover */
-}
-	
-</style>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	layout:decorate="~{admin_layout}"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head layout:fragment="head">
+<title>Meal Groups</title>
 </head>
 <body>
-	<div id="preloader">
-		<div class="spinner"></div>
-	</div>
-	<aside class="sidebar-nav-wrapper">
-		<div class="navbar-logo">
-			<a href="/admin/index"> <img src="/assets/images/logo/logo.svg"
-				alt="logo" />
-			</a>
-		</div>
-		<nav class="sidebar-nav">
-			<ul>
-				<li class="nav-item"><a href="/admin/index"> <span class="lni lni-dashboard">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>
-					</span> <span class="text">Dashboard</span>
-				</a></li>
-				<li class="nav-item"><a href="/admin/contracts/list"> <span class="lni lni-bookmark">
-							<svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>
-					</span> <span class="text">Contracts</span>
-				</a></li>
 
-				<li class="nav-item"><a href=""> <span
-						class="lni lni-stats-up"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>
-					</span> <span class="text">Invoice</span>
-				</a></li>
-				<li class="nav-item nav-item-has-children"><a href="#0"
-					class="collapsed" data-bs-toggle="collapse"
-					data-bs-target="#ddmenu_3" aria-controls="ddmenu_3"
-					aria-expanded="false" aria-label="Toggle navigation"> <span
-						class="lni lni-menu"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>
-					</span> <span class="text">Menu</span>
-				</a>
-					<ul id="ddmenu_3" class="collapse">
-						<li><a href="/admin/menu/list">Menu List</a></li>
-						<li><a href="/admin/menu/add">Add Menu</a></li>
-					</ul></li>
-				<li class="nav-item nav-item-has-children"><a href="#0"
-					class="collapsed" data-bs-toggle="collapse"
-					data-bs-target="#ddmenu_4" aria-controls="ddmenu_4"
-					aria-expanded="false" aria-label="Toggle navigation"> <span
-						class="lni lni-arrow-right"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>
-					</span> <span class="text">Orders</span>
-				</a>
-					<ul id="ddmenu_4" class="collapse">
-						<li><a href="orders.html">Orders List</a></li>
-					</ul></li>
-				<li class="nav-item nav-item-has-children"><a href="#0"
-					class="collapsed" data-bs-toggle="collapse"
-					data-bs-target="#ddmenu_5" aria-controls="ddmenu_5"
-					aria-expanded="false" aria-label="Toggle navigation"> <span
-						class="lni lni-arrow-right"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>
-					</span> <span class="text">Meals</span>
-				</a>
-					<ul id="ddmenu_5" class="collapse">
-						<li><a href="/admin/meal/list">Meal List</a></li>
-						<li><a href="/admin/meal-groups">Meal Group</a></li>
-						<li><a href="/admin/meal-requests">Meal Request</a></li>
-						<li><a href="#">Meal Order</a></li>
-					</ul></li>
-					<li class="nav-item"><a href="/admin/news"> <span
-						class="lni lni-arrow-right"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>
-					</span> <span class="text">News</span>
-				</a></li>	
-				<li class="nav-item"><a href="user-management"> <span
-						class="lni lni-user"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>         		
-					</span> <span class="text">Customer</span>
-				</a></li>
-				<li class="nav-item"><a href="logout.html"> <span
-						class="lni lni-exit"> <svg width="20" height="20"
-								viewBox="0 0 20 20" fill="none"
-								xmlns="http://www.w3.org/2000/svg">
-            </svg>
-					</span> <span class="text">Logout</span>
-				</a></li>
-			</ul>
-		</nav>
-	</aside>
-
-	<div class="overlay"></div>
-
-	<main class="main-wrapper">
-		<header class="header">
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-lg-5 col-md-5 col-6">
-						<div class="header-left d-flex align-items-center">
-							<div class="menu-toggle-btn mr-15">
-								<button id="menu-toggle" class="main-btn primary-btn btn-hover">
-									<i class="lni lni-chevron-left me-2"></i> Menu
-								</button>
-							</div>
-							<div class="header-search d-none d-md-flex">
-								<form method="get" th:action="@{/admin/user-management}">
-									<input type="text" name="search" placeholder="Search..." />
-									<button type="submit" class="btn btn-primary">
-										<i class="lni lni-search-alt"></i>
-									</button>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
+	<div layout:fragment="content">
+		<div class="container-fluid">
+			<div class="row">
 				<div class="col-lg-12">
 					<div class="card-style mb-30">
+						<div
+							class="title d-flex flex-wrap align-items-center justify-content-between">
+							<div class="left">
+								<h6 class="text-medium mb-30">Meal Group List</h6>
+							</div>
+							<div class="right">
+								<a href="/admin/meal-groups/create" class="btn btn-primary">Add
+									New Meal Group</a>
+							</div>
+						</div>
 						<div class="table-responsive">
-							<h1>Danh sách nhóm món ăn</h1>
-							<a th:href="@{/admin/meal-groups/create}" class="btn-add">Thêm
-								nhóm món ăn</a>
-							<table class="meal-group-table">
+							<table class="table meal-group-table">
 								<thead>
 									<tr>
 										<th>ID</th>
-										<th>Tên nhóm</th>
-										<th>Thao tác</th>
+										<th>Name Meal Group</th>
+										<th>Description</th>
+										<th>Action</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr th:each="mealGroup : ${mealGroups}">
 										<td th:text="${mealGroup.id}"></td>
 										<td th:text="${mealGroup.groupName}"></td>
+										<td th:utext="${mealGroup.description}"></td>
 										<td><a
 											th:href="@{/admin/meal-groups/edit/{id}(id=${mealGroup.id})}"
-											class="btn-edit">Chỉnh sửa</a> | <a
+											class="btn-edit"><i class="lni lni-pencil"></i>Edit</a> | <a
 											th:href="@{/admin/meal-groups/delete/{id}(id=${mealGroup.id})}"
-											onclick="return confirm('Bạn có chắc chắn muốn xóa không?');"
-											class="btn-delete">Xóa</a></td>
+											onclick="return confirm('Are you sure you want to delete?');"
+											class="btn-delete"><i class="lni lni-trash-can"></i>Delete</a></td>
 									</tr>
 								</tbody>
 							</table>
-
+						</div>
+						<div class="pagination-container">
+							<nav aria-label="Page navigation">
+								<ul class="pagination justify-content-center">
+									<li class="page-item"
+										th:classappend="${currentPage == 1} ? 'disabled'"><a
+										class="page-link"
+										th:href="@{/admin/meal-groups(page=${currentPage - 1}, search=${search})}"
+										aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+									</a></li>
+									<li class="page-item"
+										th:each="page : ${#numbers.sequence(1, totalPages)}"
+										th:classappend="${page == currentPage} ? 'active'"><a
+										class="page-link"
+										th:href="@{/admin/meal-groups(page=${page}, search=${search})}"
+										th:text="${page}"></a></li>
+									<li class="page-item"
+										th:classappend="${currentPage == totalPages} ? 'disabled'">
+										<a class="page-link"
+										th:href="@{/admin/meal-groups(page=${currentPage + 1}, search=${search})}"
+										aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+									</a>
+									</li>
+								</ul>
+							</nav>
 						</div>
 					</div>
 				</div>
+
 			</div>
-		</header>
-	</main>
-	<script src="/assets/js/bootstrap.bundle.min.js"></script>
-	<script src="/assets/js/Chart.min.js"></script>
-	<script src="/assets/js/dynamic-pie-chart.js"></script>
-	<script src="/assets/js/moment.min.js"></script>
-	<script src="/assets/js/fullcalendar.js"></script>
-	<script src="/assets/js/jvectormap.min.js"></script>
-	<script src="/assets/js/world-merc.js"></script>
-	<script src="/assets/js/polyfill.js"></script>
-	<script src="/assets/js/main.js"></script>
+		</div>
+	</div>
 
 </body>
 </html>

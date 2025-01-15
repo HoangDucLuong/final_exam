@@ -74,8 +74,9 @@ public class MenuUserController {
         if (email != null) {
             User user = userRepository.findUserByEmail(email);
             model.addAttribute("userId", user.getId());
-
-            List<MealGroup> mealGroups = mealGroupRepository.getAllMealGroups();
+            int page = 1; // Trang mặc định
+            String search = ""; // Chuỗi tìm kiếm trống
+            List<MealGroup> mealGroups = mealGroupRepository.getAllMealGroups(page, search);           
             model.addAttribute("mealGroups", mealGroups);
 
             return "user/create-menu"; 

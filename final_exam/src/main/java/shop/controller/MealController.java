@@ -23,12 +23,16 @@ public class MealController {
 
     // Hiển thị danh sách món ăn với phân trang và tìm kiếm
     @GetMapping("/list")
-    public String getAllMeals(@RequestParam(defaultValue = "1") int page,
-                               @RequestParam(defaultValue = "") String search, 
-                               Model model) {
-        int totalMeals = mealRepository.countAllMeals(search);
+    public String getAllMeals(Model model, @RequestParam(value = "page", defaultValue = "1") int page,
+			@RequestParam(value = "search", required = false, defaultValue = "") String search) {
+    	
+    	int pageSize = 5; 
+		int totalMeals = mealRepository.countAllMeals(search); 
+		int totalPages = totalMeals > 0 ? (int) Math.ceil((double) totalMeals / pageSize) : 1;
+		
+        
         List<Meal> meals = mealRepository.findAllMeals(page, search);
-        int totalPages = (int) Math.ceil((double) totalMeals / 5); // 5 là số lượng món ăn trên mỗi trang
+       
 
         model.addAttribute("meals", meals);
         model.addAttribute("currentPage", page);
@@ -41,7 +45,9 @@ public class MealController {
     // Hiển thị form thêm món ăn
     @GetMapping("/add")
     public String showAddMealForm(Model model) {
-        List<MealGroup> mealGroups = mealGroupRepository.getAllMealGroups();
+    	int page = 1; // Trang mặc định
+    	String search = ""; // Chuỗi tìm kiếm trống
+    	List<MealGroup> mealGroups = mealGroupRepository.getAllMealGroups(page, search);
         model.addAttribute("meal", new Meal()); // Tạo đối tượng Meal mới cho form
         model.addAttribute("mealGroups", mealGroups);
         return "admin/meal/add-meal"; // Đường dẫn view đã thay đổi
@@ -58,7 +64,9 @@ public class MealController {
     @GetMapping("/edit/{id}")
     public String showEditMealForm(@PathVariable("id") int id, Model model) {
         Meal meal = mealRepository.getMealById(id);
-        List<MealGroup> mealGroups = mealGroupRepository.getAllMealGroups();
+        int page = 1; // Trang mặc định
+        String search = ""; // Chuỗi tìm kiếm trống
+        List<MealGroup> mealGroups = mealGroupRepository.getAllMealGroups(page, search);
         model.addAttribute("meal", meal);
         model.addAttribute("mealGroups", mealGroups);
         return "admin/meal/edit-meal"; // Đường dẫn view đã thay đổi

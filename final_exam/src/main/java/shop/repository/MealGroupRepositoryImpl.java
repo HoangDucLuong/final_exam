@@ -27,51 +27,66 @@ public class MealGroupRepositoryImpl implements MealGroupRepository {
 		return jdbcTemplate.query(sql, new Object[] { groupId }, new MealMapper());
 	}
 
-	@Override
-	public List<MealGroup> getAllMealGroups() {
-	    String sql = "SELECT mg.*, m.* FROM tbl_meal_group mg LEFT JOIN tbl_meal m ON mg.id = m.meal_group_id";
+	 @Override
+	    public List<MealGroup> getAllMealGroups(int page, String search) {
+	        
+	        int pageSize = 5;
+	        int offset = (page - 1) * pageSize;
+	        
+	        String sql = "SELECT mg.*, m.* FROM tbl_meal_group mg "
+	                   + "LEFT JOIN tbl_meal m ON mg.id = m.meal_group_id "
+	                   + "WHERE mg.group_name LIKE ? OR mg.description LIKE ? OR m.meal_name LIKE ?";
 
+	        List<MealGroup> mealGroups = new ArrayList<>();
+	        Map<Integer, MealGroup> mealGroupMap = new HashMap<>();
+
+	        jdbcTemplate.query(sql, new Object[]{"%" + search + "%", "%" + search + "%", "%" + search + "%"}, (ResultSet rs) -> {
+	            int mealGroupId = rs.getInt("id");
+
+	            MealGroup mealGroup = mealGroupMap.get(mealGroupId);
+	            
+	            if (mealGroup == null) {
+	                mealGroup = new MealGroupMapper().mapRow(rs, 0);
+	                mealGroup.setMeals(new ArrayList<>()); 
+	                mealGroups.add(mealGroup);
+	                mealGroupMap.put(mealGroupId, mealGroup);
+	            }
+
+	            Meal meal = new MealMapper().mapRow(rs, 0);
+	            if (meal.getId() > 0) {
+	                mealGroup.getMeals().add(meal);
+	            }
+	        });
+
+	        return mealGroups;
+	    }
+	@Override
+	public MealGroup getMealGroupById(int id) {
+	    String sql = "SELECT mg.*, m.* FROM tbl_meal_group mg LEFT JOIN tbl_meal m ON mg.id = m.meal_group_id WHERE mg.id = ?";
+	    
 	    List<MealGroup> mealGroups = new ArrayList<>();
 	    Map<Integer, MealGroup> mealGroupMap = new HashMap<>();
 
-	    jdbcTemplate.query(sql, (ResultSet rs) -> {
-	        int mealGroupId = rs.getInt("id"); // Sửa thành "id" để lấy ID của meal_group
-
-	        MealGroup mealGroup = mealGroupMap.get(mealGroupId);
+	    jdbcTemplate.query(sql, new Object[]{id}, (ResultSet rs) -> {
+	        int mealGroupId = rs.getInt("id");
 	        
+	        MealGroup mealGroup = mealGroupMap.get(mealGroupId);
 	        if (mealGroup == null) {
-	            mealGroup = new MealGroupMapper().mapRow(rs, 0); // Tạo mới MealGroup nếu chưa tồn tại
-	            mealGroup.setMeals(new ArrayList<>()); // Khởi tạo danh sách món ăn
+	            mealGroup = new MealGroupMapper().mapRow(rs, 0); 
+	            mealGroup.setMeals(new ArrayList<>()); 
 	            mealGroups.add(mealGroup);
 	            mealGroupMap.put(mealGroupId, mealGroup);
 	        }
 
-	        // Thêm món ăn vào nhóm nếu không null
 	        Meal meal = new MealMapper().mapRow(rs, 0);
-	        if (meal.getId() > 0) { // Kiểm tra ID món ăn hợp lệ
+	        if (meal.getId() > 0) { 
 	            mealGroup.getMeals().add(meal);
 	        }
 	    });
 
-	    return mealGroups;
+	    return mealGroups.isEmpty() ? null : mealGroups.get(0);
 	}
 
-
-	@Override
-	public MealGroup getMealGroupById(int id) {
-		String sql = "SELECT mg.*, m.* FROM tbl_meal_group mg LEFT JOIN meals m ON mg.id = m.meal_group_id WHERE mg.id = ?";
-		MealGroup mealGroup = jdbcTemplate.queryForObject(sql, new Object[] { id }, new MealGroupMapper());
-
-		// Initialize the meals list
-		mealGroup.setMeals(new ArrayList<>());
-
-		// Load the meals for this group
-		String mealSql = "SELECT * FROM meals WHERE meal_group_id = ?";
-		List<Meal> meals = jdbcTemplate.query(mealSql, new Object[] { id }, new MealMapper());
-		mealGroup.setMeals(meals);
-
-		return mealGroup;
-	}
 
 	@Override
 	public void addMealGroup(MealGroup mealGroup) {
@@ -84,10 +99,10 @@ public class MealGroupRepositoryImpl implements MealGroupRepository {
 		String sql = "UPDATE tbl_meal_group SET group_name = ?, description = ? WHERE id = ?";
 		jdbcTemplate.update(sql, mealGroup.getGroupName(), mealGroup.getDescription(), mealGroup.getId());
 	}
-
 	@Override
-	public void deleteMealGroup(int id) {
-		String sql = "DELETE FROM tbl_meal_group WHERE id = ?";
-		jdbcTemplate.update(sql, id);
-	}
+    public int countMealGroups(String search) {
+        String sql = "SELECT COUNT(*) FROM tbl_meal_group WHERE group_name LIKE ? OR description LIKE ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{"%" + search + "%", "%" + search + "%"}, Integer.class);
+    }
+
 }

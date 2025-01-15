@@ -69,5 +69,18 @@ public class NewsRepositoryImpl implements NewsRepository {
         String sql = "SELECT * FROM tbl_news WHERE status = 1";
         return jdbcTemplate.query(sql, new NewsMapper());
     }
+    @Override
+    public List<News> findAllNews(int page, String search) {
+        int pageSize = 5;
+        int offset = (page - 1) * pageSize;
+        String sql = "SELECT * FROM tbl_news WHERE title LIKE ? OR content LIKE ? ORDER BY created_at DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        return jdbcTemplate.query(sql, new Object[]{"%" + search + "%", "%" + search + "%", offset, pageSize}, new NewsMapper());
+    }
+
+    @Override
+    public int countNews(String search) {
+        String sql = "SELECT COUNT(*) FROM tbl_news WHERE title LIKE ? OR content LIKE ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{"%" + search + "%", "%" + search + "%"}, Integer.class);
+    }
 
 }

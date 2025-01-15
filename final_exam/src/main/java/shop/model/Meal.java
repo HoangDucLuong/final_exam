@@ -8,7 +8,7 @@ public class Meal {
     private String mealName;
     private BigDecimal price;
     private String description;
-    private String mealGroupName; // Thêm thuộc tính này
+    private String mealGroupName;
 
     public int getId() {
         return id;
@@ -41,10 +41,10 @@ public class Meal {
     public void setDescription(String description) {
         this.description = description;
     }
-    public String getMealGroupName() { // Thêm phương thức getter
+    public String getMealGroupName() { 
         return mealGroupName;
     }
-    public void setMealGroupName(String mealGroupName) { // Thêm phương thức setter
+    public void setMealGroupName(String mealGroupName) { 
         this.mealGroupName = mealGroupName;
     }
 }

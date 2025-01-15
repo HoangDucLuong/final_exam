@@ -6,14 +6,13 @@ import java.time.LocalDateTime;
 public class Invoice {
     private int id;
     private int contractId;
-    private BigDecimal totalAmount; // Sử dụng BigDecimal
-    private BigDecimal paidAmount;   // Sử dụng BigDecimal
-    private LocalDateTime dueDate;   // Có thể sử dụng LocalDate nếu chỉ cần ngày
+    private BigDecimal totalAmount;
+    private BigDecimal paidAmount;
+    private LocalDateTime dueDate;
     private int paymentStatus;
-    private LocalDateTime createdAt;  // Sử dụng LocalDateTime
-    private boolean sent; // Thuộc tính mới
+    private LocalDateTime createdAt;
+    private boolean sent;
     private String recipientEmail;
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -85,13 +84,5 @@ public class Invoice {
 	public void setSent(boolean sent) {
 		this.sent = sent;
 	}
-
-//    public boolean isSent() { // Getter cho thuộc tính sent
-//        return sent;
-//    }
-//
-//    public void setSent(boolean sent) { // Setter cho thuộc tính sent
-//        this.sent = sent;
-//    }
     
 }

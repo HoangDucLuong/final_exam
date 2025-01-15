@@ -26,8 +26,6 @@ public class InvoiceRepositoryImpl implements InvoiceRepository {
             invoice.setContractId(rs.getInt("contract_id"));
             invoice.setTotalAmount(rs.getBigDecimal("total_amount"));
             invoice.setPaidAmount(rs.getBigDecimal("paid_amount"));
-
-            // Safely handle null values for Timestamp
             Timestamp createdAtTimestamp = rs.getTimestamp("created_at");
             Timestamp dueDateTimestamp = rs.getTimestamp("due_date");
 
@@ -55,19 +53,16 @@ public class InvoiceRepositoryImpl implements InvoiceRepository {
     @Override
     public Invoice save(Invoice invoice) {
         if (invoice.getId() == 0) {
-            // Insert mới
             String sql = "INSERT INTO tbl_invoice (contract_id, total_amount, paid_amount, due_date, payment_status, sent) VALUES (?, ?, ?, ?, ?, ?)";
             jdbcTemplate.update(sql, invoice.getContractId(), invoice.getTotalAmount(), invoice.getPaidAmount(),
                     invoice.getDueDate(), invoice.getPaymentStatus(), invoice.isSent());
         } else {
-            // Cập nhật nếu đã tồn tại
             String sql = "UPDATE tbl_invoice SET contract_id = ?, total_amount = ?, paid_amount = ?, due_date = ?, payment_status = ?, sent = ?, created_at = ? WHERE id = ?";
             jdbcTemplate.update(sql, invoice.getContractId(), invoice.getTotalAmount(), invoice.getPaidAmount(),
                     invoice.getDueDate(), invoice.getPaymentStatus(), invoice.isSent(), invoice.getCreatedAt(), invoice.getId());
         }
         return invoice;
     }
-
 
     @Override
     public void deleteById(int id) {
@@ -81,10 +76,6 @@ public class InvoiceRepositoryImpl implements InvoiceRepository {
         return jdbcTemplate.query(sql, invoiceRowMapper, contractId);
     }
 
-
-    /**
-     * Tìm tất cả các hóa đơn có ngày đến hạn nhất định
-     */
     @Override
     public List<Invoice> findByDueDate(Timestamp dueDate) {
         String sql = "SELECT * FROM tbl_invoice WHERE due_date = ?";

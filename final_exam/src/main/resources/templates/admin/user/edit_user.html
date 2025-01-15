@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	layout:decorate="~{admin_layout}"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head layout:fragment="head">
+<title>User Management</title>
+<style>
+.badge {
+	padding: 0.5em 1em;
+	font-size: 0.875rem;
+	font-weight: 600;
+	border-radius: 0.5rem;
+	text-transform: uppercase;
+}
+
+.badge.bg-success {
+	background-color: #28a745;
+	color: #fff;
+}
+
+.badge.bg-danger {
+	background-color: #dc3545;
+	color: #fff;
+}
+
+.more-btn {
+	background-color: transparent;
+	border: none;
+	color: #6c757d;
+	font-size: 1.25rem;
+	padding: 5px;
+	border-radius: 50%;
+	transition: all 0.3s ease;
+}
+
+.more-btn:hover {
+	background-color: #007bff;
+	color: #fff;
+}
+
+.more-btn:focus {
+	outline: none;
+	box-shadow: none;
+}
+
+.dropdown-menu {
+	background-color: #f8f9fa;
+	border: 1px solid #dee2e6;
+	border-radius: 0.25rem;
+}
+
+.dropdown-menu .dropdown-item {
+	color: #343a40;
+	font-size: 0.875rem;
+	font-weight: 500;
+	display: flex;
+	align-items: center;
+}
+
+.dropdown-menu .dropdown-item i {
+	margin-right: 8px;
+	font-size: 1rem;
+}
+
+.dropdown-menu .dropdown-item:hover {
+	background-color: #e9ecef;
+	color: #007bff;
+}
+
+.table.user-management-table {
+	table-layout: fixed;
+	width: 100%;
+}
+
+.table.user-management-table th, .table.user-management-table td {
+	text-align: center;
+	vertical-align: middle;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 150px;
+}
+</style>
+</head>
+<body>
+
+	<div layout:fragment="content">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card-style mb-30">
+						<div
+							class="title d-flex flex-wrap align-items-center justify-content-between">
+							<div class="left">
+								<h6 class="text-medium mb-30">Edit User</h6>
+							</div>
+							<div class="right">
+								<a href="/admin/user-management" class="btn btn-secondary">Back</a>
+							</div>
+						</div>
+						<div class="card-style mb-30">
+							<form method="post" action="/admin/user/edit">
+								<input type="hidden" name="id" th:value="${user.id}" />
+								<div class="row">
+									<div class="col-md-6 mb-3">
+										<label for="name" class="form-label">Name</label>
+										<input type="text" class="form-control" id="name" name="name" th:value="${user.name}" required />
+									</div>
+									<div class="col-md-6 mb-3">
+										<label for="email" class="form-label">Email</label>
+										<input type="email" class="form-control" id="email" name="email" th:value="${user.email}" required />
+									</div>
+									<div class="col-md-6 mb-3">
+										<label for="phone" class="form-label">Phone</label>
+										<input type="text" class="form-control" id="phone" name="phone" th:value="${user.phone}" required />
+									</div>
+									<div class="col-md-6 mb-3">
+										<label for="address" class="form-label">Address</label>
+										<input type="text" class="form-control" id="address" name="address" th:value="${user.address}" required />
+									</div>
+									<div class="col-md-6 mb-3">
+										<label for="status" class="form-label">Status</label>
+										<select class="form-select" id="status" name="status" required>
+											<option th:value="1" th:if="${user.status == 1}" selected>Active</option>
+											<option th:value="0" th:if="${user.status == 0}" selected>Inactive</option>
+											<option th:value="1" th:if="${user.status != 1}">Active</option>
+											<option th:value="0" th:if="${user.status != 0}">Inactive</option>
+										</select>
+									</div>
+								</div>
+								<button type="submit" class="btn btn-primary">Save</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

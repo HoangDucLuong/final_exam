@@ -1,30 +1,66 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Edit Meal</title>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	layout:decorate="~{admin_layout}"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head layout:fragment="head">
+<title>Edit Meal</title>
+<script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
 </head>
 <body>
-    <h1>Edit Meal</h1>
-    <form th:action="@{/admin/meal/edit/{id}(id=${meal.id})}" th:object="${meal}" method="post">
-        <label for="mealName">Meal Name:</label>
-        <input type="text" id="mealName" th:field="*{mealName}" required/>
-
-        <label for="mealGroupId">Meal Group:</label>
-        <select id="mealGroupId" th:field="*{mealGroupId}" required>
-            <option th:each="group : ${mealGroups}" 
-                    th:value="${group.id}" 
-                    th:text="${group.name}" 
-                    th:selected="${group.id == meal.mealGroupId}"></option>
-        </select>
-
-        <label for="price">Price:</label>
-        <input type="number" id="price" th:field="*{price}" step="0.01" required/>
-
-        <label for="description">Description:</label>
-        <textarea id="description" th:field="*{description}"></textarea>
-
-        <button type="submit">Update Meal</button>
-    </form>
-    <a href="/admin/meal/list">Back to Meal List</a>
+	<div layout:fragment="content">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card-style mb-30">
+						<div
+							class="title d-flex flex-wrap align-items-center justify-content-between">
+							<div class="left">
+								<h6 class="text-medium mb-30">Edit Meal</h6>
+							</div>
+							<div class="right">
+								<a href="/admin/meal/list" class="btn btn-secondary">Back to
+									Meal List</a>
+							</div>
+						</div>
+						<form th:action="@{/admin/meal/edit/{id}(id=${meal.id})}"
+							th:object="${meal}" method="post">
+							<div class="form-group">
+								<label for="mealName">Meal Name:</label> <input type="text"
+									id="mealName" th:field="*{mealName}" class="form-control"
+									required />
+							</div>
+							<div class="form-group">
+								<label for="mealGroupId">Meal Group:</label> <select
+									id="mealGroupId" th:field="*{mealGroupId}" class="form-control"
+									required>
+									<option th:each="group : ${mealGroups}" th:value="${group.id}"
+										th:text="${group.groupName}"
+										th:selected="${group.id == meal.mealGroupId}"></option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="price">Price:</label> <input type="number"
+									id="price" th:field="*{price}" class="form-control" step="0.01"
+									required />
+							</div>
+							<div class="form-group">
+								<label for="description">Description:</label>
+								<textarea th:field="*{description}" class="form-control"></textarea>
+							</div>
+							<button type="submit" class="btn btn-primary">Update
+								Meal</button>
+							<a href="/admin/meal/list" class="btn btn-secondary">Cancel</a>
+						</form>
+						<script>
+							CKEDITOR.replace('description', {
+								height : 300,
+								extraPlugins : ''
+							});
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

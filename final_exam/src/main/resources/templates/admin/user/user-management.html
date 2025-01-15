@@ -3,7 +3,7 @@
 	layout:decorate="~{admin_layout}"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head layout:fragment="head">
-<title>Meals Management</title>
+<title>User Management</title>
 <style>
 .badge {
 	padding: 0.5em 1em;
@@ -66,6 +66,20 @@
 	background-color: #e9ecef;
 	color: #007bff;
 }
+
+.table.user-management-table {
+	table-layout: fixed;
+	width: 100%;
+}
+
+.table.user-management-table th, .table.user-management-table td {
+	text-align: center;
+	vertical-align: middle;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 150px;
+}
 </style>
 </head>
 <body>
@@ -78,36 +92,61 @@
 						<div
 							class="title d-flex flex-wrap align-items-center justify-content-between">
 							<div class="left">
-								<h6 class="text-medium mb-30">Meals List</h6>
+								<h6 class="text-medium mb-30">User Management</h6>
 							</div>
 							<div class="right">
-								<a href="/admin/meal/add" class="btn btn-primary">Add Meal</a>
+								<a href="/admin/user/add" class="btn btn-primary">Add User</a>
 							</div>
 						</div>
 						<div class="table-responsive">
-							<table class="table meal-table">
+							<table class="table user-management-table">
 								<thead>
 									<tr>
 										<th>ID</th>
-										<th>Meal Name</th>
-										<th>Group</th>
-										<th>Price</th>
-										<th>Description</th>
+										<th>Name</th>
+										<th>Email</th>
+										<th>Phone Number</th>
+										<th>Address</th>
+										<th>User Type</th>
+										<th>Created Date</th>
+										<th>Status</th>
 										<th>Actions</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr th:each="meal : ${meals}">
-										<td th:text="${meal.id}"></td>
-										<td th:text="${meal.mealName}"></td>
-										<td th:text="${meal.mealGroupName}"></td>
-										<td th:text="${meal.price}"></td>
-										<td th:utext="${meal.description}"></td>
-										<td><a th:href="@{/admin/meal/edit/{id}(id=${meal.id})}"
-											class="btn-edit"><i class="lni lni-pencil"></i>Edit</a> | <a
-											th:href="@{/admin/meal/delete/{id}(id=${meal.id})}"
-											onclick="return confirm('Are you sure you want to delete this meal?');"
-											class="btn-delete"><i class="lni lni-trash-can"></i>Delete</a></td>
+									<tr th:each="user : ${users}">
+										<td th:text="${user.id}"></td>
+										<td th:text="${user.name}"></td>
+										<td th:text="${user.email}"></td>
+										<td th:text="${user.phone}"></td>
+										<td th:text="${user.address}"></td>
+										<td th:text="${user.usrType == 1 ? 'Admin' : 'User'}"></td>
+										<td
+											th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd')}"></td>
+										<td><span
+											th:classappend="${user.status == 1 ? 'badge bg-success' : 'badge bg-danger'}"
+											th:text="${user.status == 1 ? 'Active' : 'Inactive'}">
+										</span></td>
+										<td>
+											<div
+												class="action d-flex justify-content-center align-items-center">
+												<button class="more-btn dropdown-toggle"
+													data-bs-toggle="dropdown" aria-expanded="false">
+													<i class="lni lni-more-alt"></i>
+												</button>
+												<ul class="dropdown-menu dropdown-menu-end">
+													<li class="dropdown-item"><a
+														th:href="@{/admin/user/edit/{id}(id=${user.id})}"> <i
+															class="lni lni-pencil"></i> Edit
+													</a></li>
+													<li class="dropdown-item"><a
+														th:href="@{/admin/contracts/create(usrId=${user.id})}">
+															<i class="lni lni-bookmark"></i> Create Contract
+													</a></li>
+												</ul>
+											</div>
+										</td>
+
 									</tr>
 								</tbody>
 							</table>
@@ -118,19 +157,19 @@
 									<li class="page-item"
 										th:classappend="${currentPage == 1} ? 'disabled'"><a
 										class="page-link"
-										th:href="@{/admin/meal/list(page=${currentPage - 1}, search=${search})}"
+										th:href="@{/admin/user-management(page=${currentPage - 1}, search=${search})}"
 										aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 									</a></li>
 									<li class="page-item"
 										th:each="page : ${#numbers.sequence(1, totalPages)}"
 										th:classappend="${page == currentPage} ? 'active'"><a
 										class="page-link"
-										th:href="@{/admin/meal/list(page=${page}, search=${search})}"
+										th:href="@{/admin/user-management(page=${page}, search=${search})}"
 										th:text="${page}"></a></li>
 									<li class="page-item"
 										th:classappend="${currentPage == totalPages} ? 'disabled'">
 										<a class="page-link"
-										th:href="@{/admin/meal/list(page=${currentPage + 1}, search=${search})}"
+										th:href="@{/admin/user-management(page=${currentPage + 1}, search=${search})}"
 										aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 									</a>
 									</li>

@@ -14,6 +14,24 @@
 	type="text/css" />
 <link rel="stylesheet" href="/assets/css/main.css" />
 <link rel="stylesheet" href="/assets/css/custom.css" />
+<style>
+.pagination-container {
+	margin-top: 20px;
+}
+
+.pagination .page-item.active .page-link {
+	background-color: #007bff;
+	color: #fff;
+	border-color: #007bff;
+}
+
+.pagination .page-item.disabled .page-link {
+	color: #6c757d;
+	pointer-events: none;
+	background-color: #fff;
+	border-color: #dee2e6;
+}
+</style>
 </head>
 <body>
 	<div id="preloader">
@@ -38,7 +56,7 @@
 					</span> <span class="text">Contracts</span>
 				</a></li>
 
-				<li class="nav-item"><a href=""> <span
+				<li class="nav-item"><a href="/admin/invoices"> <span
 						class="lni lni-stats-up"> <svg width="20" height="20">
             </svg>
 					</span> <span class="text">Invoice</span>
@@ -77,15 +95,13 @@
 					<ul id="ddmenu_5" class="collapse">
 						<li><a href="/admin/meal/list">Meal List</a></li>
 						<li><a href="/admin/meal-groups">Meal Group</a></li>
-						<li><a href="/admin/meal-requests">Meal Request</a></li>
-						<li><a href="#">Meal Order</a></li>
 					</ul></li>
 				<li class="nav-item"><a href="/admin/news"> <span
 						class="lni lni-arrow-right"> <svg width="20" height="20">
             </svg>
 					</span> <span class="text">News</span>
 				</a></li>
-				<li class="nav-item"><a href="user-management"> <span
+				<li class="nav-item"><a href="/admin/user-management"> <span
 						class="lni lni-user"> <svg width="20" height="20">
             </svg>
 					</span> <span class="text">Customer</span>
