@@ -149,7 +149,16 @@ body {
         </div>
 <div class="container mt-5">
     <h2 class="text-center mb-4">Chi tiết hợp đồng</h2>
-
+<!-- Thông báo kết quả thanh toán -->
+        <div class="alert alert-success" role="alert" th:if="${param.success == 'payment'}">
+            Thanh toán thành công! Hợp đồng đã được xác nhận.
+        </div>
+        <div class="alert alert-danger" role="alert" th:if="${param.error == 'payment_failed'}">
+            Thanh toán thất bại! Vui lòng thử lại.
+        </div>
+        <div class="alert alert-warning" role="alert" th:if="${param.error == 'invalid_signature'}">
+            Có lỗi xảy ra trong quá trình xác thực thanh toán.
+        </div>
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Thông tin hợp đồng</h4>
@@ -178,10 +187,10 @@ body {
                     <tr>
                         <th scope="row">Trạng thái</th>
                         <td>
-                            <span th:if="${contract.status == 0}" style="color: red;">Đang chờ</span>
+                            <span th:if="${contract.status == 0}" style="color: red;">Đang chờ xác nhận</span>
                             <span th:if="${contract.status == 1}" style="color: green;">Đã xác nhận</span>
-                            <span th:if="${contract.status == 2}" style="color: orange;">Đang thực hiện</span>
-                            <span th:if="${contract.status == 3}" style="color: blue;">Đã hoàn thành</span>
+                            <span th:if="${contract.status == 2}" style="color: orange;">Đang chờ duyệt</span>
+                            <span th:if="${contract.status == 3}" style="color: blue;">Đang hoạt động</span>
                             <span th:if="${contract.status == 4}" style="color: grey;">Đã hủy</span>
                         </td>
                     </tr>
@@ -214,12 +223,25 @@ body {
 
     <div class="text-center mt-4">
         <a th:if="${contract.status == 0}" 
-           th:href="@{/admin/contracts/confirm/{id}(id=${contract.id})}" 
-           class="btn btn-primary btn-lg">Xác nhận hợp đồng</a>
+               th:href="@{/user/contracts/confirm/{id}(id=${contract.id})}" 
+               class="btn btn-primary btn-lg">
+                Xác nhận và thanh toán đặt cọc
+            </a>
+            
+            <!-- Thêm nút xem lịch sử thanh toán -->
+            <a th:if="${contract.status >= 1}" 
+               th:href="@{/user/invoices/{id}/payment-history(id=${contract.id})}" 
+               class="btn btn-info btn-lg">
+                Xem lịch sử thanh toán
+            </a>
 
-        <a th:if="${contract.status != 4}" 
-           th:href="@{/user/contracts/cancel?id=${contract.id}}" 
-           class="btn btn-danger btn-lg ml-3">Hủy hợp đồng</a>
+            <!-- Thêm nút xem PDF hợp đồng -->
+            <a th:href="@{/user/contracts/pdf/{id}(id=${contract.id})}" 
+               class="btn btn-secondary btn-lg ml-2" 
+               target="_blank">
+                Xem hợp đồng PDF
+            </a>
+        </div>
     </div>
 </div>
 

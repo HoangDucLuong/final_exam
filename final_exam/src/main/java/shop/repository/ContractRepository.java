@@ -1,40 +1,43 @@
 package shop.repository;
 
 import shop.model.Contract;
-import shop.model.Menu;
+import shop.model.Menu; // Thay đổi từ Meal thành Menu
 
 import java.util.List;
-
-import org.springframework.data.domain.Page;
+import java.util.Optional;
 
 public interface ContractRepository {
-	List<Contract> getAllContracts();
+    // Lấy tất cả hợp đồng (dành cho admin)
+    List<Contract> getAllContracts();
 
-	List<Contract> findAll();
+    // Lấy tất cả hợp đồng (dành cho admin)
+    List<Contract> findAll();  // Phương thức mới
 
-	List<Contract> getContractsByUserId(int usrId);
+    // Lấy hợp đồng theo ID của user (dành cho user)
+    List<Contract> getContractsByUserId(int usrId);
+    
+    List<Menu> findMenusByContractId(int contractId); // Thay đổi từ Meal thành Menu
 
-	List<Menu> findMenusByContractId(int contractId);
+    // Lấy chi tiết hợp đồng theo ID hợp đồng (dùng cho cả user và admin)
+    Contract getContractById(int id);
 
-	List<Contract> getContractsExpiringSoon();
+    // Thêm mới hợp đồng
+    void addContract(Contract contract);
 
-	List<Contract> findActiveContracts();
+    // Cập nhật hợp đồng
+    void updateContract(Contract contract);
 
-	Contract getContractById(int id);
+    // Xóa hợp đồng
+    void deleteContract(int id);
 
-	Contract findById(int id);
-
-	void addContract(Contract contract);
-
-	void updateContract(Contract contract);
-
-	void deleteContract(int id);
-
-	void updateContractStatus(int contractId, int status);
-
-	void save(Contract contract);
-	List<Contract> searchContracts(String keyword, int offset, int limit);
-
-	int countContracts(String keyword);
-
+    // Cập nhật trạng thái hợp đồng (dùng để hủy hợp đồng)
+    void updateContractStatus(int contractId, int status);
+    
+    // Lưu hợp đồng (có thể là thêm mới hoặc cập nhật)
+    void save(Contract contract);
+    
+    List<Contract> getContractsExpiringSoon();
+    List<Contract> findActiveContracts();
+    Contract findById(int id);  // Thêm dòng này
+    //Optional<Contract> findById(int id); 
 }

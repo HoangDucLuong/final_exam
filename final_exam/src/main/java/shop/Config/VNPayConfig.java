@@ -1,10 +1,10 @@
 package shop.Config;
+
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -12,111 +12,94 @@ import java.util.*;
 
 @Component
 public class VNPayConfig {
-    public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static String vnp_Returnurl = "http://localhost:8080/user/invoices/{contractId}/pay/vnpay-payment-return";
-    public static String vnp_TmnCode = "5ZE6ZJZ6";
-    public static String vnp_HashSecret = "FI82AEZOW3SZ35S5CENAQQ4G45MPIR4W";
-    public static String vnp_apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
+    // Cấu hình VNPay
+    public static final String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+    public static final String vnp_TmnCode = "5ZE6ZJZ6";
+    public static final String vnp_HashSecret = "FI82AEZOW3SZ35S5CENAQQ4G45MPIR4W";
+    public static final String vnp_apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
 
-    public static String md5(String message) {
-        String digest = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] hash = md.digest(message.getBytes("UTF-8"));
-            StringBuilder sb = new StringBuilder(2 * hash.length);
-            for (byte b : hash) {
-                sb.append(String.format("%02x", b & 0xff));
-            }
-            digest = sb.toString();
-        } catch (UnsupportedEncodingException ex) {
-            digest = "";
-        } catch (NoSuchAlgorithmException ex) {
-            digest = "";
+    // Lấy URL return theo loại thanh toán
+    public static String getReturnUrl(String contractId, boolean isDeposit) {
+        if (isDeposit) {
+            return "http://localhost:8080/user/contracts/" + contractId + "/payment-callback";
+        } else {
+            return "http://localhost:8080/user/invoices/" + contractId + "/pay/vnpay-payment-return";
         }
-        return digest;
     }
 
-    public static String Sha256(String message) {
-        String digest = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(message.getBytes("UTF-8"));
-            StringBuilder sb = new StringBuilder(2 * hash.length);
-            for (byte b : hash) {
-                sb.append(String.format("%02x", b & 0xff));
-            }
-            digest = sb.toString();
-        } catch (UnsupportedEncodingException ex) {
-            digest = "";
-        } catch (NoSuchAlgorithmException ex) {
-            digest = "";
-        }
-        return digest;
-    }
+    // Hàm tạo hash cho VNPay
+    public static String hashAllFields(Map<String, String> fields) {
+        List<String> fieldNames = new ArrayList<>(fields.keySet());
+        Collections.sort(fieldNames); // Sắp xếp theo thứ tự tăng dần
 
-    //Util for VNPAY
-    public static String hashAllFields(Map fields) {
-        List fieldNames = new ArrayList(fields.keySet());
-        Collections.sort(fieldNames);
-        StringBuilder sb = new StringBuilder();
-        Iterator itr = fieldNames.iterator();
-        while (itr.hasNext()) {
-            String fieldName = (String) itr.next();
-            String fieldValue = (String) fields.get(fieldName);
-            if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                sb.append(fieldName);
-                sb.append("=");
-                sb.append(fieldValue);
-            }
-            if (itr.hasNext()) {
-                sb.append("&");
+        StringBuilder hashData = new StringBuilder();
+        for (String fieldName : fieldNames) {
+            String fieldValue = fields.get(fieldName);
+            if (fieldValue != null && !fieldValue.isEmpty() && !fieldName.equals("vnp_SecureHash")) {
+                hashData.append(fieldName).append('=').append(fieldValue).append('&');
             }
         }
-        return hmacSHA512(vnp_HashSecret,sb.toString());
+
+        // Loại bỏ ký tự `&` cuối cùng
+        if (hashData.length() > 0) {
+            hashData.setLength(hashData.length() - 1);
+        }
+
+        // Log để kiểm tra
+        System.out.println("Data to hash: " + hashData);
+
+        // Tạo HMAC SHA512
+        return hmacSHA512(vnp_HashSecret, hashData.toString());
     }
 
+    public static boolean validateSignature(Map<String, String> fields, String secureHash) {
+        // Loại bỏ vnp_SecureHash khỏi các tham số cần băm
+        fields.remove("vnp_SecureHash");
+        
+        // Tạo lại chữ ký từ các tham số
+        String data = hashAllFields(fields);
+        String calculatedHash = hmacSHA512(vnp_HashSecret, data);
+
+        // So sánh chữ ký nhận được với chữ ký tính toán
+        return secureHash.equalsIgnoreCase(calculatedHash);
+    }
+
+
+
+    // Hàm tạo HMAC SHA512
     public static String hmacSHA512(final String key, final String data) {
         try {
-
-            if (key == null || data == null) {
-                throw new NullPointerException();
-            }
-            final Mac hmac512 = Mac.getInstance("HmacSHA512");
-            byte[] hmacKeyBytes = key.getBytes();
-            final SecretKeySpec secretKey = new SecretKeySpec(hmacKeyBytes, "HmacSHA512");
+            Mac hmac512 = Mac.getInstance("HmacSHA512");
+            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA512");
             hmac512.init(secretKey);
-            byte[] dataBytes = data.getBytes(StandardCharsets.UTF_8);
-            byte[] result = hmac512.doFinal(dataBytes);
-            StringBuilder sb = new StringBuilder(2 * result.length);
-            for (byte b : result) {
+            byte[] hashBytes = hmac512.doFinal(data.getBytes(StandardCharsets.UTF_8));
+
+            // Chuyển đổi byte array thành chuỗi hex
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashBytes) {
                 sb.append(String.format("%02x", b & 0xff));
             }
             return sb.toString();
-
         } catch (Exception ex) {
-            return "";
+            throw new RuntimeException("Error creating HMAC SHA-512", ex);
         }
     }
 
+    // Lấy địa chỉ IP của client
     public static String getIpAddress(HttpServletRequest request) {
-        String ipAdress;
-        try {
-            ipAdress = request.getHeader("X-FORWARDED-FOR");
-            if (ipAdress == null) {
-                ipAdress = request.getLocalAddr();
-            }
-        } catch (Exception e) {
-            ipAdress = "Invalid IP:" + e.getMessage();
+        String ipAddress = request.getHeader("X-FORWARDED-FOR");
+        if (ipAddress == null || ipAddress.isEmpty()) {
+            ipAddress = request.getRemoteAddr();
         }
-        return ipAdress;
+        return ipAddress;
     }
 
+    // Tạo số ngẫu nhiên..
     public static String getRandomNumber(int len) {
         Random rnd = new Random();
-        String chars = "0123456789";
         StringBuilder sb = new StringBuilder(len);
         for (int i = 0; i < len; i++) {
-            sb.append(chars.charAt(rnd.nextInt(chars.length())));
+            sb.append(rnd.nextInt(10)); // Chỉ sử dụng các chữ số từ 0-9
         }
         return sb.toString();
     }

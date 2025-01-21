@@ -92,44 +92,48 @@
 			New Contract</a>
 
 		<div class="contracts mx-auto" style="max-width: 80%;">
-			<h3 class="mb-4">Contract List</h3>
-			<table class="table table-bordered table-hover mx-auto">
-				<thead class="table-dark">
-					<tr>
-						<th class="text-center">Contract code</th>
-						<th class="text-center">Start date</th>
-						<th class="text-center">End date</th>
-						<th class="text-center">Status</th>
-						<th class="text-center">Action</th>
-						<th class="text-center">View Invoice</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="contract : ${contracts}">
-						<td th:text="${contract.id}" class="text-center"></td>
-						<td th:text="${contract.startDate}" class="text-center"></td>
-						<td th:text="${contract.endDate}" class="text-center"></td>
-						<td class="text-center"><span th:if="${contract.status == 0}"
-							style="color: red;">Pending</span> <span
-							th:if="${contract.status == 1}" style="color: green;">Confirmed</span>
-							<span th:if="${contract.status == 2}" style="color: orange;">In
-								Progress</span> <span th:if="${contract.status == 3}"
-							style="color: blue;">Completed</span> <span
-							th:if="${contract.status == 4}" style="color: grey;">Canceled</span>
-						</td>
-						<td class="text-center"><a
-							th:href="@{/user/contracts/{id}(id=${contract.id})}"
-							class="btn btn-info btn-sm">Detail</a> <a
-							th:href="@{/mealRequest/create(contractId=${contract.id})}"
-							class="btn btn-warning btn-sm">Create a meal request form</a></td>
-						<td class="text-center"><a
-							th:href="@{/user/invoices/{contractId}(contractId=${contract.id})}"
-							class="btn btn-success btn-sm"> View Invoice</a></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+        <h3 class="mb-4">Danh sách hợp đồng</h3>
+        <table class="table table-bordered table-hover mx-auto">
+            <thead class="table-dark">
+                <tr>
+                    <th class="text-center">Mã hợp đồng</th>
+                    <th class="text-center">Ngày bắt đầu</th>
+                    <th class="text-center">Ngày kết thúc</th>
+                    <th class="text-center">Trạng thái</th>
+                    <th class="text-center">Thao tác</th>
+                    <th class="text-center">Xem Hóa Đơn</th>
+                    <th class="text-center">Xem hợp đồng</th> <!-- Thêm cột mới -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="contract : ${contracts}">
+                    <td th:text="${contract.id}" class="text-center"></td>
+                    <td th:text="${contract.startDate}" class="text-center"></td>
+                    <td th:text="${contract.endDate}" class="text-center"></td>
+                    <td class="text-center">
+                        <span th:if="${contract.status == 0}" style="color: red;">Đang chờ xác nhận</span>
+                        <span th:if="${contract.status == 1}" style="color: green;">Đã xác nhận</span>
+                        <span th:if="${contract.status == 2}" style="color: orange;">Đang chờ duyệt</span>
+                        <span th:if="${contract.status == 3}" style="color: blue;">Đang hoạt động</span>
+                        <span th:if="${contract.status == 4}" style="color: grey;">Đã hủy</span>
+                    </td>
+                    <td class="text-center">
+                        <a th:href="@{/user/contracts/{id}(id=${contract.id})}" class="btn btn-info btn-sm">Chi tiết</a>
+                        <a th:href="@{/mealRequest/create(contractId=${contract.id})}" class="btn btn-warning btn-sm">Tạo phiếu yêu cầu suất ăn</a>
+                    </td>
+                    <!-- Thêm nút Xem hóa đơn -->
+                    <td class="text-center">
+                        <a th:href="@{/user/invoices/{contractId}(contractId=${contract.id})}" class="btn btn-success btn-sm">Xem Hóa Đơn</a>
+                    </td>
+                    <td>
+                <a th:href="@{'/user/contracts/pdf/' + ${contract.id}}" target="_blank" class="btn btn-primary">Xem PDF</a>
+            </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 	</div>
+
 
 	<div
 		class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn"
@@ -195,7 +199,8 @@
 		</div>
 	</div>
 	<!-- Footer End -->
-	</div>
+    
+
 
 	<!-- Back to Top -->
 	<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i
