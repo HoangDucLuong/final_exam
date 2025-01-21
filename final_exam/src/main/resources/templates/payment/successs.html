@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Success</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .success {
+            color: green;
+            font-size: 24px;
+            text-align: center;
+        }
+        .details {
+            margin-top: 20px;
+        }
+        .details p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="success">Payment Successful</h1>
+        <div class="details">
+            <p><strong>Transaction ID:</strong> <span th:text="${vnpTransactionNo}"></span></p>
+            <p><strong>Amount Paid:</strong> <span th:text="${vnpAmount}"></span> VND</p>
+            <p><strong>Bank Code:</strong> <span th:text="${vnpBankCode}"></span></p>
+            <p><strong>Payment Date:</strong> <span th:text="${vnpPayDate}"></span></p>
+            <p><strong>Order Info:</strong> <span th:text="${vnpOrderInfo}"></span></p>
+        </div>
+        <a href="/user/contracts">Back to Contracts</a>
+    </div>
+</body>
+</html>

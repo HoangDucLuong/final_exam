@@ -4,6 +4,7 @@ import shop.model.Contract;
 import shop.model.Menu; // Thay đổi từ Meal thành Menu
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ContractRepository {
     // Lấy tất cả hợp đồng (dành cho admin)
@@ -38,4 +39,5 @@ public interface ContractRepository {
     List<Contract> getContractsExpiringSoon();
     List<Contract> findActiveContracts();
     Contract findById(int id);  // Thêm dòng này
+    //Optional<Contract> findById(int id); 
 }

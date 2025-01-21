@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
 import shop.Config.VNPayService;
+import shop.model.Contract;
 import shop.model.Invoice;
 import shop.model.Payment;
+import shop.repository.ContractRepository;
 import shop.repository.InvoiceRepository;
 import shop.repository.PaymentRepository;
 
@@ -37,7 +39,9 @@ public class VNpayController {
 
     @Autowired
     private InvoiceRepository invoiceRepository;
-
+    @Autowired
+    private ContractRepository contractRepository;
+    
     @PostMapping("/{contractId}/pay/vnpay-payment-return")
     public String vnpayReturnPost(@PathVariable("contractId") int contractId,
                                   HttpServletRequest request,
@@ -51,7 +55,20 @@ public class VNpayController {
                                  Model model) {
         return processVnpayReturn(contractId, request, model);
     }
+    // Phương thức xử lý callback khi VNPay gửi lại
+    @PostMapping("/{contractId}/payment-callback")
+    public String paymentCallbackPost(@PathVariable("contractId") int contractId,
+                                      HttpServletRequest request,
+                                      Model model) {
+        return processVnpayReturn(contractId, request, model);
+    }
 
+    @GetMapping("/{contractId}/payment-callback")
+    public String paymentCallbackGet(@PathVariable("contractId") int contractId,
+                                     HttpServletRequest request,
+                                     Model model) {
+        return processVnpayReturn(contractId, request, model);
+    }
     private String processVnpayReturn(int contractId, HttpServletRequest request, Model model) {
         String transactionStatus = request.getParameter("vnp_TransactionStatus");
         String txnRef = request.getParameter("vnp_TxnRef");
@@ -94,7 +111,20 @@ public class VNpayController {
                 payment.setTransactionRef(transactionId);
 
                 paymentRepository.save(payment);
-
+             // Cập nhật trạng thái contract
+                Contract contract = contractRepository.findById(contractId);
+                if (contract != null) {
+                    // Kiểm tra nếu là thanh toán đặt cọc
+                    if (contract.getStatus() == 2 && contract.getPaymentStatus() == 0) {
+                        contract.setStatus(1); // Chuyển sang trạng thái đã xác nhận
+                        contract.setPaymentStatus(1); // Đã thanh toán đặt cọc
+                    }
+                    // Nếu là thanh toán hóa đơn thông thường
+                    else if (contract.getStatus() == 1) {
+                        contract.setPaymentStatus(1); // Đã thanh toán
+                    }
+                    contractRepository.updateContract(contract);
+                }
                 List<Invoice> invoices = invoiceRepository.findByContractId(contractId);
                 Invoice selectedInvoice = null;
 

@@ -15,6 +15,7 @@ import shop.Config.VNPayService;
 import shop.model.Contract;
 import shop.model.ContractDetail;
 import shop.model.MenuDetails;
+import shop.model.Payment;
 import shop.model.User;
 import shop.model.Menu;
 
@@ -22,6 +23,7 @@ import shop.repository.ContractRepository;
 import shop.repository.ContractDetailRepository;
 import shop.repository.MenuDetailsRepository;
 import shop.repository.MenuRepository;
+import shop.repository.PaymentRepository;
 import shop.repository.UserRepository;
 
 import com.itextpdf.text.Document;
@@ -44,7 +46,9 @@ import java.io.OutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +68,8 @@ public class ContractController {
 
 	@Autowired
 	private MenuDetailsRepository menuDetailsRepository;
-
+	@Autowired
+	private PaymentRepository paymentRepository;
 	@Autowired
 	private MenuRepository menuRepository;
 	@Autowired
@@ -175,83 +180,86 @@ public class ContractController {
 		return "user/create-contract";
 	}
 
-	 @PostMapping("/create-contract")
-	    public String createContract(@RequestParam("menuId") List<Integer> menuIds,
-	                                 @RequestParam("startDate") String startDate,
-	                                 @RequestParam("contractDuration") Integer contractDuration,
-	                                 HttpServletRequest request,
-	                                 Model model) {
-	        String email = (String) request.getSession().getAttribute("user");
+	@PostMapping("/create-contract")
+	public String createContract(@RequestParam("menuId") List<Integer> menuIds,
+	                             @RequestParam("startDate") String startDate,
+	                             @RequestParam("contractDuration") Integer contractDuration,
+	                             HttpServletRequest request,
+	                             Model model) {
+	    String email = (String) request.getSession().getAttribute("user");
 
-	        if (email != null) {
-	            Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByEmail(email));
-	            if (userOptional.isPresent()) {
-	                User user = userOptional.get();
-	                try {
-	                    if (contractDuration < 6) {
-	                        model.addAttribute("error", "Thời gian hợp đồng phải lớn hơn hoặc bằng 6 tháng.");
-	                        return "user/create-contract";
-	                    }
-	                    if (menuIds == null || menuIds.isEmpty()) {
-	                        model.addAttribute("error", "Bạn phải chọn ít nhất một menu.");
-	                        return "user/create-contract";
-	                    }
-
-	                    LocalDate start = LocalDate.parse(startDate);
-	                    LocalDate endDate = start.plusMonths(contractDuration);
-
-	                    BigDecimal totalMenuPrice = BigDecimal.ZERO;
-	                    List<MenuDetails> menuDetails = new ArrayList<>();
-
-	                    for (Integer menuId : menuIds) {
-	                        List<MenuDetails> details = menuDetailsRepository.findByMenuId(menuId);
-	                        if (details.isEmpty()) {
-	                            model.addAttribute("error", "Một trong các menu không có chi tiết nào.");
-	                            return "user/create-contract";
-	                        }
-	                        menuDetails.addAll(details);
-	                    }
-
-	                    for (MenuDetails detail : menuDetails) {
-	                        BigDecimal mealPrice = detail.getPrice();
-	                        totalMenuPrice = totalMenuPrice.add(mealPrice);
-	                    }
-
-	                    BigDecimal totalContractAmount = totalMenuPrice.multiply(BigDecimal.valueOf(contractDuration));
-	                    BigDecimal depositAmount = totalContractAmount.multiply(BigDecimal.valueOf(0.1));
-
-	                    Contract newContract = new Contract();
-	                    newContract.setUsrId(user.getId());
-	                    newContract.setStartDate(start);
-	                    newContract.setEndDate(endDate);
-	                    newContract.setDepositAmount(depositAmount);
-	                    newContract.setTotalAmount(totalContractAmount);
-	                    newContract.setStatus(2);
-	                    newContract.setPaymentStatus(0);
-
-	                    contractRepository.addContract(newContract);
-
-	                    for (MenuDetails detail : menuDetails) {
-	                        ContractDetail contractDetail = new ContractDetail();
-	                        contractDetail.setContractId(newContract.getId());
-	                        contractDetail.setMenuId(detail.getMenuId());
-	                        contractDetailRepository.saveContractDetail(contractDetail);
-	                    }
-
-	                    String filePath = "src/main/resources/contracts/contract_" + newContract.getId() + ".pdf";
-	                    generateContractPdf(newContract, user, menuDetails, filePath);
-	                    sendContractEmail(user.getEmail(), filePath);
-
-	                    return "redirect:/user/contracts";
-	                } catch (Exception e) {
-	                    e.printStackTrace();
-	                    model.addAttribute("error", "Đã có lỗi xảy ra khi tạo hợp đồng: " + e.getMessage());
+	    if (email != null) {
+	        Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByEmail(email));
+	        if (userOptional.isPresent()) {
+	            User user = userOptional.get();
+	            try {
+	                if (contractDuration < 6) {
+	                    model.addAttribute("error", "Thời gian hợp đồng phải lớn hơn hoặc bằng 6 tháng.");
 	                    return "user/create-contract";
 	                }
+	                if (menuIds == null || menuIds.isEmpty()) {
+	                    model.addAttribute("error", "Bạn phải chọn ít nhất một menu.");
+	                    return "user/create-contract";
+	                }
+
+	                LocalDate start = LocalDate.parse(startDate);
+	                LocalDate endDate = start.plusMonths(contractDuration);
+
+	                BigDecimal totalMenuPrice = BigDecimal.ZERO;
+	                List<MenuDetails> menuDetails = new ArrayList<>();
+
+	                for (Integer menuId : menuIds) {
+	                    List<MenuDetails> details = menuDetailsRepository.findByMenuId(menuId);
+	                    if (details.isEmpty()) {
+	                        model.addAttribute("error", "Một trong các menu không có chi tiết nào.");
+	                        return "user/create-contract";
+	                    }
+	                    menuDetails.addAll(details);
+	                }
+
+	                for (MenuDetails detail : menuDetails) {
+	                    BigDecimal mealPrice = detail.getPrice();
+	                    totalMenuPrice = totalMenuPrice.add(mealPrice);
+	                }
+
+	                BigDecimal daysInMonth = BigDecimal.valueOf(31); // Số ngày trong một tháng
+	                BigDecimal totalDays = BigDecimal.valueOf(contractDuration).multiply(daysInMonth);
+	                BigDecimal totalContractAmount = totalMenuPrice.multiply(totalDays);
+	                BigDecimal depositAmount = totalContractAmount.multiply(BigDecimal.valueOf(0.1));
+
+	                Contract newContract = new Contract();
+	                newContract.setUsrId(user.getId());
+	                newContract.setStartDate(start);
+	                newContract.setEndDate(endDate);
+	                newContract.setDepositAmount(depositAmount);
+	                newContract.setTotalAmount(totalContractAmount);
+	                newContract.setStatus(2);
+	                newContract.setPaymentStatus(0);
+
+	                contractRepository.addContract(newContract);
+
+	                for (MenuDetails detail : menuDetails) {
+	                    ContractDetail contractDetail = new ContractDetail();
+	                    contractDetail.setContractId(newContract.getId());
+	                    contractDetail.setMenuId(detail.getMenuId());
+	                    contractDetailRepository.saveContractDetail(contractDetail);
+	                }
+
+	                String filePath = "src/main/resources/contracts/contract_" + newContract.getId() + ".pdf";
+	                generateContractPdf(newContract, user, menuDetails, filePath);
+	                sendContractEmail(user.getEmail(), filePath);
+
+	                return "redirect:/user/contracts";
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	                model.addAttribute("error", "Đã có lỗi xảy ra khi tạo hợp đồng: " + e.getMessage());
+	                return "user/create-contract";
 	            }
 	        }
-	        return "redirect:/user/login";
 	    }
+	    return "redirect:/user/login";
+	}
+
 
 	 private void generateContractPdf(Contract contract, User user, List<MenuDetails> menuDetails, String filePath) throws DocumentException, IOException {
 		    Document document = new Document();
@@ -359,12 +367,15 @@ public class ContractController {
 	                if (contract != null && contract.getStatus() == 0) {
 	                    // Lấy baseUrl từ request
 	                    String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-	                    
+	                 // Xác định rằng đây là thanh toán đặt cọc
+	                    boolean isDeposit = true;
+
 	                    // Tạo URL thanh toán VNPay với số tiền đặt cọc
 	                    String paymentUrl = vnPayService.createOrder(
 	                        request,
 	                        contract.getDepositAmount().intValue(), // Chuyển BigDecimal sang int
 	                        contract.getId(),
+	                        isDeposit, // Truyền giá trị isDeposit
 	                        baseUrl
 	                    );
 	                    
@@ -374,7 +385,47 @@ public class ContractController {
 	        }
 	        return "redirect:/user/contracts";
 	    }
-
+	    @GetMapping("/contracts/{id}/payment-callback")
+	    public String handlePaymentCallbackGet(@PathVariable("id") int id, HttpServletRequest request, Model model) {
+	        try {
+	            int paymentResult = vnPayService.orderReturn(request);
+	            
+	            if (paymentResult == 1) { // Thanh toán thành công
+	                Contract contract = contractRepository.getContractById(id);
+	                if (contract != null) {
+	                    // Lấy số tiền từ VNPay response
+	                    String vnpAmount = request.getParameter("vnp_Amount");
+	                    BigDecimal amount = new BigDecimal(vnpAmount).divide(new BigDecimal(100));
+	                    
+	                    // Lưu thông tin thanh toán trước
+	                    Payment payment = new Payment();
+	                    payment.setContractId(id);
+	                    payment.setPaymentAmount(amount);
+	                    payment.setPaymentDate(LocalDateTime.now());
+	                    payment.setPaymentMethod("VNPAY");
+	                    payment.setPaymentStatus(1);
+	                    payment.setTransactionRef(request.getParameter("vnp_TransactionNo"));
+	                    paymentRepository.save(payment);
+	                    
+	                    // Cập nhật trạng thái hợp đồng sau khi lưu thanh toán thành công
+	                    if (contract.getStatus() == 0 && contract.getPaymentStatus() == 0) {
+	                        contract.setStatus(1); // Chuyển sang trạng thái đã xác nhận
+	                        contract.setPaymentStatus(1); // Đã thanh toán đặt cọc
+	                        contractRepository.updateContract(contract);
+	                        return "payment/successs";
+	                    }
+	                }
+	                return "payment/successs";
+	            } else if (paymentResult == 0) {
+	                return "payment/orderfailed";
+	            } else {
+	                return "redirect:/user/contracts?error=invalid_signature";
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return "redirect:/user/contracts?error=system_error";
+	        }
+	    }
 	    @PostMapping("/contracts/{id}/payment-callback")
 	    public String handlePaymentCallback(@PathVariable("id") int id, HttpServletRequest request) {
 	        int paymentResult = vnPayService.orderReturn(request);

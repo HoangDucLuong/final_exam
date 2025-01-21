@@ -192,7 +192,9 @@ public class InvoiceUserController {
             }
 
             String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-            String vnpayUrl = vnPayService.createOrder(request, totalAmountToPay.intValue(), contractId, baseUrl);
+            boolean isDeposit = false; // Đây là thanh toán hóa đơn thông thường
+            String vnpayUrl = vnPayService.createOrder(request, totalAmountToPay.intValue(), contractId, isDeposit, baseUrl);
+
 
             return "redirect:" + vnpayUrl;
         } catch (Exception e) {

@@ -101,7 +101,7 @@ public class ContractAdminController {
 	        mailService.sendContractUpdateMail(user.getEmail(), existingContract);
 	    }
 
-	    return "redirect:/admin/contract/contracts"; // Quay lại trang danh sách hợp đồng của admin
+	    return "redirect:/admin/contracts"; // Quay lại trang danh sách hợp đồng của admin
 	}
 
 
@@ -126,7 +126,7 @@ public class ContractAdminController {
 		if (existingContract != null) {
 			contractRepository.deleteContract(id);
 		}
-		return "redirect:/admin/contract/contracts"; // Quay lại trang danh sách hợp đồng của admin
+		return "redirect:/admin/contracts"; // Quay lại trang danh sách hợp đồng của admin
 	}
 
 	// Admin tạo hợp đồng mới
@@ -171,7 +171,7 @@ public class ContractAdminController {
 			// Lưu hợp đồng vào cơ sở dữ liệu
 			contractRepository.addContract(newContract);
 
-			return "redirect:/admin/contract/contracts"; // Chuyển hướng về trang danh sách hợp đồng của admin sau khi tạo hợp
+			return "redirect:/admin/contracts"; // Chuyển hướng về trang danh sách hợp đồng của admin sau khi tạo hợp
 												// đồng
 		} catch (Exception e) {
 			// Xử lý lỗi (nếu có)
@@ -200,7 +200,7 @@ public class ContractAdminController {
 	        model.addAttribute("mailStatus", "failure");
 	        model.addAttribute("errorMessage", "Hợp đồng không tồn tại.");
 	    }
-	    return "redirect:/admin/contract/contracts"; // Quay lại trang danh sách hợp đồng
+	    return "redirect:/admin/contracts"; // Quay lại trang danh sách hợp đồng
 	}
 
 }
