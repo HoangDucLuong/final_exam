@@ -39,18 +39,15 @@ public class MenuController {
 	@GetMapping("/list")
 	public String listMenus(Model model, @RequestParam(value = "page", defaultValue = "1") int page,
 			@RequestParam(value = "search", defaultValue = "") String search) {
-		// Lấy tổng số menu với điều kiện tìm kiếm
 		int totalMenus = menuRepository.countAllMenus(search);
 		int totalPages = (int) Math.ceil((double) totalMenus / 5);
 
-		// Kiểm tra và điều chỉnh số trang
 		if (page < 1) {
-			page = 1; // Đặt lại về trang đầu tiên nếu nhỏ hơn 1
+			page = 1;
 		} else if (page > totalPages && totalPages > 0) {
-			page = totalPages; // Đặt lại về trang cuối cùng nếu lớn hơn tổng trang
+			page = totalPages; 
 		}
 
-		// Lấy danh sách menu cho trang hiện tại
 		List<Menu> menus = menuRepository.findAllMenus(page, search);
 		model.addAttribute("menus", menus);
 		model.addAttribute("currentPage", page);
@@ -63,8 +60,8 @@ public class MenuController {
 	@GetMapping("/add")
 	public String showAddMenuForm(Model model) {
 		model.addAttribute("menu", new Menu());
-		int page = 1; // Trang mặc định
-		String search = ""; // Chuỗi tìm kiếm trống
+		int page = 1; 
+		String search = ""; 
 		List<MealGroup> mealGroups = mealGroupRepository.getAllMealGroups(page, search);
 		model.addAttribute("mealGroups", mealGroups);
 
@@ -78,23 +75,19 @@ public class MenuController {
 		menu.setMenuType(1);
 		menu.setUsrId(1);
 
-		// Lưu menu và nhận ID
-		menuRepository.save(menu); // Gọi phương thức save
+		menuRepository.save(menu); 
 
-		// Lưu ID của menu vừa tạo để liên kết với các món ăn
 		int newMenuId = menuRepository.getAllMenus().stream().filter(m -> m.getMenuName().equals(menu.getMenuName()))
 				.map(Menu::getId).findFirst().orElseThrow(() -> new RuntimeException("Không tìm thấy menu mới tạo!"));
 
-		// Liên kết các món ăn với menu vừa tạo
 		for (Integer mealId : mealIds) {
 			Meal meal = mealRepository.getMealById(mealId);
-			if (mealRepository.getMealById(mealId) != null) {// Tạo đối tượng MenuDetails để lưu vào tbl_menu_details
+			if (mealRepository.getMealById(mealId) != null) {
 				MenuDetails menuDetails = new MenuDetails();
 				menuDetails.setMenuId(newMenuId);
 				menuDetails.setMealId(mealId);
 				 menuDetails.setPrice(meal.getPrice());
 
-				// Lưu vào tbl_menu_details
 				menuDetailsRepository.addMenuDetail(menuDetails);
 			}
 		}
@@ -106,8 +99,8 @@ public class MenuController {
 	public String showEditMenuForm(@PathVariable int id, Model model) {
 		Menu menu = menuRepository.getMenuById(id);
 		model.addAttribute("menu", menu);
-		int page = 1; // Trang mặc định
-		String search = ""; // Chuỗi tìm kiếm trống
+		int page = 1; 
+		String search = ""; 
 		List<MealGroup> mealGroups = mealGroupRepository.getAllMealGroups(page, search);
 		model.addAttribute("mealGroups", mealGroups);
 
@@ -136,7 +129,6 @@ public class MenuController {
 	private void linkMealToMenu(int menuId, int mealId) {
 		String sql = "INSERT INTO tbl_menu_details (menu_id, meal_id) VALUES (?, ?)";
 		try {
-			// Kiểm tra xem menuId và mealId có hợp lệ không
 			if (menuId <= 0 || mealId <= 0) {
 				System.err.println("Invalid menuId or mealId");
 				return;
@@ -150,18 +142,13 @@ public class MenuController {
 
 	@GetMapping("/detail/{id}")
 	public String showMenuDetail(@PathVariable int id, Model model) {
-		// Lấy thông tin menu theo ID
 		Menu menu = menuRepository.getMenuById(id);
 		model.addAttribute("menu", menu);
 
-		// Lấy danh sách món ăn liên quan đến menu
 		List<Meal> meals = mealRepository.findMealsByMenuId(id);
 		model.addAttribute("meals", meals);
 
-		// Lấy chi tiết của từng món ăn và thêm vào model
 		for (Meal meal : meals) {
-			// Lấy thêm thông tin chi tiết cho mỗi món ăn nếu cần
-			// Ví dụ: mealDetails có thể là một phương thức trong mealRepository
 			Meal detailedMeal = mealRepository.getMealById(meal.getId());
 			model.addAttribute("mealDetail_" + meal.getId(), detailedMeal);
 		}

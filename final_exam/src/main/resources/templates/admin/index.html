@@ -117,9 +117,10 @@
 										th:text="${mealRequest.contract != null ? mealRequest.contract.id : 'N/A'}"></td>
 									<td th:text="${mealRequest.deliveryDate}"></td>
 									<td th:text="${mealRequest.totalMeals}"></td>
-									<td><span th:if="${mealRequest.status == 0}">Pending</span>
-										<span th:if="${mealRequest.status == 1}">Confirmed</span> <span
-										th:if="${mealRequest.status == 2}">Delivered</span></td>
+									<td><span th:if="${mealRequest.status == 0}"
+										class="badge bg-secondary">Pending</span> <span
+										th:if="${mealRequest.status == 1}" class="badge bg-success">Confirmed</span>
+										<span th:if="${mealRequest.status == 2}" class="badge bg-info">Delivered</span></td>
 									<td><a
 										th:href="@{/admin/meal-request/detail(id=${mealRequest.id}, userId=${mealRequest.user != null ? mealRequest.user.id : 0})}">
 											See details </a></td>
@@ -134,6 +135,37 @@
 							</tbody>
 						</table>
 					</div>
+					<div class="pagination-container">
+						<nav aria-label="Page navigation">
+							<ul class="pagination justify-content-center">
+								<!-- Nút Previous -->
+								<li class="page-item"
+									th:classappend="${currentPage == 1} ? 'disabled'"><a
+									class="page-link"
+									th:href="@{/admin/index(page=${currentPage - 1}, search=${search})}"
+									aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+								</a></li>
+
+								<!-- Danh sách các trang -->
+								<li class="page-item"
+									th:each="page : ${#numbers.sequence(1, totalPages)}"
+									th:classappend="${page == currentPage} ? 'active'"><a
+									class="page-link"
+									th:href="@{/admin/index(page=${page}, search=${search})}"
+									th:text="${page}"></a></li>
+
+								<!-- Nút Next -->
+								<li class="page-item"
+									th:classappend="${currentPage == totalPages} ? 'disabled'">
+									<a class="page-link"
+									th:href="@{/admin/index(page=${currentPage + 1}, search=${search})}"
+									aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+								</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+
 				</div>
 			</div>
 

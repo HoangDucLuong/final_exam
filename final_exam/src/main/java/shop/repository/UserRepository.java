@@ -21,7 +21,7 @@ public class UserRepository {
 	private JdbcTemplate jdbcTemplate;
 
 	public List<User> findAllUsers(int page, String search) {
-		int pageSize = 5; // Số lượng người dùng mỗi trang
+		int pageSize = 5;
 		int offset = (page - 1) * pageSize;
 
 		String sql = "SELECT * FROM tbl_user WHERE name LIKE ? OR email LIKE ? OR phone LIKE ? ORDER BY id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";

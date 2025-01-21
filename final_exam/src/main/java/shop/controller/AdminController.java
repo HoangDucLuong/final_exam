@@ -49,9 +49,12 @@ public class AdminController {
 	private MealRepository mealRepository;
 
 	@GetMapping("/index")
-	public String viewMealRequests(Model model) {
-		List<MealRequest> mealRequests = mealRequestRepository.getAllMealRequests();
-
+	public String viewMealRequests(@RequestParam(defaultValue = "") String search,
+			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
+		int offset = (page - 1) * size;
+		List<MealRequest> mealRequests = mealRequestRepository.searchMealRequests(search, offset, size);
+		int totalRequests = mealRequestRepository.countMealRequests(search);
+		int totalPages = (int) Math.ceil((double) totalRequests / size);
 		for (MealRequest mealRequest : mealRequests) {
 			List<MealRequestDetail> details = mealRequestDetailRepository
 					.getDetailsByMealRequestId(mealRequest.getId());
@@ -81,7 +84,9 @@ public class AdminController {
 				mealRequest.setStatusText("Unknown");
 			}
 		}
-
+		model.addAttribute("search", search);
+	    model.addAttribute("currentPage", page);
+	    model.addAttribute("totalPages", totalPages);
 		model.addAttribute("mealRequests", mealRequests);
 		return "admin/index";
 	}
@@ -124,20 +129,20 @@ public class AdminController {
 	public String approveMealRequest(@PathVariable("id") int id) {
 		MealRequest mealRequest = mealRequestRepository.findById(id);
 		if (mealRequest != null) {
-			mealRequest.setStatus(1); 
+			mealRequest.setStatus(1);
 			mealRequestRepository.updateMealRequest(mealRequest);
 		}
-		return "redirect:/admin/index"; 
+		return "redirect:/admin/index";
 	}
 
 	@GetMapping("/meal-request/reject/{id}")
 	public String rejectMealRequest(@PathVariable("id") int id) {
 		MealRequest mealRequest = mealRequestRepository.findById(id);
 		if (mealRequest != null) {
-			mealRequest.setStatus(2); 
+			mealRequest.setStatus(2);
 			mealRequestRepository.updateMealRequest(mealRequest);
 		}
-		return "redirect:/admin/index"; 
+		return "redirect:/admin/index";
 	}
 
 	// Trang đăng nhập
@@ -157,15 +162,15 @@ public class AdminController {
 
 		if (encryptedPassword == null || !SecurityUtility.compareBcrypt(encryptedPassword, password)) {
 			request.setAttribute("error", "Invalid email or password");
-			return "admin/login"; 
+			return "admin/login";
 		}
 
-		if (role == 1) { 
+		if (role == 1) {
 			request.getSession().setAttribute("usr_type", role);
 			return "redirect:/admin/index";
 		} else {
 			request.setAttribute("error", "You do not have permission to access the admin area.");
-			return "admin/login"; 
+			return "admin/login";
 		}
 	}
 
@@ -184,15 +189,14 @@ public class AdminController {
 		User user = new User();
 		user.setEmail(email);
 
-		// Hash mật khẩu
 		String hashedPassword = SecurityUtility.encryptBcrypt(pwd);
-		user.setPwd(hashedPassword); 
+		user.setPwd(hashedPassword);
 
 		user.setName(name);
 		user.setCreatedAt(LocalDateTime.now());
-		user.setPhone(phone); 
-		user.setAddress(address); 
-		user.setStatus(1); 
+		user.setPhone(phone);
+		user.setAddress(address);
+		user.setStatus(1);
 		user.setUsrType(0);
 
 		repUser.addUser(user);

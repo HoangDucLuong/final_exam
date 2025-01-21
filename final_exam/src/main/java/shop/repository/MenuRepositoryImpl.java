@@ -140,7 +140,7 @@ public class MenuRepositoryImpl implements MenuRepository {
 
     @Override
     public List<Menu> findAllMenus(int page, String search) {
-        int pageSize = 5; // Số lượng menu trên mỗi trang
+        int pageSize = 5; 
         int offset = (page - 1) * pageSize;
 
         String sql = "SELECT * FROM tbl_menu WHERE menu_name LIKE ? ORDER BY id DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";

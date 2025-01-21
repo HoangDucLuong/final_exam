@@ -149,13 +149,13 @@ public class MealRepositoryImpl implements MealRepository {
                      "WHERE m.meal_name LIKE ? ORDER BY m.id DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         return jdbcTemplate.query(sql, new Object[]{"%" + search + "%", offset, pageSize}, (rs, rowNum) -> {
-            Meal meal = new Meal(); // Khởi tạo đối tượng Meal
+            Meal meal = new Meal();
             meal.setId(rs.getInt("id"));
             meal.setMealGroupId(rs.getInt("meal_group_id"));
             meal.setMealName(rs.getString("meal_name"));
             meal.setPrice(rs.getBigDecimal("price"));
             meal.setDescription(rs.getString("description"));
-            meal.setMealGroupName(rs.getString("group_name")); // Nếu bạn muốn thêm thông tin nhóm vào đối tượng Meal
+            meal.setMealGroupName(rs.getString("group_name"));
             return meal;
         });
     }

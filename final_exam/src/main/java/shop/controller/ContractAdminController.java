@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/admin/contracts") // Đường dẫn dành riêng cho admin
+@RequestMapping("/admin/contracts") 
 public class ContractAdminController {
 
 	@Autowired
@@ -33,57 +33,69 @@ public class ContractAdminController {
 	private MailService mailService;
 
 	@GetMapping("")
-	public String getAllContractsForAdmin(Model model) {
-		List<Contract> contracts = contractRepository.getAllContracts();
+	public String getAllContractsForAdmin(@RequestParam(value = "page", defaultValue = "1") int page,
+	        @RequestParam(value = "size", defaultValue = "10") int size,
+	        @RequestParam(value = "search", required = false) String search, Model model) {
+		
+		String keyword = search != null ? search : "";
+	    int offset = (page - 1) * size;
+	    
+		List<Contract> contracts = contractRepository.searchContracts(keyword, offset, size);
 		List<Map<String, Object>> contractsWithUser = new ArrayList<>();
+		
+		int totalContracts = contractRepository.countContracts(keyword);
 
+	    int totalPages = (int) Math.ceil((double) totalContracts / size);
+		
 		LocalDate today = LocalDate.now();
 
 		for (Contract contract : contracts) {
 			User user = userRepository.findById(contract.getUsrId());
 			Map<String, Object> contractWithUser = new HashMap<>();
 			contractWithUser.put("contract", contract);
-			contractWithUser.put("userName", user != null ? user.getName() : "N/A"); // Lấy tên người dùng
+			contractWithUser.put("userName", user != null ? user.getName() : "N/A");
 			long daysToExpiry = java.time.temporal.ChronoUnit.DAYS.between(today, contract.getEndDate());
 			contractWithUser.put("isExpiringSoon", daysToExpiry <= 10 && daysToExpiry >= 0);
 
 			contractsWithUser.add(contractWithUser);
 		}
-
+		
+		model.addAttribute("contracts", contracts);
+	    model.addAttribute("currentPage", page);
+	    model.addAttribute("totalPages", totalPages);
+	    model.addAttribute("search", keyword);
+		
 		model.addAttribute("contracts", contractsWithUser);
-		return "admin/contract/contracts"; // Trả về trang danh sách hợp đồng cho admin
+		return "admin/contract/contracts"; 
 	}
 
-	// Chi tiết hợp đồng cho admin
 	@GetMapping("/{id}")
 	public String getContractByIdForAdmin(@PathVariable("id") int id, Model model) {
 		Contract contract = contractRepository.getContractById(id);
 		if (contract == null) {
-			return "redirect:/admin/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
+			return "redirect:/admin/contracts?error=notfound"; 
 		}
 		model.addAttribute("contract", contract);
-		return "admin/contract/contract-details"; // Trả về trang chi tiết hợp đồng cho admin
+		return "admin/contract/contract-details"; 
 	}
 
-	// Hiển thị trang chỉnh sửa hợp đồng
 	@GetMapping("/edit/{id}")
 	public String showEditContractForm(@PathVariable("id") int id, Model model) {
 		Contract contract = contractRepository.getContractById(id);
 		if (contract == null) {
-			return "redirect:/admin/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
+			return "redirect:/admin/contracts?error=notfound"; 
 		}
 		model.addAttribute("contract", contract);
-		return "admin/contract/edit_contract"; // Trả về trang chỉnh sửa hợp đồng
+		return "admin/contract/edit_contract"; 
 	}
 	@PostMapping("/update/{id}")
-	public String updateContract(@PathVariable("id") int id, @ModelAttribute Contract contract, Model model) {
+public String updateContract(@PathVariable("id") int id, @ModelAttribute Contract contract, Model model) {
 	    Contract existingContract = contractRepository.getContractById(id);
 
 	    if (existingContract == null) {
-	        return "redirect:/admin/contract/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
+	        return "redirect:/admin/contract/contracts?error=notfound"; 
 	    }
 
-	    // Cập nhật các thuộc tính của hợp đồng
 	    existingContract.setUsrId(contract.getUsrId());
 	    existingContract.setStartDate(contract.getStartDate());
 	    existingContract.setEndDate(contract.getEndDate());
@@ -92,63 +104,52 @@ public class ContractAdminController {
 	    existingContract.setStatus(contract.getStatus());
 	    existingContract.setPaymentStatus(contract.getPaymentStatus());
 
-	    // Lưu hợp đồng đã cập nhật vào cơ sở dữ liệu
 	    contractRepository.updateContract(existingContract);
 
-	    // Lấy thông tin người dùng từ hợp đồng và gửi email
 	    User user = userRepository.findById(contract.getUsrId());
 	    if (user != null) {
 	        mailService.sendContractUpdateMail(user.getEmail(), existingContract);
 	    }
 
-	    return "redirect:/admin/contract/contracts"; // Quay lại trang danh sách hợp đồng của admin
+	    return "redirect:/admin/contracts"; 
 	}
 
-
-    // Xác nhận hợp đồng (POST) - đổi tên thành confirmContractPost
 	@RequestMapping(value = "/confirm/{id}", method = {RequestMethod.GET, RequestMethod.POST})
 	public String confirmContract(@PathVariable("id") int id, Model model) {
 	    Contract contract = contractRepository.getContractById(id);
 	    if (contract == null) {
-	        return "redirect:/admin/contract/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
+	        return "redirect:/admin/contract/contracts?error=notfound"; 
 	    }
-	    contract.setStatus(1); // Đặt trạng thái là đã xác nhận
-	    contractRepository.updateContract(contract); // Cập nhật trạng thái trong cơ sở dữ liệu
+	    contract.setStatus(1);
+	    contractRepository.updateContract(contract); 
 
-	    return "redirect:/user/contracts"; // Chuyển hướng về trang danh sách hợp đồng của admin
+	    return "redirect:/user/contracts"; 
 	}
 
-
-	// Admin xóa hợp đồng
 	@GetMapping("/delete/{id}")
 	public String deleteContract(@PathVariable("id") int id) {
 		Contract existingContract = contractRepository.getContractById(id);
 		if (existingContract != null) {
 			contractRepository.deleteContract(id);
 		}
-		return "redirect:/admin/contract/contracts"; // Quay lại trang danh sách hợp đồng của admin
+		return "redirect:/admin/contracts"; 
 	}
 
-	// Admin tạo hợp đồng mới
 	@GetMapping("/create")
 	public String showCreateContractFormForAdmin(@RequestParam("usrId") int usrId, Model model) {
-		// Lấy người dùng từ cơ sở dữ liệu bằng usrId
 		User user = userRepository.findById(usrId);
 
-		// Kiểm tra xem người dùng có tồn tại không
 		if (user == null) {
-			return "redirect:/admin/contract/contracts?error=usernotfound"; // Nếu không tìm thấy người dùng
+			return "redirect:/admin/contract/contracts?error=usernotfound";
 		}
 
-		// Tạo đối tượng hợp đồng và gán thông tin người dùng
 		Contract contract = new Contract();
 		contract.setUsrId(user.getId());
 
-		// Thêm người dùng và hợp đồng vào model để hiển thị trong form
 		model.addAttribute("user", user);
 		model.addAttribute("contract", contract);
 
-		return "admin/contract/create-contract"; // Trả về trang tạo hợp đồng cho admin
+		return "admin/contract/create-contract"; 
 	}
 
 	@PostMapping("/create")
@@ -156,33 +157,27 @@ public class ContractAdminController {
 			@RequestParam("startDate") LocalDate startDate, @RequestParam("contractDuration") int contractDuration,
 			@RequestParam("depositAmount") BigDecimal depositAmount, Model model) {
 		try {
-			// Tính toán ngày kết thúc
 			LocalDate endDate = startDate.plusMonths(contractDuration);
 
-			// Tạo đối tượng hợp đồng mới
 			Contract newContract = new Contract();
-			newContract.setUsrId(usrId); // Gán ID người dùng
+			newContract.setUsrId(usrId); 
 			newContract.setStartDate(startDate);
 			newContract.setEndDate(endDate);
 			newContract.setDepositAmount(depositAmount);
-			newContract.setStatus(0); // Trạng thái ban đầu là Pending
-			newContract.setPaymentStatus(0); // Trạng thái thanh toán là Unpaid
-
-			// Lưu hợp đồng vào cơ sở dữ liệu
+			newContract.setStatus(0);
+			newContract.setPaymentStatus(0);
 			contractRepository.addContract(newContract);
 
-			return "redirect:/admin/contract/contracts"; // Chuyển hướng về trang danh sách hợp đồng của admin sau khi tạo hợp
-												// đồng
+			return "redirect:/admin/contracts"; 												
 		} catch (Exception e) {
-			// Xử lý lỗi (nếu có)
 			model.addAttribute("error", "Đã có lỗi xảy ra khi tạo hợp đồng: " + e.getMessage());
-			return "admin/contract/create-contract"; // Trả về trang tạo hợp đồng để admin có thể thử lại
+			return "admin/contract/create-contract"; 
 		}
 	}
 
 	@PostMapping("/sendMail/{id}")
 	public String sendExpiryNotification(@PathVariable("id") int contractId, Model model) {
-	    System.out.println("Gửi thông báo cho hợp đồng ID: " + contractId); // log thông tin hợp đồng
+	    System.out.println("Gửi thông báo cho hợp đồng ID: " + contractId); 
 
 	    Contract contract = contractRepository.getContractById(contractId);
 	    if (contract != null) {
@@ -200,7 +195,7 @@ public class ContractAdminController {
 	        model.addAttribute("mailStatus", "failure");
 	        model.addAttribute("errorMessage", "Hợp đồng không tồn tại.");
 	    }
-	    return "redirect:/admin/contract/contracts"; // Quay lại trang danh sách hợp đồng
+	    return "redirect:/admin/contracts"; 
 	}
 
 }

@@ -28,156 +28,140 @@ import shop.repository.MealGroupRepository;
 @Controller
 public class MenuUserController {
 
-    @Autowired
-    private MenuRepository menuRepository;
+	@Autowired
+	private MenuRepository menuRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    @Autowired
-    private MealRepository mealRepository;
+	@Autowired
+	private MealRepository mealRepository;
 
-    @Autowired
-    private MenuDetailsRepository menuDetailsRepository;
+	@Autowired
+	private MenuDetailsRepository menuDetailsRepository;
 
-    @Autowired
-    private MealGroupRepository mealGroupRepository;
+	@Autowired
+	private MealGroupRepository mealGroupRepository;
 
-    // Hiển thị danh sách menu cho user đã đăng nhập
-    @GetMapping("/menu")
-    public String showUserMenus(HttpServletRequest request, Model model) {
-        String email = (String) request.getSession().getAttribute("user");
+	@GetMapping("/menu")
+	public String showUserMenus(HttpServletRequest request, Model model) {
+		String email = (String) request.getSession().getAttribute("user");
 
-        if (email != null) {
-            User user = userRepository.findUserByEmail(email);
-            if (user != null) {
-                // Lấy danh sách menu của người dùng
-                List<Menu> userMenus = menuRepository.findMenusByUserId(user.getId());
-                model.addAttribute("userMenus", userMenus);
+		if (email != null) {
+			User user = userRepository.findUserByEmail(email);
+			if (user != null) {
+				List<Menu> userMenus = menuRepository.findMenusByUserId(user.getId());
+				model.addAttribute("userMenus", userMenus);
 
-                // Lấy danh sách menu do admin tạo
-                List<Menu> adminMenus = menuRepository.findAdminMenus();
-                model.addAttribute("allMenus", adminMenus);
+				List<Menu> adminMenus = menuRepository.findAdminMenus();
+				model.addAttribute("allMenus", adminMenus);
 
-                return "user/menu-list"; 
-            }
-        }
-        return "redirect:/user/login"; 
-    }
+				return "user/menu-list";
+			}
+		}
+		return "redirect:/user/login";
+	}
 
+	@GetMapping("/menu/create")
+	public String showCreateMenuPage(Model model, HttpServletRequest request) {
+		String email = (String) request.getSession().getAttribute("user");
 
-    // Hiển thị form tạo menu mới
-    @GetMapping("/menu/create")
-    public String showCreateMenuPage(Model model, HttpServletRequest request) {
-        String email = (String) request.getSession().getAttribute("user");
+		if (email != null) {
+			User user = userRepository.findUserByEmail(email);
+			model.addAttribute("userId", user.getId());
+			int page = 1;
+			String search = "";
+			List<MealGroup> mealGroups = mealGroupRepository.getAllMealGroups(page, search);
+			model.addAttribute("mealGroups", mealGroups);
 
-        if (email != null) {
-            User user = userRepository.findUserByEmail(email);
-            model.addAttribute("userId", user.getId());
-            int page = 1; // Trang mặc định
-            String search = ""; // Chuỗi tìm kiếm trống
-            List<MealGroup> mealGroups = mealGroupRepository.getAllMealGroups(page, search);           
-            model.addAttribute("mealGroups", mealGroups);
+			return "user/create-menu";
+		}
 
-            return "user/create-menu"; 
-        }
+		return "redirect:/user/login";
+	}
 
-        return "redirect:/user/login"; 
-    }
+	@PostMapping("/menu/create")
+	public String createMenu(@RequestParam String menuName, @RequestParam List<Integer> mealIds,
+			HttpServletRequest request) {
+		String email = (String) request.getSession().getAttribute("user");
 
-    // Xử lý tạo menu mới
-    @PostMapping("/menu/create")
-    public String createMenu(@RequestParam String menuName,
-                             @RequestParam List<Integer> mealIds,
-                             HttpServletRequest request) {
-        String email = (String) request.getSession().getAttribute("user");
+		if (email != null) {
+			User user = userRepository.findUserByEmail(email);
+			if (user != null) {
+				Menu menu = new Menu();
+				menu.setMenuName(menuName);
+				menu.setMenuType(0);
+				menu.setUsrId(user.getId());
+				menu.setCreatedAt(LocalDateTime.now());
 
-        if (email != null) {
-            User user = userRepository.findUserByEmail(email);
-            if (user != null) {
-                Menu menu = new Menu();
-                menu.setMenuName(menuName);
-                menu.setMenuType(0); // 0: User-created
-                menu.setUsrId(user.getId());
-                menu.setCreatedAt(LocalDateTime.now());
+				menuRepository.save(menu);
 
-                // Lưu menu
-                menuRepository.save(menu); // Gọi phương thức lưu menu
-                
-                // Lấy ID của menu vừa tạo
-                int newMenuId = menuRepository.getAllMenus().stream()
-                                            .filter(m -> m.getMenuName().equals(menu.getMenuName()))
-                                            .map(Menu::getId)
-                                            .findFirst()
-                                            .orElseThrow(() -> new RuntimeException("Không tìm thấy menu mới tạo!"));
+				int newMenuId = menuRepository.getAllMenus().stream()
+						.filter(m -> m.getMenuName().equals(menu.getMenuName())).map(Menu::getId).findFirst()
+						.orElseThrow(() -> new RuntimeException("Newly created menu not found!"));
 
-                // Lưu chi tiết món ăn liên kết với menu
-                for (Integer mealId : mealIds) {
-                	Meal meal = mealRepository.getMealById(mealId);
-                    // Kiểm tra xem món ăn có tồn tại không
-                    if (mealRepository.getMealById(mealId) != null) {
-                        MenuDetails menuDetails = new MenuDetails();
-                        menuDetails.setMenuId(newMenuId); // Sử dụng ID của menu vừa tạo
-                        menuDetails.setMealId(mealId);
-                        menuDetails.setPrice(meal.getPrice());
-                        
-                        // Lưu vào tbl_menu_details
-                        menuDetailsRepository.addMenuDetail(menuDetails);
-                    }
-                }
+				for (Integer mealId : mealIds) {
+					Meal meal = mealRepository.getMealById(mealId);
+					if (mealRepository.getMealById(mealId) != null) {
+						MenuDetails menuDetails = new MenuDetails();
+						menuDetails.setMenuId(newMenuId);
+						menuDetails.setMealId(mealId);
+						menuDetails.setPrice(meal.getPrice());
 
-                return "redirect:/menu"; 
-            }
-        }
-        return "redirect:/user/login";
-    }
- // Hiển thị chi tiết của một menu
-    @GetMapping("/menu/details/{menuId}")
-    public String getMenuDetails(@PathVariable int menuId, Model model) {
-        Menu menu = menuRepository.getMenuById(menuId);
-        
-        if (menu == null) {
-            return "redirect:/menu"; 
-        }
-        
-        List<MenuDetails> menuDetailsList = menuDetailsRepository.findByMenuId(menuId);
-        List<Meal> meals = new ArrayList<>();
+						menuDetailsRepository.addMenuDetail(menuDetails);
+					}
+				}
 
-        for (MenuDetails details : menuDetailsList) {
-            Optional<Meal> mealOptional = mealRepository.findById(details.getMealId());
+				return "redirect:/menu";
+			}
+		}
+		return "redirect:/user/login";
+	}
 
-            if (mealOptional.isPresent()) {
-                meals.add(mealOptional.get());
-            } else {
-                System.out.println("Món ăn với ID " + details.getMealId() + " không tồn tại.");
-            }
-        }
+	@GetMapping("/menu/details/{menuId}")
+	public String getMenuDetails(@PathVariable int menuId, Model model) {
+		Menu menu = menuRepository.getMenuById(menuId);
 
-        model.addAttribute("menu", menu);
-        model.addAttribute("menuDetails", menuDetailsList);
-        model.addAttribute("meals", meals);
-        return "user/menu-details";
-    }
+		if (menu == null) {
+			return "redirect:/menu";
+		}
 
-    // Xóa menu của user
-    @PostMapping("/menu/delete")
-    public String deleteMenu(@RequestParam("menuId") int menuId, HttpServletRequest request) {
-        String email = (String) request.getSession().getAttribute("user");
+		List<MenuDetails> menuDetailsList = menuDetailsRepository.findByMenuId(menuId);
+		List<Meal> meals = new ArrayList<>();
 
-        if (email != null) {
-            User user = userRepository.findUserByEmail(email);
-            if (user != null) {
-                Menu menu = menuRepository.findMenuByIdAndUserId(menuId, user.getId());
-                if (menu != null) {
-                    // Xóa menu và tất cả chi tiết liên quan (nếu cần)
-                    menuDetailsRepository.deleteByMenuId(menuId); // Xóa chi tiết món ăn liên quan (nếu cần)
-                    menuRepository.delete(menu);
-                }
-                return "redirect:/menu"; 
-            }
-        }
+		for (MenuDetails details : menuDetailsList) {
+			Optional<Meal> mealOptional = mealRepository.findById(details.getMealId());
 
-        return "redirect:/user/login"; 
-    }
+			if (mealOptional.isPresent()) {
+				meals.add(mealOptional.get());
+			} else {
+				System.out.println("Món ăn với ID " + details.getMealId() + " không tồn tại.");
+			}
+		}
+
+		model.addAttribute("menu", menu);
+		model.addAttribute("menuDetails", menuDetailsList);
+		model.addAttribute("meals", meals);
+		return "user/menu-details";
+	}
+
+	@PostMapping("/menu/delete")
+	public String deleteMenu(@RequestParam("menuId") int menuId, HttpServletRequest request) {
+		String email = (String) request.getSession().getAttribute("user");
+
+		if (email != null) {
+			User user = userRepository.findUserByEmail(email);
+			if (user != null) {
+				Menu menu = menuRepository.findMenuByIdAndUserId(menuId, user.getId());
+				if (menu != null) {
+					menuDetailsRepository.deleteByMenuId(menuId);
+					menuRepository.delete(menu);
+				}
+				return "redirect:/menu";
+			}
+		}
+
+		return "redirect:/user/login";
+	}
 
 }

@@ -29,14 +29,10 @@
 <body>
     <h1>Something went wrong!</h1>
     <p>We are experiencing some technical issues. Please try again later.</p>
-
-    <!-- Hiển thị thông báo lỗi -->
     <div class="error-details">
         <h3>Error Details:</h3>
         <p><strong>Message:</strong> <span th:text="${message}">Error message goes here</span></p>
         <p><strong>Type:</strong> <span th:text="${error}">Error type goes here</span></p>
-        
-        <!-- Hiển thị stack trace nếu có -->
         <h3>Stack Trace:</h3>
         <pre th:each="trace : ${trace}" th:text="${trace}">Stack trace will appear here</pre>
     </div>

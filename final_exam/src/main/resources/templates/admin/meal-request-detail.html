@@ -1,67 +1,138 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
-    <title>Meal Request Detail</title>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	layout:decorate="~{admin_layout}"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head layout:fragment="head">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Meal Request Detail</title>
+<style>
+.badge {
+	padding: 0.5em 1em;
+	font-size: 0.875rem;
+	font-weight: 600;
+	border-radius: 0.5rem;
+	text-transform: uppercase;
+}
+
+.badge.bg-success {
+	background-color: #28a745;
+	color: #fff;
+}
+
+.badge.bg-warning {
+	background-color: #ffc107;
+	color: #212529;
+}
+
+.badge.bg-danger {
+	background-color: #dc3545;
+	color: #fff;
+}
+
+.badge.bg-info {
+	background-color: #17a2b8;
+	color: #fff;
+}
+
+.badge.bg-secondary {
+	background-color: #6c757d;
+	color: #fff;
+}
+
+.more-btn {
+	background-color: transparent;
+	border: none;
+	color: #6c757d;
+	font-size: 1.25rem;
+	padding: 5px;
+	border-radius: 50%;
+	transition: all 0.3s ease;
+}
+
+.more-btn:hover {
+	background-color: #007bff;
+	color: #fff;
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="mb-4">Chi tiết Yêu cầu Suất ăn</h1>
-        
-        <div class="card mb-4">
-            <div class="card-body">
-                <h5>Thông tin Yêu cầu</h5>
-                <p><strong>ID:</strong> <span th:text="${mealRequest.id}"></span></p>
-                <p><strong>User Name:</strong> 
-                    <span th:text="${mealRequest.user != null ? mealRequest.user.name : 'N/A'}"></span>
-                </p>
-                <p><strong>User Email:</strong> 
-                    <span th:text="${mealRequest.user != null ? mealRequest.user.email : 'N/A'}"></span>
-                </p>
-                <p><strong>Contract ID:</strong> 
-                    <span th:text="${mealRequest.contract != null ? mealRequest.contract.id : 'N/A'}"></span>
-                </p>
-                <p><strong>Delivery Date:</strong> <span th:text="${mealRequest.deliveryDate}"></span></p>
-                <p><strong>Total Meals:</strong> <span th:text="${mealRequest.totalMeals}"></span></p>
-                <p><strong>Status:</strong>
-                    <span th:if="${mealRequest.status == 0}">Pending</span>
-                    <span th:if="${mealRequest.status == 1}">Confirmed</span>
-                    <span th:if="${mealRequest.status == 2}">Delivered</span>
-                </p>
-            </div>
-        </div>
 
-        <div class="card">
-            <div class="card-body">
-                <h5>Chi tiết Món ăn</h5>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>STT</th>
-                            <th>Menu Name</th>
-                            <th>Meal Name</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="detail, iterStat : ${mealRequestDetails}">
-                            <td th:text="${iterStat.index + 1}"></td>
-                            <td th:text="${detail.menuName}"></td>
-                            <td th:text="${detail.mealName}"></td>
-                            <td th:text="${detail.quantity}"></td>
-                            <td th:text="${#numbers.formatDecimal(detail.price, 2, 1)}"></td>
-                            <td th:text="${#numbers.formatDecimal(detail.quantity * detail.price, 2, 1)}"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+	<div layout:fragment="content">
+		<div class="container">
+			<div
+				class="title d-flex flex-wrap align-items-center justify-content-between">
+				<div class="left">
+					<h6 class="text-medium mb-30">Meal Request Detail</h6>
+				</div>
+				<div class="right">
+					<a href="/admin/index" class="btn btn-secondary">Back</a>
+				</div>
+			</div>
+			<div class="card mb-4">
+				<div class="card-body">
+					<h5>Request Information</h5>
+					<p>
+						<strong>ID:</strong> <span th:text="${mealRequest.id}"></span>
+					</p>
+					<p>
+						<strong>User Name:</strong> <span
+							th:text="${mealRequest.user != null ? mealRequest.user.name : 'N/A'}"></span>
+					</p>
+					<p>
+						<strong>User Email:</strong> <span
+							th:text="${mealRequest.user != null ? mealRequest.user.email : 'N/A'}"></span>
+					</p>
+					<p>
+						<strong>Contract ID:</strong> <span
+							th:text="${mealRequest.contract != null ? mealRequest.contract.id : 'N/A'}"></span>
+					</p>
+					<p>
+						<strong>Delivery Date:</strong> <span
+							th:text="${mealRequest.deliveryDate}"></span>
+					</p>
+					<p>
+						<strong>Total Meals:</strong> <span
+							th:text="${mealRequest.totalMeals}"></span>
+					</p>
+					<p>
+						<strong>Status:</strong>
+						<span th:if="${mealRequest.status == 0}" class="badge bg-secondary">Pending</span>
+						<span th:if="${mealRequest.status == 1}" class="badge bg-success">Confirmed</span>
+						<span th:if="${mealRequest.status == 2}" class="badge bg-info">Delivered</span>
+					</p>
+				</div>
+			</div>
 
-    <script src="/assets/js/bootstrap.bundle.min.js"></script>
+			<div class="card">
+				<div class="card-body">
+					<h5>Meals Detail</h5>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Menu Name</th>
+								<th>Meal Name</th>
+								<th>Quantity</th>
+								<th>Price</th>
+								<th>Total</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="detail, iterStat : ${mealRequestDetails}">
+								<td th:text="${iterStat.index + 1}"></td>
+								<td th:text="${detail.menuName}"></td>
+								<td th:text="${detail.mealName}"></td>
+								<td th:text="${detail.quantity}"></td>
+								<td th:text="${#numbers.formatDecimal(detail.price, 2, 1)}"></td>
+								<td
+									th:text="${#numbers.formatDecimal(detail.quantity * detail.price, 2, 1)}"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

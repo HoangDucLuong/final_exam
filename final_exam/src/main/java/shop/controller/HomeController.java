@@ -25,19 +25,19 @@ import shop.utils.SecurityUtility;
 @Controller
 public class HomeController {
 
-    @Autowired
-    UserRepository repUser;
+	@Autowired
+	UserRepository repUser;
 
-    @Autowired
-    NewsRepository newsRepository;
+	@Autowired
+	NewsRepository newsRepository;
 
-    @Autowired
-    private CommentRepository commentRepository;
+	@Autowired
+	private CommentRepository commentRepository;
 
-    @Autowired
-    private LikeRepository likeRepository;
-    
-    @GetMapping("/")
+	@Autowired
+	private LikeRepository likeRepository;
+
+	@GetMapping("/")
 	public ModelAndView showHomePage() {
 		return new ModelAndView("home/index");
 	}
@@ -71,10 +71,9 @@ public class HomeController {
 	public String profile(HttpServletRequest request, Model model) {
 		String email = (String) request.getSession().getAttribute("user");
 		if (email != null) {
-			User user = repUser.findUserByEmail(email); // Lấy thông tin người dùng từ CSDL
-			model.addAttribute("user", user); // Đưa thông tin người dùng vào Model
+			User user = repUser.findUserByEmail(email);
+			model.addAttribute("user", user);
 
-			// Thêm thông báo nếu có
 			if (request.getAttribute("success") != null) {
 				model.addAttribute("success", request.getAttribute("success"));
 			}
@@ -82,29 +81,27 @@ public class HomeController {
 				model.addAttribute("error", request.getAttribute("error"));
 			}
 
-			return "home/profile"; // Trả về trang profile
+			return "home/profile";
 		}
-		return "redirect:/user/login"; // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+		return "redirect:/user/login";
 	}
 
-	// Xử lý việc cập nhật thông tin người dùng
 	@PostMapping("/update")
 	public String updateProfile(@RequestParam String name, @RequestParam String phone, @RequestParam String address,
 			HttpServletRequest request) {
 		String email = (String) request.getSession().getAttribute("user");
 
 		if (email != null) {
-			User user = repUser.findUserByEmail(email); // Lấy người dùng theo email
-			user.setName(name); // Cập nhật tên mới
-			user.setPhone(phone); // Cập nhật số điện thoại mới
-			user.setAddress(address); // Cập nhật địa chỉ mới
+			User user = repUser.findUserByEmail(email);
+			user.setName(name);
+			user.setPhone(phone);
+			user.setAddress(address);
 
-			repUser.updateUser(user); // Gọi phương thức update để lưu thay đổi vào cơ sở dữ liệu
-
-			request.setAttribute("success", "Cập nhật thông tin thành công!"); // Thông báo thành công
-			return "redirect:/profile"; // Quay lại trang profile sau khi cập nhật
+			repUser.updateUser(user);
+			request.setAttribute("success", "Updated information successfully!");
+			return "redirect:/profile";
 		}
-		return "redirect:/user/login"; // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+		return "redirect:/user/login";
 	}
 
 	@PostMapping("/change-password")
@@ -113,124 +110,115 @@ public class HomeController {
 		String email = (String) request.getSession().getAttribute("user");
 
 		if (email != null) {
-			User user = repUser.findUserByEmail(email); // Lấy người dùng theo email
+			User user = repUser.findUserByEmail(email);
 
-			// Kiểm tra mật khẩu cũ
 			if (user != null && SecurityUtility.compareBcrypt(user.getPwd(), oldPassword)) {
 				if (newPassword.equals(confirmPassword)) {
-					user.setPwd(SecurityUtility.encryptBcrypt(newPassword)); // Cập nhật mật khẩu mới
-					repUser.updateUser(user); // Gọi phương thức update để lưu thay đổi vào cơ sở dữ liệu
+					user.setPwd(SecurityUtility.encryptBcrypt(newPassword)); 
+					repUser.updateUser(user); 
 					return "redirect:/profile";
 				} else {
-					return "redirect:/profile";// Thông báo lỗi
+					return "redirect:/profile";
 				}
 			} else {
 				return "redirect:/profile";
 			}
 		} else {
-			return "redirect:/profile"; // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+			return "redirect:/profile"; 
 		}
 	}
-    
-    // Hiển thị danh sách tin tức
-    @GetMapping("/news")
-    public String showNewsPage(Model model) {
-        List<News> newsList = newsRepository.findAllActive(); // Lấy danh sách bài viết từ DB
-        newsList.forEach(news -> {
-            news.setLikeCount(likeRepository.countLikesByNewsId(news.getId()));
-            news.setCommentCount(commentRepository.countCommentsByNewsId(news.getId()));
-        });
-        model.addAttribute("newsList", newsList);
-        return "home/news";
-    }
 
-    // Hiển thị chi tiết bài viết
-    @GetMapping("/news/{id}")
-    public String viewNews(@PathVariable("id") int id, Model model, HttpServletRequest request) {
-        News news = newsRepository.findById(id);
-        if (news == null || news.getStatus() != 1) {
-            model.addAttribute("error", "News not found!");
-            return "redirect:/news";
-        }
-        model.addAttribute("news", news);
+	@GetMapping("/news")
+	public String showNewsPage(Model model) {
+		List<News> newsList = newsRepository.findAllActive();
+		newsList.forEach(news -> {
+			news.setLikeCount(likeRepository.countLikesByNewsId(news.getId()));
+			news.setCommentCount(commentRepository.countCommentsByNewsId(news.getId()));
+		});
+		model.addAttribute("newsList", newsList);
+		return "home/news";
+	}
 
-        // Lấy danh sách bình luận và lượt thích
-        List<Comment> comments = commentRepository.findCommentsByNewsId(id);
-        model.addAttribute("comments", comments);
+	@GetMapping("/news/{id}")
+	public String viewNews(@PathVariable("id") int id, Model model, HttpServletRequest request) {
+		News news = newsRepository.findById(id);
+		if (news == null || news.getStatus() != 1) {
+			model.addAttribute("error", "News not found!");
+			return "redirect:/news";
+		}
+		model.addAttribute("news", news);
 
-        int likeCount = likeRepository.countLikesByNewsId(id);
-        model.addAttribute("likeCount", likeCount);
+		List<Comment> comments = commentRepository.findCommentsByNewsId(id);
+		model.addAttribute("comments", comments);
 
-        // Kiểm tra người dùng đăng nhập
-        String email = (String) request.getSession().getAttribute("user");
-        if (email != null) {
-            Integer userId = (Integer) request.getSession().getAttribute("userId");
-            if (userId != null) {
-                boolean userLiked = likeRepository.hasUserLikedNews(userId, id);
-                model.addAttribute("userLiked", userLiked);
-            }
-        }
+		int likeCount = likeRepository.countLikesByNewsId(id);
+		model.addAttribute("likeCount", likeCount);
 
-        return "home/news-details";
-    }
+		String email = (String) request.getSession().getAttribute("user");
+		if (email != null) {
+			Integer userId = (Integer) request.getSession().getAttribute("userId");
+			if (userId != null) {
+				boolean userLiked = likeRepository.hasUserLikedNews(userId, id);
+				model.addAttribute("userLiked", userLiked);
+			}
+		}
 
-    @PostMapping("/news/{id}/comments")
-    public String addComment(@PathVariable("id") int id, @RequestParam String content, HttpServletRequest request) {
-        System.out.println("Email from session: " + request.getSession().getAttribute("user"));
-        System.out.println("UserId from session: " + request.getSession().getAttribute("userId"));
+		return "home/news-details";
+	}
 
-        String email = (String) request.getSession().getAttribute("user");
-        if (email == null) {
-            return "redirect:/user/login"; // Chuyển hướng nếu chưa đăng nhập
-        }
+	@PostMapping("/news/{id}/comments")
+	public String addComment(@PathVariable("id") int id, @RequestParam String content, HttpServletRequest request) {
+		System.out.println("Email from session: " + request.getSession().getAttribute("user"));
+		System.out.println("UserId from session: " + request.getSession().getAttribute("userId"));
 
-        Integer userId = (Integer) request.getSession().getAttribute("userId");
-        if (userId == null) {
-            return "redirect:/user/login"; // Chuyển hướng nếu không tìm thấy userId
-        }
+		String email = (String) request.getSession().getAttribute("user");
+		if (email == null) {
+			return "redirect:/user/login"; 
+		}
 
-        Comment comment = new Comment();
-        comment.setUserId(userId);
-        comment.setNewsId(id);
-        comment.setContent(content);
-        comment.setCreatedAt(new java.sql.Date(System.currentTimeMillis()));
-        commentRepository.addComment(comment);
+		Integer userId = (Integer) request.getSession().getAttribute("userId");
+		if (userId == null) {
+			return "redirect:/user/login"; 
+		}
 
-        return "redirect:/news/" + id; // Quay lại trang chi tiết bài viết
-    }
+		Comment comment = new Comment();
+		comment.setUserId(userId);
+		comment.setNewsId(id);
+		comment.setContent(content);
+		comment.setCreatedAt(new java.sql.Date(System.currentTimeMillis()));
+		commentRepository.addComment(comment);
 
+		return "redirect:/news/" + id; 
+	}
 
-    // Thêm lượt thích
-    @PostMapping("/news/{id}/likes")
-    public String addLike(@PathVariable("id") int id, HttpServletRequest request) {
-        String email = (String) request.getSession().getAttribute("user");
-        if (email == null) {
-            return "redirect:/user/login"; // Chuyển hướng nếu chưa đăng nhập
-        }
+	@PostMapping("/news/{id}/likes")
+	public String addLike(@PathVariable("id") int id, HttpServletRequest request) {
+		String email = (String) request.getSession().getAttribute("user");
+		if (email == null) {
+			return "redirect:/user/login"; 
+		}
 
-        Integer userId = (Integer) request.getSession().getAttribute("userId");
-        if (userId != null && !likeRepository.hasUserLikedNews(userId, id)) {
-            Like like = new Like();
-            like.setUserId(userId);
-            like.setNewsId(id);
-            like.setCreatedAt(new java.sql.Date(System.currentTimeMillis()));
-            likeRepository.addLike(like);
-        }
-        return "redirect:/news/" + id;
-    }
+		Integer userId = (Integer) request.getSession().getAttribute("userId");
+		if (userId != null && !likeRepository.hasUserLikedNews(userId, id)) {
+			Like like = new Like();
+			like.setUserId(userId);
+			like.setNewsId(id);
+			like.setCreatedAt(new java.sql.Date(System.currentTimeMillis()));
+			likeRepository.addLike(like);
+		}
+		return "redirect:/news/" + id;
+	}
 
-    // Bỏ lượt thích
-    @PostMapping("/news/{id}/unlikes")
-    public String removeLike(@PathVariable("id") int id, HttpServletRequest request) {
-        String email = (String) request.getSession().getAttribute("user");
-        if (email == null) {
-            return "redirect:/user/login"; // Chuyển hướng nếu chưa đăng nhập
-        }
+	@PostMapping("/news/{id}/unlikes")
+	public String removeLike(@PathVariable("id") int id, HttpServletRequest request) {
+		String email = (String) request.getSession().getAttribute("user");
+		if (email == null) {
+		}
 
-        Integer userId = (Integer) request.getSession().getAttribute("userId");
-        if (userId != null && likeRepository.hasUserLikedNews(userId, id)) {
-            likeRepository.removeLike(userId, id);
-        }
-        return "redirect:/news/" + id;
-    }
+		Integer userId = (Integer) request.getSession().getAttribute("userId");
+		if (userId != null && likeRepository.hasUserLikedNews(userId, id)) {
+			likeRepository.removeLike(userId, id);
+		}
+		return "redirect:/news/" + id;
+	}
 }

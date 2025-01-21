@@ -18,11 +18,30 @@ public class MealRequest {
     private List<MealRequestDetail> mealRequestDetails = new ArrayList<>(); // Danh sách chi tiết yêu cầu suất ăn
     private Integer userId;
     private BigDecimal totalAmount;
+    private String userName; // Thêm thuộc tính tên user
+    private String userEmail; // Thêm thuộc tính email user
+
 
     
     // Getters và Setters
     
-    public Integer getUserId() {
+    public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
+	}
+
+	public Integer getUserId() {
         return userId;
     }
 
