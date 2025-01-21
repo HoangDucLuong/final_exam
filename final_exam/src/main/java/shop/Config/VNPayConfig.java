@@ -94,7 +94,7 @@ public class VNPayConfig {
         return ipAddress;
     }
 
-    // Tạo số ngẫu nhiên
+    // Tạo số ngẫu nhiên..
     public static String getRandomNumber(int len) {
         Random rnd = new Random();
         StringBuilder sb = new StringBuilder(len);
