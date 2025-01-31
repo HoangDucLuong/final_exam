@@ -2,54 +2,52 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <title>Menu Details</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <link href="img/favicon.ico" rel="icon">
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap" rel="stylesheet">
-    <!-- Icon Font Stylesheet -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Template Stylesheet -->
-    <link href="/css/style.css" rel="stylesheet">
+<meta charset="utf-8">
+<title>Invoice Details</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<link href="img/favicon.ico" rel="icon">
+<!-- Google Web Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+	href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap"
+	rel="stylesheet">
+<!-- Icon Font Stylesheet -->
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+	rel="stylesheet">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
+	rel="stylesheet">
+<!-- Customized Bootstrap Stylesheet -->
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<!-- Template Stylesheet -->
+<link href="/css/style.css" rel="stylesheet">
 </head>
 
 <body>
-		<!-- Navbar & Hero Start -->
-		<div class="container-xxl position-relative p-0">
-			<nav
-				class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
-				<a href="" class="navbar-brand p-0">
-					<h1 class="text-primary m-0">
-						<i class="fa fa-utensils me-3"></i>Restoran
-					</h1> <!-- <img src="img/logo.png" alt="Logo"> -->
-				</a>
-				<button class="navbar-toggler" type="button"
-					data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-					<span class="fa fa-bars"></span>
-				</button>
-				<div class="collapse navbar-collapse" id="navbarCollapse">
-					<div class="navbar-nav ms-auto py-0 pe-4">
-						<a href="/" class="nav-item nav-link active">Home</a> <a
-							href="/about" class="nav-item nav-link">About</a> <a
-							href="/service" class="nav-item nav-link">Service</a> <a
-							href="/menu" class="nav-item nav-link">Menu</a>
-						<div class="nav-item dropdown">
-							<a href="#" class="nav-link dropdown-toggle"
-								data-bs-toggle="dropdown">Pages</a>
-							<div class="dropdown-menu m-0">
-								<a href="/booking" class="dropdown-item">Booking</a> <a
-									href="/team" class="dropdown-item">Our Team</a> <a
-									href="/testimonial" class="dropdown-item">Testimonial</a>
-							</div>
-						</div>
-						<a href="/contact" class="nav-item nav-link">Contact</a>
-					</div>
+	<!-- Navbar & Hero Start -->
+	<div class="container-xxl position-relative p-0">
+		<nav
+			class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
+			<a href="" class="navbar-brand p-0">
+				<h1 class="text-primary m-0">
+					<i class="fa fa-utensils me-3"></i>Restoran
+				</h1> <!-- <img src="img/logo.png" alt="Logo"> -->
+			</a>
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+				<span class="fa fa-bars"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarCollapse">
+				<div class="navbar-nav ms-auto py-0 pe-4">
+					<a href="/" class="nav-item nav-link">Home</a> <a href="/about"
+						class="nav-item nav-link">About</a> <a href="/service"
+						class="nav-item nav-link">Service</a> <a href="/menu"
+						class="nav-item nav-link">Menu</a> <a href="/user/contracts"
+						class="nav-item nav-link">Contracts</a> <a href="/news"
+						class="nav-item nav-link ">News</a> <a href="/contact"
+						class="nav-item nav-link">Contact</a>
 					<div class="nav-item dropdown">
 						<a href="#" class="nav-link dropdown-toggle"
 							data-bs-toggle="dropdown"> <span
@@ -66,133 +64,187 @@
 								th:if="${session.name != null}">Logout</a>
 						</div>
 					</div>
+
+
 				</div>
-			</nav>
 
-			
+			</div>
+		</nav>
+
+
+	</div>
+	<div class="container-xxl py-5 bg-dark hero-header mb-5">
+		<div class="container text-center my-5 pt-5 pb-4">
+			<h1 class="text-light">
+				Invoice for Contract Code: <span th:text="${contractId}"></span>
+			</h1>
 		</div>
-<div class="container-xxl py-5 bg-dark hero-header mb-5">
-    <div class="container text-center my-5 pt-5 pb-4">
-        <h1 class="text-light">Hóa Đơn cho Mã Hợp Đồng: <span th:text="${contractId}"></span></h1>
-    </div>
-</div>
+	</div>
 
-<div class="container">
+	<div class="container">
 
-    <!-- Hiển thị thông báo nếu không tìm thấy hóa đơn -->
-    <div th:if="${#lists.isEmpty(invoicesByMonth)}" class="text-center my-4">
-        <p>Không tìm thấy hóa đơn nào cho hợp đồng này.</p>
-    </div>
+		<!-- Hiển thị thông báo nếu không tìm thấy hóa đơn -->
+		<div th:if="${#lists.isEmpty(invoicesByMonth)}"
+			class="text-center my-4">
+			<p>No invoices were found for this contract.</p>
+		</div>
 
-    <!-- Hiển thị danh sách hóa đơn nếu có -->
-    <div th:unless="${#lists.isEmpty(invoicesByMonth)}">
-        <div th:each="entry : ${invoicesByMonth}" class="mb-5">
-            <h2 class="mb-3">Tháng: <span th:text="${entry.key}"></span></h2>
+		<!-- Hiển thị danh sách hóa đơn nếu có -->
+		<div th:unless="${#lists.isEmpty(invoicesByMonth)}">
+			<div th:each="entry : ${invoicesByMonth}" class="mb-5">
+				<h2 class="mb-3">
+					Year-Month: <span th:text="${entry.key}"></span>
+				</h2>
 
-            <div th:if="${unpaidAmountsByMonth[entry.key] > 0}" class="mb-3">
-                <p th:text="'Hóa Đơn tháng ' + ${entry.key} + ' đang nợ ' + ${unpaidAmountsByMonth[entry.key]} + 'đ'"></p>
-            </div>
+				<div th:if="${unpaidAmountsByMonth[entry.key] > 0}" class="mb-3">
+					<p
+						th:text="'Monthly Invoice: ' + ${entry.key} + ' in debt ' + ${unpaidAmountsByMonth[entry.key]} + 'đ'"></p>
+				</div>
 
-            <table class="table table-bordered">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Mã Hóa Đơn</th>
-                        <th>Ngày Tạo</th>
-                        <th>Ngày Đến Hạn</th>
-                        <th>Tổng Số Tiền</th>
-                        <th>Số Tiền Đã Thanh Toán</th>
-                        <th>Trạng Thái Thanh Toán</th>
-                        
-                        <th>Chi Tiết</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="invoice : ${entry.value}">
-                        <td th:text="${invoice.id}"></td>
-                        <td th:text="${#temporals.format(invoice.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td> <!-- Hiển thị Ngày Tạo -->
-                        <td th:text="${#temporals.format(invoice.dueDate, 'yyyy-MM-dd')}"></td>
-                        <td th:text="${invoice.totalAmount}"></td>
-                        <td th:text="${invoice.paidAmount}"></td>
-                        <td th:text="${invoice.paymentStatus == 0 ? 'Chưa thanh toán' : 'Đã thanh toán'}"></td>
-                        
-                        <td>
-                		<!-- Nút Chi Tiết -->
-                			<a th:href="@{/user/invoices/detail/{invoiceId}(invoiceId=${invoice.id})}" class="btn btn-info">Chi Tiết</a>
-            			</td>
-                    </tr>
-                </tbody>
-            </table>
+				<table class="table table-bordered">
+					<thead class="table-dark">
+						<tr>
+							<th>Invoice Code</th>
+							<th>Date Created</th>
+							<th>Due Date</th>
+							<th>Total Amount</th>
+							<th>Amount Paid</th>
+							<th>Payment Status</th>
 
-           <form th:action="@{/user/invoices/{contractId}/pay(contractId=${contractId})}" method="post">
-    <input type="hidden" th:value="${contractId}" name="contractId" />
-    <input type="hidden" th:value="${entry.key}" name="month" />
-    <button type="submit" class="btn btn-success">Thanh Toán Hóa Đơn</button>
-</form>
+							<th>Details</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="invoice : ${entry.value}">
+							<td th:text="${invoice.id}"></td>
+							<td
+								th:text="${#temporals.format(invoice.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+							<!-- Hiển thị Ngày Tạo -->
+							<td th:text="${#temporals.format(invoice.dueDate, 'yyyy-MM-dd')}"></td>
+							<td th:text="${invoice.totalAmount}"></td>
+							<td th:text="${invoice.paidAmount}"></td>
+							<td
+								th:text="${invoice.paymentStatus == 0 ? 'Not yet paid' : 'Paid'}"></td>
 
-        </div>
-         <div class="text-center mt-5">
-        <a th:href="@{/user/invoices/{contractId}/payment-history(contractId=${contractId})}" class="btn btn-primary">
-            Xem Lịch Sử Thanh Toán
-        </a>
-    </div>
-    </div>
-</div>
+							<td>
+								<!-- Nút Chi Tiết --> <a
+								th:href="@{/user/invoices/detail/{invoiceId}(invoiceId=${invoice.id})}"
+								class="btn btn-info">View</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 
-        <!-- Footer Start -->
-        <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
-            <div class="container py-5">
-                <div class="row g-5">
-                    <div class="col-lg-3 col-md-6">
-                        <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4">Company</h4>
-                        <a class="btn btn-link" href="">About Us</a>
-                        <a class="btn btn-link" href="">Contact Us</a>
-                        <a class="btn btn-link" href="">Reservation</a>
-                        <a class="btn btn-link" href="">Privacy Policy</a>
-                        <a class="btn btn-link" href="">Terms & Condition</a>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4">Contact</h4>
-                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
-                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
-                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@example.com</p>
-                        <div class="d-flex pt-2">
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
-                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4">Opening</h4>
-                        <h5 class="text-light fw-normal">Monday - Saturday</h5>
-                        <p>09AM - 09PM</p>
-                        <h5 class="text-light fw-normal">Sunday</h5>
-                        <p>10AM - 08PM</p>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <h4 class="section-title ff-secondary text-start text-primary fw-normal mb-4">Newsletter</h4>
-                        <p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
-                        <div class="position-relative mx-auto" style="max-width: 400px;">
-                            <input class="form-control border-primary w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
-                            <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0">SignUp</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="container text-center">
-                <p class="m-0">&copy; Your Site Name, All Right Reserved. Designed By HTML Codex</p>
-            </div>
-        </div>
-        <!-- Footer End -->
-    </div>
+				<form
+					th:action="@{/user/invoices/{contractId}/pay(contractId=${contractId})}"
+					method="post">
+					<input type="hidden" th:value="${contractId}" name="contractId" />
+					<input type="hidden" th:value="${entry.key}" name="month" />
+					<button type="submit" class="btn btn-success">Bill Payment</button>
+				</form>
 
-    <!-- Back to Top -->
-    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+			</div>
+			<div class="text-center mt-5">
+				<a
+					th:href="@{/user/invoices/{contractId}/payment-history(contractId=${contractId})}"
+					class="btn btn-primary"> View Payment History </a>
+			</div>
+		</div>
+	</div>
 
-    <!-- JavaScript Libraries -->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/main.js"></script>
+	<!-- Footer Start -->
+	<div
+		class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn"
+		data-wow-delay="0.1s">
+		<div class="container py-5">
+			<div class="row g-5">
+				<div class="col-lg-3 col-md-6">
+					<h4
+						class="section-title ff-secondary text-start text-primary fw-normal mb-4">Company</h4>
+					<a class="btn btn-link" href="/about">About Us</a> <a
+						class="btn btn-link" href="/contact">Contact Us</a> <a
+						class="btn btn-link" href="">Reservation</a> <a
+						class="btn btn-link" href="">Privacy Policy</a> <a
+						class="btn btn-link" href="">Terms & Condition</a>
+				</div>
+				<div class="col-lg-3 col-md-6">
+					<h4
+						class="section-title ff-secondary text-start text-primary fw-normal mb-4">Contact</h4>
+					<p class="mb-2">
+						<i class="fa fa-map-marker-alt me-3"></i>35/6 Đường D5, Phường 25,
+						Bình Thạnh, Hồ Chí Minh 72308, Việt Nam
+					</p>
+					<p class="mb-2">
+						<i class="fa fa-phone-alt me-3"></i>0899358332
+					</p>
+					<p class="mb-2">
+						<i class="fa fa-envelope me-3"></i>hoangluong22012001@gmail.com
+					</p>
+					<div class="d-flex pt-2">
+						<a class="btn btn-outline-light btn-social" href=""><i
+							class="fab fa-twitter"></i></a> <a
+							class="btn btn-outline-light btn-social"
+							href="https://www.facebook.com/profile.php?id=100024153168722"><i
+							class="fab fa-facebook-f"></i></a> <a
+							class="btn btn-outline-light btn-social" href=""><i
+							class="fab fa-youtube"></i></a> <a
+							class="btn btn-outline-light btn-social" href=""><i
+							class="fab fa-linkedin-in"></i></a>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-6">
+					<h4
+						class="section-title ff-secondary text-start text-primary fw-normal mb-4">Opening</h4>
+					<h5 class="text-light fw-normal">Monday - Saturday</h5>
+					<p>09AM - 09PM</p>
+					<h5 class="text-light fw-normal">Sunday</h5>
+					<p>10AM - 08PM</p>
+				</div>
+				<div class="col-lg-3 col-md-6">
+					<h4
+						class="section-title ff-secondary text-start text-primary fw-normal mb-4">Newsletter</h4>
+					<p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
+					<div class="position-relative mx-auto" style="max-width: 400px;">
+						<input class="form-control border-primary w-100 py-3 ps-4 pe-5"
+							type="text" placeholder="Your email">
+						<button type="button"
+							class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2"
+							onclick="window.location.href='/user/register'">SignUp</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="copyright">
+				<div class="row">
+					<div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+						&copy; <a class="border-bottom" href="#">IndustrialCatering</a>,
+						All Right Reserved.
+
+						<!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
+						Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML
+							Codex</a><br> <br> Distributed By <a class="border-bottom"
+							href="https://themewagon.com" target="_blank">ThemeWagon</a>
+					</div>
+					<div class="col-md-6 text-center text-md-end">
+						<div class="footer-menu">
+							<a href="">Home</a> <a href="">Cookies</a> <a href="">Help</a> <a
+								href="">FQAs</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Back to Top -->
+	<a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i
+		class="bi bi-arrow-up"></i></a>
+
+	<!-- JavaScript Libraries -->
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap.bundle.min.js"></script>
+	<script src="js/main.js"></script>
 </body>
 
 </html>

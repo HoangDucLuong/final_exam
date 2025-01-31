@@ -47,19 +47,19 @@ public class MenuUserController {
 	public String showUserMenus(HttpServletRequest request, Model model) {
 		String email = (String) request.getSession().getAttribute("user");
 
+		// Lấy danh sách menu do admin tạo
+		List<Menu> adminMenus = menuRepository.findAdminMenus();
+		model.addAttribute("allMenus", adminMenus);
+
 		if (email != null) {
 			User user = userRepository.findUserByEmail(email);
 			if (user != null) {
 				List<Menu> userMenus = menuRepository.findMenusByUserId(user.getId());
 				model.addAttribute("userMenus", userMenus);
-
-				List<Menu> adminMenus = menuRepository.findAdminMenus();
-				model.addAttribute("allMenus", adminMenus);
-
-				return "user/menu-list";
 			}
 		}
-		return "redirect:/user/login";
+
+		return "user/menu-list";
 	}
 
 	@GetMapping("/menu/create")

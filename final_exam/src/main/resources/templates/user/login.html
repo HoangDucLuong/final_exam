@@ -1,138 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Login</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #121212; /* Dark background for a modern look */
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-        .login-container {
-            max-width: 400px;
-            width: 100%;
-            padding: 30px;
-            background: #1e1e1e; /* Slightly lighter dark color for the form container */
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        }
-        .login-container h2 {
-            font-weight: 600;
-            color: #00adb5; /* Teal accent color for the title */
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-        .login-container .form-label {
-            font-weight: 500;
-            color: #cfcfcf; /* Light grey for form labels */
-        }
-        .login-container .form-control {
-            background-color: #333333;
-            border: 1px solid #444444;
-            color: #ffffff;
-            border-radius: 8px;
-            padding: 10px;
-        }
-        .login-container .form-control:focus {
-            background-color: #333333;
-            border-color: #00adb5; /* Teal outline on focus */
-            color: #ffffff;
-        }
-        .login-container .btn-primary {
-            background-color: #00adb5; /* Teal button */
-            border: none;
-            width: 100%;
-            padding: 10px;
-            font-size: 1rem;
-            font-weight: 500;
-            border-radius: 8px;
-            transition: background-color 0.3s;
-        }
-        .login-container .btn-primary:hover {
-            background-color: #00bebe; /* Slightly lighter teal on hover */
-        }
-        .login-container .alert {
-            margin-top: 1rem;
-            text-align: center;
-        }
-        .form-group {
-            margin-bottom: 1rem;
-            position: relative;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Login</title>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+<style>
+body {
+	background-color: #6c757d; /* Màu xám */
+	color: #ffc107; /* Màu vàng (yellow-500) */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	margin: 0;
+}
 
-        .toggle-text {
-            font-size: 12px;
-            color: #007bff;
-            cursor: pointer;
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        .additional-links {
-            margin-top: 1rem;
-            text-align: center;
-        }
+.login-container {
+	max-width: 420px;
+	width: 100%;
+	padding: 40px;
+	background: #495057; /* Tông xám đậm hơn */
+	border-radius: 12px;
+	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
 
-        .additional-links a {
-            color: #00adb5;
-            text-decoration: none;
-            font-weight: 500;
-        }
+.login-container h2 {
+	font-weight: 700;
+	color: #ffc107; /* Màu vàng cho tiêu đề */
+	margin-bottom: 20px;
+	text-align: center;
+}
 
-        .additional-links a:hover {
-            text-decoration: underline;
-        }
-    </style>
+.login-container .form-label {
+	font-weight: 600;
+	color: #ffc107; /* Màu vàng cho label */
+}
+
+.login-container .form-control {
+	background-color: #343a40; /* Màu xám đậm */
+	border: 1px solid #495057;
+	color: #ffc107;
+	border-radius: 8px;
+	padding: 12px;
+}
+
+.login-container .form-control:focus {
+	background-color: #343a40;
+	border-color: #ffc107; /* Màu vàng khi focus */
+	color: #ffc107;
+}
+
+.login-container .btn-primary {
+	background-color: #ffc107; /* Màu vàng cho nút */
+	border: none;
+	width: 100%;
+	padding: 12px;
+	font-size: 16px;
+	font-weight: 600;
+	border-radius: 8px;
+	transition: all 0.3s;
+	color: #343a40; /* Màu chữ nút */
+}
+
+.login-container .btn-primary:hover {
+	background-color: #ffd54f; /* Vàng sáng hơn khi hover */
+}
+
+.login-container .alert {
+	margin-top: 1rem;
+	text-align: center;
+}
+
+.form-group {
+	margin-bottom: 1rem;
+	position: relative;
+}
+
+.toggle-text {
+	font-size: 14px;
+	color: #ffc107; /* Màu vàng cho nút hiển thị mật khẩu */
+	cursor: pointer;
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.additional-links {
+	margin-top: 20px;
+	text-align: center;
+}
+
+.additional-links a {
+	color: #ffc107;
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.additional-links a:hover {
+	text-decoration: underline;
+}
+.yellow-link {
+    color: #f59e0b; /* Yellow-600 */
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.yellow-link:hover {
+    text-decoration: underline;
+}
+
+</style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>User Login</h2>
-        <form th:action="@{/user/chklogins}" method="post">
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="text" class="form-control" name="email" id="email" placeholder="Enter your email" required>
-            </div>
-            <div class="mb-3 form-group">
-                <label for="pwd" class="form-label">Password</label>
-                <input type="password" class="form-control" name="pwd" id="pwd" placeholder="Enter your password" required>
-                <span id="togglePwd" class="toggle-text" onclick="togglePassword()">Show</span>
-            </div>
-            <button type="submit" class="btn btn-primary">Login</button>
-            <div th:if="${error != null}" class="alert alert-danger" th:text="${error}"></div>
-        </form>
-         <div class="additional-links">
-            <p>
-                <a href="/user/forgot-password">Forgot Password?</a>
-            </p>
-            <p>
-                Don't have an account? <a href="/user/register">Register here</a>
-            </p>
-        </div>
-    </div>
+	<div class="login-container">
+		<h2>User Login</h2>
+		<form th:action="@{/user/chklogins}" method="post">
+			<div class="mb-3">
+				<label for="email" class="form-label">Email</label> <input
+					type="text" class="form-control" name="email" id="email"
+					placeholder="Enter your email" required>
+			</div>
+			<div class="mb-3 form-group">
+				<label for="pwd" class="form-label">Password</label> <input
+					type="password" class="form-control" name="pwd" id="pwd"
+					placeholder="Enter your password" required> <span
+					id="togglePwd" class="toggle-text" onclick="togglePassword()">Show</span>
+			</div>
+			<button type="submit" class="btn btn-primary">Login</button>
+			<div th:if="${error != null}" class="alert alert-danger"
+				th:text="${error}"></div>
+		</form>
+		<div class="additional-links">
+			<p>
+				<a href="/user/forgot-password">Forgot Password?</a>
+			</p>
+			<p>
+				Already have an account? <a href="/user/register"
+					class="yellow-link">Register here</a>
+			</p>
+		</div>
+	</div>
 
-    <script>
-        function togglePassword() {
-            var pwdField = document.getElementById("pwd");
-            var togglePwdText = document.getElementById("togglePwd");
+	<script>
+		function togglePassword() {
+			var pwdField = document.getElementById("pwd");
+			var togglePwdText = document.getElementById("togglePwd");
 
-            if (pwdField.type === "password") {
-                pwdField.type = "text";
-                togglePwdText.textContent = "Hide";
-            } else {
-                pwdField.type = "password";
-                togglePwdText.textContent = "Show";
-            }
-        }
-    </script>
+			if (pwdField.type === "password") {
+				pwdField.type = "text";
+				togglePwdText.textContent = "Hide";
+			} else {
+				pwdField.type = "password";
+				togglePwdText.textContent = "Show";
+			}
+		}
+	</script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

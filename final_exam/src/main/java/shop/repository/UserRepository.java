@@ -126,5 +126,14 @@ public class UserRepository {
 		String sql = "SELECT COUNT(*) FROM tbl_user WHERE name LIKE ? OR email LIKE ?";
 		return db.queryForObject(sql, new Object[] { "%" + search + "%", "%" + search + "%" }, Integer.class);
 	}
+	public String findUserNameById(int userId) {
+	    String sql = "SELECT name FROM tbl_user WHERE id = ?";
+	    try {
+	        return db.queryForObject(sql, new Object[] { userId }, String.class);
+	    } catch (EmptyResultDataAccessException e) {
+	        return null;
+	    }
+	}
+
 
 }

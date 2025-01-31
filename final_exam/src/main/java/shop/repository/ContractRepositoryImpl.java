@@ -139,6 +139,28 @@ public class ContractRepositoryImpl implements ContractRepository {
         } catch (EmptyResultDataAccessException e) {
             return null; // Trả về null nếu không tìm thấy hợp đồng
         }
+    }	
+    @Override
+    public List<Contract> searchContracts(String keyword, int offset, int limit) {
+        String sql = "SELECT * FROM tbl_contract WHERE usr_id IN " +
+                     "(SELECT id FROM tbl_user WHERE name LIKE ?) " +
+                     "OR start_date LIKE ? OR end_date LIKE ? " +
+                     "ORDER BY id " + // Đảm bảo có cột để sắp xếp
+                     "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        String searchPattern = "%" + keyword + "%";
+        return jdbcTemplate.query(sql, 
+            new Object[]{searchPattern, searchPattern, searchPattern, offset, limit}, 
+            new ContractRowMapper());
+    }
+    @Override
+    public int countContracts(String keyword) {
+        String sql = "SELECT COUNT(*) FROM tbl_contract WHERE usr_id IN " +
+                     "(SELECT id FROM tbl_user WHERE name LIKE ?) " +
+                     "OR start_date LIKE ? OR end_date LIKE ?";
+        String searchPattern = "%" + keyword + "%";
+        return jdbcTemplate.queryForObject(sql, 
+            new Object[]{searchPattern, searchPattern, searchPattern}, 
+            Integer.class);
     }
 
 
