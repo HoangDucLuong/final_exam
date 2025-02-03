@@ -97,7 +97,7 @@
 			</div>
 			<div class="card-style mb-30">
 				<form th:action="@{/admin/contracts/update/{id}(id=${contract.id})}"
-					method="post">
+					method="post"enctype="multipart/form-data">
 					<div class="row">
 						<div class="col-md-6 mb-3">
 							<label for="usrId" class="form-label">User ID</label> <input
@@ -152,8 +152,14 @@
 							</select>
 						</div>
 					</div>
+					<div class="col-md-12 mb-3">
+        <label for="pdfFile" class="form-label">Cập nhật file hợp đồng (PDF)</label>
+        <input type="file" class="form-control" id="pdfFile" name="pdfFile" accept="application/pdf">
+        <small class="text-muted">Nếu upload file mới, file cũ sẽ bị ghi đè</small>
+    </div>
 					<button type="submit" class="btn btn-primary">Update Contract</button>
 					<a href="/admin/contracts" class="btn btn-secondary">Cancel</a>
+					
 				</form>
 			</div>
 		</div>

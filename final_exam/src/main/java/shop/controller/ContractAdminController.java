@@ -1,9 +1,25 @@
 package shop.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.HttpServletResponse;
 import shop.model.Contract;
 import shop.model.User;
 import shop.repository.ContractRepository;
@@ -11,6 +27,15 @@ import shop.repository.UserRepository;
 import shop.service.MailService;
 import shop.repository.ContractDetailRepository;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,7 +53,8 @@ public class ContractAdminController {
 	private UserRepository userRepository;
 	@Autowired
 	private ContractDetailRepository contractDetailRepository;
-
+	@Autowired
+	private JavaMailSender mailSender;
 	@Autowired
 	private MailService mailService;
 
@@ -76,14 +102,47 @@ public class ContractAdminController {
 		return "admin/contract/edit_contract"; // Trả về trang chỉnh sửa hợp đồng
 	}
 	@PostMapping("/update/{id}")
-	public String updateContract(@PathVariable("id") int id, @ModelAttribute Contract contract, Model model) {
+	public String updateContract(
+	        @PathVariable("id") int id,
+	        @ModelAttribute Contract contract,
+	        @RequestParam("pdfFile") MultipartFile pdfFile,
+	        Model model) throws IOException {
+	    
 	    Contract existingContract = contractRepository.getContractById(id);
-
+	    
 	    if (existingContract == null) {
-	        return "redirect:/admin/contract/contracts?error=notfound"; // Xử lý khi không tìm thấy hợp đồng
+	        return "redirect:/admin/contracts?error=notfound";
 	    }
 
-	    // Cập nhật các thuộc tính của hợp đồng
+	    // Xử lý upload file PDF
+	    if (!pdfFile.isEmpty()) {
+	        // Validate file type
+	        if (!pdfFile.getContentType().equalsIgnoreCase("application/pdf")) {
+	            model.addAttribute("error", "Chỉ chấp nhận file PDF");
+	            return "admin/contract/edit_contract";
+	        }
+
+	        // Validate file size (max 5MB)
+	        if (pdfFile.getSize() > 5 * 1024 * 1024) {
+	            model.addAttribute("error", "Kích thước file tối đa 5MB");
+	            return "admin/contract/edit_contract";
+	        }
+
+	        // Tạo thư mục nếu chưa tồn tại
+	        Path uploadDir = Paths.get("src/main/resources/contracts");
+	        if (!Files.exists(uploadDir)) {
+	            Files.createDirectories(uploadDir);
+	        }
+
+	        // Tạo tên file theo ID hợp đồng
+	        String fileName = "contract_" + id + ".pdf";
+	        Path filePath = uploadDir.resolve(fileName);
+
+	        // Lưu file và ghi đè nếu tồn tại
+	        Files.copy(pdfFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+	    }
+
+	    // Cập nhật thông tin hợp đồng
 	    existingContract.setUsrId(contract.getUsrId());
 	    existingContract.setStartDate(contract.getStartDate());
 	    existingContract.setEndDate(contract.getEndDate());
@@ -92,16 +151,15 @@ public class ContractAdminController {
 	    existingContract.setStatus(contract.getStatus());
 	    existingContract.setPaymentStatus(contract.getPaymentStatus());
 
-	    // Lưu hợp đồng đã cập nhật vào cơ sở dữ liệu
 	    contractRepository.updateContract(existingContract);
 
-	    // Lấy thông tin người dùng từ hợp đồng và gửi email
+	    // Gửi email thông báo
 	    User user = userRepository.findById(contract.getUsrId());
 	    if (user != null) {
 	        mailService.sendContractUpdateMail(user.getEmail(), existingContract);
 	    }
 
-	    return "redirect:/admin/contracts"; // Quay lại trang danh sách hợp đồng của admin
+	    return "redirect:/admin/contracts";
 	}
 
 
@@ -153,31 +211,135 @@ public class ContractAdminController {
 
 	@PostMapping("/create")
 	public String createContractForAdmin(@RequestParam("usrId") int usrId,
-			@RequestParam("startDate") LocalDate startDate, @RequestParam("contractDuration") int contractDuration,
-			@RequestParam("depositAmount") BigDecimal depositAmount, Model model) {
-		try {
-			// Tính toán ngày kết thúc
-			LocalDate endDate = startDate.plusMonths(contractDuration);
+	        @RequestParam("startDate") LocalDate startDate, 
+	        @RequestParam("contractDuration") int contractDuration,
+	        @RequestParam("depositAmount") BigDecimal depositAmount, 
+	        Model model) {
+	    try {
+	        // Tính toán ngày kết thúc
+	        LocalDate endDate = startDate.plusMonths(contractDuration);
 
-			// Tạo đối tượng hợp đồng mới
-			Contract newContract = new Contract();
-			newContract.setUsrId(usrId); // Gán ID người dùng
-			newContract.setStartDate(startDate);
-			newContract.setEndDate(endDate);
-			newContract.setDepositAmount(depositAmount);
-			newContract.setStatus(0); // Trạng thái ban đầu là Pending
-			newContract.setPaymentStatus(0); // Trạng thái thanh toán là Unpaid
+	        // Lấy thông tin người dùng
+	        User user = userRepository.findById(usrId);
+	        if (user == null) {
+	            model.addAttribute("error", "Không tìm thấy người dùng");
+	            return "admin/contract/create-contract";
+	        }
 
-			// Lưu hợp đồng vào cơ sở dữ liệu
-			contractRepository.addContract(newContract);
+	        // Tính toán tổng số tiền
+	        BigDecimal daysInMonth = BigDecimal.valueOf(31);
+	        BigDecimal totalDays = BigDecimal.valueOf(contractDuration).multiply(daysInMonth);
+	        
+	        // Giả sử tính toán tổng số tiền dựa trên một mức giá cơ bản
+	        BigDecimal dailyRate = BigDecimal.valueOf(100000); // Ví dụ: 100,000 VND/ngày
+	        BigDecimal totalContractAmount = dailyRate.multiply(totalDays);
 
-			return "redirect:/admin/contracts"; // Chuyển hướng về trang danh sách hợp đồng của admin sau khi tạo hợp
-												// đồng
-		} catch (Exception e) {
-			// Xử lý lỗi (nếu có)
-			model.addAttribute("error", "Đã có lỗi xảy ra khi tạo hợp đồng: " + e.getMessage());
-			return "admin/contract/create-contract"; // Trả về trang tạo hợp đồng để admin có thể thử lại
-		}
+	        // Tạo đối tượng hợp đồng mới
+	        Contract newContract = new Contract();
+	        newContract.setUsrId(usrId);
+	        newContract.setStartDate(startDate);
+	        newContract.setEndDate(endDate);
+	        newContract.setDepositAmount(depositAmount);
+	        newContract.setTotalAmount(totalContractAmount);
+	        newContract.setStatus(0); // Trạng thái ban đầu là Pending
+	        newContract.setPaymentStatus(0); // Trạng thái thanh toán là Unpaid
+
+	        // Lưu hợp đồng vào cơ sở dữ liệu
+	        contractRepository.addContract(newContract);
+
+	        // Tạo file PDF
+	        String filePath = "src/main/resources/contracts/contract_" + newContract.getId() + ".pdf";
+	        generateContractPdf(newContract, user, filePath);
+
+	        // Gửi email
+	        sendContractEmail(user.getEmail(), filePath);
+
+	        return "redirect:/admin/contracts";
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        model.addAttribute("error", "Đã có lỗi xảy ra khi tạo hợp đồng: " + e.getMessage());
+	        return "admin/contract/create-contract";
+	    }
+	}
+
+	private void generateContractPdf(Contract contract, User user, String filePath) throws DocumentException, IOException {
+	    Document document = new Document();
+	    File file = new File(filePath);
+	    file.getParentFile().mkdirs();
+	    PdfWriter.getInstance(document, new FileOutputStream(file));
+
+	    // Nhúng font Arial Unicode MS vào PDF
+	    BaseFont baseFont = BaseFont.createFont("c:\\windows\\fonts\\arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+	    Font vietnameseFont = new Font(baseFont, 12);
+
+	    document.open();
+
+	    // Tiêu đề hợp đồng
+	    Paragraph title = new Paragraph("Hợp đồng dịch vụ (Quản trị viên)", vietnameseFont);
+	    title.setAlignment(Element.ALIGN_CENTER);
+	    title.setSpacingAfter(10);
+	    document.add(title);
+
+	    // Thêm thông tin hợp đồng cơ bản
+	    document.add(new Paragraph("Người dùng: " + user.getName(), vietnameseFont));
+	    document.add(new Paragraph("Email: " + user.getEmail(), vietnameseFont));
+	    document.add(new Paragraph("Ngày bắt đầu: " + contract.getStartDate(), vietnameseFont));
+	    document.add(new Paragraph("Ngày kết thúc: " + contract.getEndDate(), vietnameseFont));
+	    document.add(new Paragraph("Tổng số tiền: " + contract.getTotalAmount(), vietnameseFont));
+	    document.add(new Paragraph("Số tiền đặt cọc: " + contract.getDepositAmount(), vietnameseFont));
+
+	    document.close();
+	    System.out.println("PDF được tạo tại: " + filePath);
+	}
+
+	private void sendContractEmail(String recipientEmail, String filePath) throws MessagingException {
+	    MimeMessage message = mailSender.createMimeMessage();
+	    MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+	    helper.setTo(recipientEmail);
+	    helper.setSubject("Hợp đồng mới được tạo bởi quản trị viên");
+	    helper.setText("Vui lòng kiểm tra file đính kèm để xem chi tiết hợp đồng.");
+
+	    File file = new File(filePath);
+	    helper.addAttachment(file.getName(), file);
+
+	    mailSender.send(message);
+	    System.out.println("Email được gửi đến: " + recipientEmail);
+	}
+
+	// Thêm method để xem PDF cho admin
+	@GetMapping("/pdf/{id}")
+	@ResponseBody
+	public void viewContractPdf(@PathVariable("id") int contractId, HttpServletResponse response) {
+	    String filePath = "src/main/resources/contracts/contract_" + contractId + ".pdf";
+	    File file = new File(filePath);
+
+	    if (!file.exists() || file.length() == 0) {
+	        try {
+	            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy file PDF");
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	        return;
+	    }
+
+	    try (FileInputStream fileInputStream = new FileInputStream(file);
+	         OutputStream responseOutputStream = response.getOutputStream()) {
+
+	        response.setContentType("application/pdf");
+	        response.setHeader("Content-Disposition", "inline; filename=contract_" + contractId + ".pdf");
+	        response.setContentLength((int) file.length());
+
+	        byte[] buffer = new byte[1024];
+	        int bytesRead;
+	        while ((bytesRead = fileInputStream.read(buffer)) != -1) {
+	            responseOutputStream.write(buffer, 0, bytesRead);
+	        }
+
+	        responseOutputStream.flush();
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
 	}
 
 	@PostMapping("/sendMail/{id}")

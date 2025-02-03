@@ -261,52 +261,114 @@ public class ContractController {
 	}
 
 
-	 private void generateContractPdf(Contract contract, User user, List<MenuDetails> menuDetails, String filePath) throws DocumentException, IOException {
-		    Document document = new Document();
-		    File file = new File(filePath);
-		    file.getParentFile().mkdirs();
-		    PdfWriter.getInstance(document, new FileOutputStream(file));
+	private void generateContractPdf(Contract contract, User user, List<MenuDetails> menuDetails, String filePath) throws DocumentException, IOException {
+	    Document document = new Document();
+	    File file = new File(filePath);
+	    file.getParentFile().mkdirs();
+	    PdfWriter.getInstance(document, new FileOutputStream(file));
 
-		    // Nhúng font Arial Unicode MS vào PDF
-		    BaseFont baseFont = BaseFont.createFont("c:\\windows\\fonts\\arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-		    Font vietnameseFont = new Font(baseFont, 12);
+	    // Nhúng font Arial Unicode MS vào PDF
+	    BaseFont baseFont = BaseFont.createFont("c:\\windows\\fonts\\arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+	    Font vietnameseFont = new Font(baseFont, 12);
+	    Font titleFont = new Font(baseFont, 14, Font.BOLD);
 
-		    document.open();
+	    document.open();
 
-		    // Tiêu đề hợp đồng
-		    Paragraph title = new Paragraph("Hợp đồng dịch vụ công nghiệp", vietnameseFont);
-		    title.setAlignment(Element.ALIGN_CENTER);
-		    title.setSpacingAfter(10); // Khoảng cách sau tiêu đề
-		    document.add(title);
+	    // Tiêu đề hợp đồng
+	    Paragraph title = new Paragraph("HỢP ĐỒNG DỊCH VỤ CÔNG NGHIỆP", titleFont);
+	    title.setAlignment(Element.ALIGN_CENTER);
+	    title.setSpacingAfter(20);
+	    document.add(title);
 
-		    // Thêm thông tin hợp đồng cơ bản
-		    document.add(new Paragraph("Người dùng: " + user.getName(), vietnameseFont));
-		    document.add(new Paragraph("Email: " + user.getEmail(), vietnameseFont));
-		    document.add(new Paragraph("Ngày bắt đầu: " + contract.getStartDate(), vietnameseFont));
-		    document.add(new Paragraph("Ngày kết thúc: " + contract.getEndDate(), vietnameseFont));
-		    document.add(new Paragraph("Tổng số tiền: " + contract.getTotalAmount(), vietnameseFont));
-		    document.add(new Paragraph("Số tiền đặt cọc: " + contract.getDepositAmount(), vietnameseFont));
-		    document.add(new Paragraph(" ", vietnameseFont));
+	    // Căn cứ pháp lý
+	    document.add(new Paragraph("Căn cứ vào:", vietnameseFont));
+	    document.add(new Paragraph("- Bộ luật Dân sự Việt Nam;", vietnameseFont));
+	    document.add(new Paragraph("- Các quy định pháp lý liên quan đến hợp đồng dịch vụ.", vietnameseFont));
+	    document.add(new Paragraph("\n", vietnameseFont));
 
-		    // Bảng menu với tên và giá
-		    PdfPTable table = new PdfPTable(2);  // Cột cho Tên Menu và Giá
-		    table.addCell(new Phrase("Tên Menu", vietnameseFont));
-		    table.addCell(new Phrase("Giá", vietnameseFont));
+	    // Thông tin các bên
+	    document.add(new Paragraph("Hôm nay, ngày " + LocalDate.now() + ", tại Văn phòng Industrial Catering, chúng tôi gồm có:", vietnameseFont));
+	    document.add(new Paragraph("\nBên Cung Cấp Dịch Vụ (Bên A):", vietnameseFont));
+	    document.add(new Paragraph("Tên: Industrial Catering", vietnameseFont));
+	    document.add(new Paragraph("Email: admin@gmail.com", vietnameseFont));
+	    document.add(new Paragraph("\nBên Sử Dụng Dịch Vụ (Bên B):", vietnameseFont));
+	    document.add(new Paragraph("Tên: " + user.getName(), vietnameseFont));
+	    document.add(new Paragraph("Email: " + user.getEmail(), vietnameseFont));
+	    document.add(new Paragraph("\n", vietnameseFont));
 
-		    for (MenuDetails detail : menuDetails) {
-		        // Lấy thông tin Menu từ ID
-		        Menu menu = menuRepository.getMenuById(detail.getMenuId());
+	    // Điều khoản hợp đồng
+	    document.add(new Paragraph("Điều 1: Phạm vi và mục đích dịch vụ", vietnameseFont));
+	    document.add(new Paragraph("Bên A sẽ cung cấp dịch vụ công nghiệp theo các yêu cầu sau:", vietnameseFont));
+	    document.add(new Paragraph("- Cung cấp các sản phẩm thực phẩm theo danh sách dưới đây.", vietnameseFont));
+	    document.add(new Paragraph("- Đảm bảo chất lượng sản phẩm, tiến độ và các yêu cầu kỹ thuật được quy định trong hợp đồng.", vietnameseFont));
+	    document.add(new Paragraph("\n", vietnameseFont));
 
-		        // Thêm tên menu và giá vào bảng
-		        table.addCell(new Phrase(menu.getMenuName(), vietnameseFont));
-		        table.addCell(new Phrase(detail.getPrice().toString(), vietnameseFont));
-		    }
+	    document.add(new Paragraph("Điều 2: Thời gian thực hiện dịch vụ", vietnameseFont));
+	    document.add(new Paragraph("Thời gian bắt đầu dịch vụ: " + contract.getStartDate(), vietnameseFont));
+	    document.add(new Paragraph("Thời gian kết thúc dịch vụ: " + contract.getEndDate(), vietnameseFont));
+	    document.add(new Paragraph("\n", vietnameseFont));
 
-		    document.add(table);
-		    document.close();
+	    document.add(new Paragraph("Điều 3: Giá trị hợp đồng", vietnameseFont));
+	    document.add(new Paragraph("- Tổng giá trị hợp đồng: " + contract.getTotalAmount() + " VND", vietnameseFont));
+	    document.add(new Paragraph("- Số tiền đặt cọc: " + contract.getDepositAmount() + " VND", vietnameseFont));
+	    document.add(new Paragraph("- Phương thức thanh toán: Chuyển khoản", vietnameseFont));
+	    document.add(new Paragraph("\n", vietnameseFont));
 
-		    System.out.println("PDF được tạo tại: " + filePath);
-		}
+	    document.add(new Paragraph("Điều 4: Các điều khoản thanh toán", vietnameseFont));
+	    document.add(new Paragraph("Phần còn lại của tổng số tiền sẽ được thanh toán trực tiếp tại văn phòng công ty Industrial Catering.", vietnameseFont));
+	    document.add(new Paragraph("\n", vietnameseFont));
+
+	    document.add(new Paragraph("Điều 5: Quyền và nghĩa vụ của các bên", vietnameseFont));
+	    document.add(new Paragraph("- Quyền và nghĩa vụ của Bên A:", vietnameseFont));
+	    document.add(new Paragraph("  + Cung cấp dịch vụ đúng chất lượng và tiến độ đã thỏa thuận.", vietnameseFont));
+	    document.add(new Paragraph("  + Đảm bảo bảo mật thông tin của Bên B.", vietnameseFont));
+	    document.add(new Paragraph("- Quyền và nghĩa vụ của Bên B:", vietnameseFont));
+	    document.add(new Paragraph("  + Thanh toán đúng thời gian và số tiền đã thỏa thuận trong hợp đồng.", vietnameseFont));
+	    document.add(new Paragraph("  + Cung cấp thông tin đầy đủ và chính xác để Bên A thực hiện dịch vụ.", vietnameseFont));
+	    document.add(new Paragraph("\n", vietnameseFont));
+
+	    document.add(new Paragraph("Điều 6: Điều khoản bảo mật", vietnameseFont));
+	    document.add(new Paragraph("Bên A cam kết bảo mật tất cả các thông tin của Bên B trong suốt thời gian thực hiện hợp đồng và sau khi hợp đồng kết thúc.", vietnameseFont));
+	    document.add(new Paragraph("\n", vietnameseFont));
+
+	    document.add(new Paragraph("Điều 7: Giải quyết tranh chấp", vietnameseFont));
+	    document.add(new Paragraph("Mọi tranh chấp phát sinh trong quá trình thực hiện hợp đồng sẽ được giải quyết thông qua thương lượng. Nếu không thể thương lượng, các bên có thể đưa ra Tòa án có thẩm quyền giải quyết.", vietnameseFont));
+	    document.add(new Paragraph("\n", vietnameseFont));
+
+	    document.add(new Paragraph("Điều 8: Các sản phẩm, dịch vụ được cung cấp theo hợp đồng này:", vietnameseFont));
+
+	    // Bảng menu với tên và giá
+	    PdfPTable table = new PdfPTable(2);  // Cột cho Tên Menu và Giá
+	    table.setSpacingBefore(10);
+	    table.setSpacingAfter(10);
+	    table.addCell(new Phrase("Tên Menu", vietnameseFont));
+	    table.addCell(new Phrase("Giá (VND)", vietnameseFont));
+
+	    for (MenuDetails detail : menuDetails) {
+	        Menu menu = menuRepository.getMenuById(detail.getMenuId());
+	        table.addCell(new Phrase(menu.getMenuName(), vietnameseFont));
+	        table.addCell(new Phrase(detail.getPrice().toString(), vietnameseFont));
+	    }
+
+	    document.add(table);
+
+	    document.add(new Paragraph("Điều 9: Ký kết hợp đồng", vietnameseFont));
+	    document.add(new Paragraph("Hợp đồng này có hiệu lực từ ngày ký và có giá trị bắt buộc đối với cả hai bên.", vietnameseFont));
+	    document.add(new Paragraph("\n", vietnameseFont));
+
+	    document.add(new Paragraph("Bên A (Cung cấp dịch vụ):", vietnameseFont));
+	    document.add(new Paragraph("Chữ ký: __________________", vietnameseFont));
+	    document.add(new Paragraph("Ngày ký: __________________", vietnameseFont));
+	    document.add(new Paragraph("\n", vietnameseFont));
+
+	    document.add(new Paragraph("Bên B (Sử dụng dịch vụ):", vietnameseFont));
+	    document.add(new Paragraph("Chữ ký: __________________", vietnameseFont));
+	    document.add(new Paragraph("Ngày ký: __________________", vietnameseFont));
+
+	    document.close();
+	    System.out.println("PDF được tạo tại: " + filePath);
+	}
+
 
 	    private void sendContractEmail(String recipientEmail, String filePath) throws MessagingException {
 	        MimeMessage message = mailSender.createMimeMessage();
