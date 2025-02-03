@@ -61,9 +61,16 @@ public class NewsRepositoryImpl implements NewsRepository {
 
     @Override
     public void deleteNews(int id) {
-        String sql = "DELETE FROM tbl_news WHERE id = ?";
-        jdbcTemplate.update(sql, id);
+        // Xóa các bản ghi liên quan trong tbl_like
+        String deleteLikesSql = "DELETE FROM tbl_like WHERE news_id = ?";
+        jdbcTemplate.update(deleteLikesSql, id);
+        String deleteCommentsSql = "DELETE FROM tbl_comment WHERE news_id = ?";
+        jdbcTemplate.update(deleteCommentsSql, id);
+        // Sau đó xóa bản ghi trong tbl_news
+        String deleteNewsSql = "DELETE FROM tbl_news WHERE id = ?";
+        jdbcTemplate.update(deleteNewsSql, id);
     }
+
     @Override
     public List<News> findAllActive() {
         String sql = "SELECT * FROM tbl_news WHERE status = 1";

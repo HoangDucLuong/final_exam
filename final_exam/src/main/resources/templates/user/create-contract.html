@@ -1,241 +1,309 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Tạo Hợp Đồng</title>
-<link rel="stylesheet" href="/css/style.css">
-<style>
-body {
-	font-family: Arial, sans-serif;
-	background-color: #f4f4f4;
-	margin: 0;
-	padding: 20px;
-}
+  <meta charset="utf-8">
+  <title>Contract Details</title>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <link href="/img/favicon.ico" rel="icon">
 
-h2 {
-	color: #333;
-}
+  <!-- Google Web Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&family=Pacifico&display=swap" rel="stylesheet">
 
-form {
-	background: white;
-	padding: 20px;
-	border-radius: 8px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+  <!-- Icon Font Stylesheet -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-div {
-	margin-bottom: 15px;
-}
+  <!-- Libraries Stylesheet -->
+  <link href="/lib/animate/animate.min.css" rel="stylesheet">
+  <link href="/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+  <link href="/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
-label {
-	display: block;
-	margin-bottom: 5px;
-}
+  <!-- Customized Bootstrap Stylesheet -->
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
 
-select, input[type="date"], input[type="number"], input[type="text"],
-	button {
-	width: 100%;
-	padding: 10px;
-	border-radius: 5px;
-	border: 1px solid #ccc;
-}
+  <!-- Template Stylesheet -->
+  <link href="/css/style.css" rel="stylesheet">
 
-button {
-	background-color: #007BFF;
-	color: white;
-	border: none;
-	cursor: pointer;
-}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
 
-button:hover {
-	background-color: #0056b3;
-}
+    h2 {
+      color: #333;
+    }
 
-/* Popup Modal Styles */
-.modal {
-	display: none; /* Popup hidden by default */
-	position: fixed;
-	z-index: 1;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(0, 0, 0, 0.5);
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
 
-.modal-content {
-	background-color: white;
-	padding: 20px;
-	width: 80%;
-	max-width: 500px;
-	border-radius: 8px;
-	position: relative;
-}
+    div {
+      margin-bottom: 15px;
+    }
 
-.modal-header {
-	text-align: center;
-	font-size: 18px;
-	margin-bottom: 15px;
-}
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
 
-.menu-list {
-	max-height: 300px;
-	overflow-y: auto;
-	margin-bottom: 20px;
-}
+    select, input[type="date"], input[type="number"], input[type="text"],
+    button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
 
-/* Close button for modal */
-.modal-close {
-	position: absolute;
-	top: 10px;
-	right: 10px;
-	font-size: 20px;
-	cursor: pointer;
-	color: #333;
-}
+    button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
 
-.modal-close:hover {
-	color: red;
-}
+    button:hover {
+      background-color: #0056b3;
+    }
 
-#contractDuration {
-	margin-bottom: 20px; /* Đảm bảo có khoảng cách hợp lý */
-}
-</style>
-<script>
-        function openMenuPopup() {
-            document.getElementById("menuModal").style.display = "flex"; // Show modal when button is clicked
-        }
+    /* Popup Modal Styles */
+    .modal {
+      display: none; /* Popup hidden by default */
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        function closeMenuPopup() {
-            document.getElementById("menuModal").style.display = "none"; // Hide modal
-        }
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 8px;
+      position: relative;
+    }
 
-        function updateMenuPrices() {
-            const selectedMenus = document.querySelectorAll('.menu-checkbox:checked');
-            let totalMenuPrice = 0;
+    .modal-header {
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
 
-            // Calculate the total price for the selected menus
-            selectedMenus.forEach(menu => {
-                totalMenuPrice += parseFloat(menu.getAttribute("data-price"));
-            });
+    .menu-list {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
 
-            // Update contract total price
-            const contractDuration = document.getElementById("contractDuration").value;
-            const totalContractPrice = totalMenuPrice * (contractDuration ? parseInt(contractDuration) * 31 : 31);
-            document.getElementById("contractTotalPrice").value = totalContractPrice.toFixed(2);
+    /* Close button for modal */
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      cursor: pointer;
+      color: #333;
+    }
 
-            // Update deposit amount (10% of total contract price)
-            const depositAmount = totalContractPrice * 0.1;
-            document.getElementById("depositAmount").value = depositAmount.toFixed(2);
-        }
+    .modal-close:hover {
+      color: red;
+    }
 
-        function selectMenu() {
-            const selectedMenus = document.querySelectorAll('.menu-checkbox:checked');
-            const menuNames = Array.from(selectedMenus).map(menu => menu.nextElementSibling.textContent);
-            const menuIds = Array.from(selectedMenus).map(menu => menu.value);  // Collect menuIds
-            document.getElementById("selectedMenuNames").value = menuNames.join(", ");
-
-            // Insert menuId values into hidden input fields
-            const menuIdInput = document.getElementById("menuIds");
-            menuIdInput.value = menuIds.join(", ");
-
-            closeMenuPopup(); // Close the modal after selecting menus
-            updateMenuPrices(); // Update prices based on selected menus
-        }
-
-        function setTodayDate() {
-            const today = new Date().toISOString().split("T")[0]; // Lấy ngày hiện tại dạng YYYY-MM-DD
-            document.getElementById("creationDate").value = today;
-            document.getElementById("startDate").value = today;
-        }
-        function validateForm() {
-            var contractDuration = document.getElementById("contractDuration").value;
-            
-            // Check if the contract duration is less than 6 months
-            if (contractDuration < 6) {
-                alert("Hợp đồng phải có thời hạn ít nhất 6 tháng.");
-                return false;  // Stop form submission
-            }
-
-            return true; // Allow form submission
-        }
-
-
-    </script>
+    #contractDuration {
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
+
 <body onload="setTodayDate()">
-	<h2>Tạo Hợp Đồng</h2>
-	<form th:action="@{/user/create-contract}" method="post"
-		onsubmit="return validateForm()">
-		<div>
-			<label for="creator">Người tạo hợp đồng:</label> <input type="text"
-				id="creator" name="creator" th:value="${userName}" readonly>
-		</div>
+  <div class="container-xxl position-relative p-0">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 px-lg-5 py-3 py-lg-0">
+      <a href="" class="navbar-brand p-0">
+        <h1 class="text-primary m-0">
+          <i class="fa fa-utensils me-3"></i>Restoran
+        </h1>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="fa fa-bars"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav ms-auto py-0 pe-4">
+          <a href="/" class="nav-item nav-link">Home</a>
+          <a href="/about" class="nav-item nav-link">About</a>
+          <a href="/service" class="nav-item nav-link">Service</a>
+          <a href="/menu" class="nav-item nav-link">Menu</a>
+          <a href="/user/contracts" class="nav-item nav-link active">Contracts</a>
+          <a href="/news" class="nav-item nav-link">News</a>
+          <a href="/contact" class="nav-item nav-link">Contact</a>
+          <div class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+              <span th:if="${session.name != null}" th:text="${session.name}">Auth</span>
+              <span th:if="${session.name == null}">Auth</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end">
+              <a href="/user/login" class="dropdown-item" th:if="${session.name == null}">Sign In</a>
+              <a href="/user/register" class="dropdown-item" th:if="${session.name == null}">Sign Up</a>
+              <a href="/profile" class="dropdown-item" th:if="${session.name != null}">Profile</a>
+              <a href="/user/logout" class="dropdown-item" th:if="${session.name != null}">Logout</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
 
-		<div>
-			<input type="date" id="creationDate" name="creationDate" readonly
-				hidden>
-			<!-- Set as readonly -->
-		</div>
+  <div class="container-xxl py-5 bg-dark hero-header mb-5">
+    <div class="container text-center my-5 pt-5 pb-4">
+      <h1 class="display-3 text-white mb-3 animated slideInDown">Contract</h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb justify-content-center text-uppercase">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item text-white active" aria-current="page">Contract</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
 
-		<div>
-			<label for="startDate">Ngày bắt đầu:</label> <input type="date"
-				id="startDate" name="startDate" required readonly>
-			<!-- User can change start date if needed -->
-		</div>
-		<div>
-			<label for="contractDuration">Thời hạn hợp đồng (Tháng):</label> <input
-				type="number" id="contractDuration" name="contractDuration" required
-				min="1" onchange="updateMenuPrices()">
-		</div>
-		<div>
-			<input type="hidden" id="menuIds" name="menuIds"> <label
-				for="menuId">Chọn Menu:</label>
-			<button type="button" onclick="openMenuPopup()">Chọn Menu</button>
-			<input type="text" id="selectedMenuNames" name="selectedMenuNames"
-				readonly>
-		</div>
+  <div class="contract-container text-center">
+    <h2>Create Contract</h2>
+    <form th:action="@{/user/create-contract}" method="post" onsubmit="return validateForm()">
+      <div>
+        <label for="creator">Contract Creator:</label>
+        <input type="text" id="creator" name="creator" th:value="${userName}" readonly>
+      </div>
 
-		<!-- Modal for menu selection -->
-		<div id="menuModal" class="modal" style="display: none;">
-			<div class="modal-content">
-				<span class="modal-close" onclick="closeMenuPopup()">&times;</span>
-				<div class="modal-header">
-					<h3>Chọn Menu</h3>
-				</div>
-				<div class="menu-list">
-					<th:block th:each="menu : ${menus}">
-						<label> <input type="checkbox" class="menu-checkbox"
-							name="menuId" th:value="${menu.id}" th:text="${menu.menuName}"
-							th:attr="data-price=${menuPrices[menu.id]}"
-							onchange="updateMenuPrices()"> <span
-							th:text="${menu.menuName}"></span>
-						</label>
-						<br>
-					</th:block>
+      <div>
+        <input type="date" id="creationDate" name="creationDate" readonly hidden>
+      </div>
 
-				</div>
-				<button type="button" onclick="selectMenu()">Chọn</button>
-			</div>
-		</div>
+      <div>
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate" name="startDate" required readonly>
+      </div>
 
-		<div>
-			<label for="contractTotalPrice">Tổng giá hợp đồng:</label> <input
-				type="text" id="contractTotalPrice" name="contractTotalPrice"
-				readonly value="0.00">
-		</div>
+      <div>
+        <label for="contractDuration">Contract Duration (Months):</label>
+        <input type="number" id="contractDuration" name="contractDuration" required min="1" onchange="updateMenuPrices()">
+      </div>
 
-		<div>
-			<label for="depositAmount">Số tiền đặt cọc:</label> <input
-				type="number" id="depositAmount" name="depositAmount" value="0"
-				required step="0.01" readonly>
-		</div>
+      <div>
+        <input type="hidden" id="menuIds" name="menuIds">
+        <label for="menuId">Choose Menu:</label>
+        <button type="button" onclick="openMenuPopup()">Select Menu</button>
+        <input type="text" id="selectedMenuNames" name="selectedMenuNames" readonly>
+      </div>
 
-		<button type="submit">Gửi</button>
-	</form>
+      <!-- Modal for menu selection -->
+      <div id="menuModal" class="modal" style="display: none;">
+        <div class="modal-content">
+          <span class="modal-close" onclick="closeMenuPopup()">&times;</span>
+          <div class="modal-header">
+            <h3>Select Menu</h3>
+          </div>
+          <div class="menu-list">
+            <th:block th:each="menu : ${menus}">
+              <label>
+                <input type="checkbox" class="menu-checkbox" name="menuId" th:value="${menu.id}" th:text="${menu.menuName}" th:attr="data-price=${menuPrices[menu.id]}" onchange="updateMenuPrices()">
+                <span th:text="${menu.menuName}"></span>
+              </label><br>
+            </th:block>
+          </div>
+          <button type="button" onclick="selectMenu()">Select</button>
+        </div>
+      </div>
+
+      <div>
+        <label for="contractTotalPrice">Total Contract Price:</label>
+        <input type="text" id="contractTotalPrice" name="contractTotalPrice" readonly value="0.00">
+      </div>
+
+      <div>
+        <label for="depositAmount">Deposit Amount (10%):</label>
+        <input type="text" id="depositAmount" name="depositAmount" readonly value="0.00">
+      </div>
+
+      <button type="submit">Create Contract</button>
+    </form>
+  </div>
+
+  <script>
+    function setTodayDate() {
+      const today = new Date();
+      const formattedDate = today.toISOString().split('T')[0];
+      document.getElementById("startDate").value = formattedDate;
+      document.getElementById("creationDate").value = formattedDate;
+    }
+
+    function openMenuPopup() {
+      document.getElementById("menuModal").style.display = "flex";
+    }
+
+    function closeMenuPopup() {
+      document.getElementById("menuModal").style.display = "none";
+    }
+
+    function selectMenu() {
+      let selectedMenuNames = "";
+      let selectedMenuIds = [];
+      let totalPrice = 0;
+
+      // Collect selected menus and calculate total price
+      const selectedMenus = document.querySelectorAll('.menu-checkbox:checked');
+      selectedMenus.forEach(menu => {
+        selectedMenuIds.push(menu.value);
+        selectedMenuNames += menu.nextElementSibling.innerText + ", ";
+        totalPrice += parseFloat(menu.dataset.price);
+      });
+
+      // Update form fields
+      document.getElementById("menuIds").value = selectedMenuIds.join(',');
+      document.getElementById("selectedMenuNames").value = selectedMenuNames.slice(0, -2); // Remove last comma
+      document.getElementById("contractTotalPrice").value = totalPrice.toFixed(2);
+
+      // Calculate deposit (10% of the total contract price)
+      document.getElementById("depositAmount").value = (totalPrice * 0.1).toFixed(2);
+
+      closeMenuPopup();
+    }
+
+    function updateMenuPrices() {
+      let totalPrice = 0;
+      const selectedMenus = document.querySelectorAll('.menu-checkbox:checked');
+      selectedMenus.forEach(menu => {
+        totalPrice += parseFloat(menu.dataset.price);
+      });
+
+      const contractDuration = document.getElementById('contractDuration').value;
+      totalPrice *= contractDuration; // Multiply by duration (months)
+
+      document.getElementById('contractTotalPrice').value = totalPrice.toFixed(2);
+      document.getElementById('depositAmount').value = (totalPrice * 0.1).toFixed(2);
+    }
+
+    function validateForm() {
+      const totalPrice = document.getElementById('contractTotalPrice').value;
+      if (parseFloat(totalPrice) <= 0) {
+        alert("Please select at least one menu!");
+        return false;
+      }
+      return true;
+    }
+  </script>
 </body>
+
 </html>

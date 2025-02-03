@@ -7,158 +7,145 @@
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
 <style>
-body {
-	background-color: #121212;
-	color: #ffffff;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	min-height: 100vh;
-	margin: 0;
-}
+        body {
+            background-color: #6c757d; /* Màu xám */
+            color: #ffc107; /* Màu vàng (yellow-500) */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
 
-.container {
-	max-width: 500px;
-	width: 100%;
-	padding: 30px;
-	background: #1e1e1e;
-	border-radius: 10px;
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
+        .register-container {
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+            background: #495057; /* Tông xám đậm hơn */
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
 
-.container h2 {
-	color: #00adb5;
-	font-weight: 600;
-	text-align: center;
-	margin-bottom: 1.5rem;
-}
+        .register-container h2 {
+            font-weight: 700;
+            color: #ffc107; /* Màu vàng cho tiêu đề */
+            margin-bottom: 20px;
+            text-align: center;
+        }
 
-.form-group {
-	margin-bottom: 1rem;
-	position: relative;
-}
+        .register-container .form-label {
+            font-weight: 600;
+            color: #ffc107; /* Màu vàng cho label */
+        }
 
-.toggle-text {
-	font-size: 12px;
-	color: #007bff;
-	cursor: pointer;
-	position: absolute;
-	right: 15px;
-	top: 50%;
-	transform: translateY(-50%);
-}
+        .register-container .form-control {
+            background-color: #343a40; /* Màu xám đậm */
+            border: 1px solid #495057;
+            color: #ffc107;
+            border-radius: 8px;
+            padding: 12px;
+        }
 
-.form-group label {
-	font-weight: 500;
-	color: #cfcfcf;
-}
+        .register-container .form-control:focus {
+            background-color: #343a40;
+            border-color: #ffc107; /* Màu vàng khi focus */
+            color: #ffc107;
+        }
 
-.form-group input {
-	background-color: #333333;
-	border: 1px solid #444444;
-	color: #ffffff;
-	border-radius: 8px;
-	padding: 10px;
-	width: 100%;
-}
+        .register-container .btn-primary {
+            background-color: #ffc107; /* Màu vàng cho nút */
+            border: none;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s;
+            color: #343a40; /* Màu chữ nút */
+        }
 
-.form-group input:focus {
-	background-color: #333333;
-	border-color: #00adb5;
-	color: #ffffff;
-}
+        .register-container .btn-primary:hover {
+            background-color: #ffd54f; /* Vàng sáng hơn khi hover */
+        }
 
-.form-group button {
-	background-color: #00adb5;
-	border: none;
-	color: #ffffff;
-	padding: 10px;
-	width: 100%;
-	font-size: 1rem;
-	font-weight: 500;
-	border-radius: 8px;
-	cursor: pointer;
-	transition: background-color 0.3s;
-}
+        .form-group {
+            margin-bottom: 1rem;
+            position: relative;
+        }
 
-.form-group button:hover {
-	background-color: #00bebe;
-}
+        .toggle-text {
+            font-size: 14px;
+            color: #ffc107; /* Màu vàng cho nút hiển thị mật khẩu */
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
 
-.error {
-	color: #ff4c4c;
-	font-size: 0.9rem;
-	text-align: center;
-	margin-top: 1rem;
-}
+        .additional-links {
+            margin-top: 20px;
+            text-align: center;
+        }
 
-.login-link {
-	text-align: center;
-	margin-top: 1rem;
-}
+        .additional-links a {
+            color: #ffc107;
+            text-decoration: none;
+            font-weight: 600;
+        }
 
-.login-link a {
-	color: #00adb5;
-	text-decoration: none;
-}
-
-.login-link a:hover {
-	text-decoration: underline;
-}
-
-</style>
+        .additional-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-	<div class="container">
-		<h2>Register User</h2>
-		<form action="/user/add" method="POST">
-			<div class="form-group">
-				<label for="name">Full Name:</label> 
-				<input type="text" id="name" name="name" required>
-			</div>
-			<div class="form-group">
-				<label for="email">Email:</label> 
-				<input type="email" id="email" name="email" required>
-			</div>
-			<div class="form-group">
-				<label for="phone">Phone:</label> 
-				<input type="text" id="phone" name="phone" required>
-			</div>
-			<div class="form-group">
-				<label for="address">Address:</label> 
-				<input type="text" id="address" name="address" required>
-			</div>
-			<div class="form-group">
-				<label for="pwd">Password:</label> 
-				<input type="password" id="pwd" name="pwd" required> 
-				<span id="togglePwd" class="toggle-text" onclick="togglePassword()">Show</span>
-			</div>
-			<div class="form-group">
-				<label for="confirmPwd">Confirm Password:</label> 
-				<input type="password" id="confirmPwd" name="confirmPwd" required>
-				<span id="toggleConfirmPwd" class="toggle-text" onclick="toggleConfirmPassword()">Show</span>
-			</div>
-
-			<div class="form-group">
-				<label for="otp">OTP:</label> 
-				<input type="text" id="otp" name="otp" placeholder="Enter OTP received on email" required>
-			</div>
-			<div class="form-group">
-				<button type="button" id="sendOtpBtn" class="btn-send-otp" onclick="sendOtp()">Send OTP</button>
-			</div>
-			<div class="form-group">
-				<button type="submit">Register</button>
-			</div>
-			<div class="error">
-				<span id="errorMessage"></span>
-			</div>
-		</form>
-		<div class="login-link">
-			<p>
-				Already have an account? <a href="/user/login">Login here</a>
-			</p>
-		</div>
-	</div>
+	<div class="register-container">
+        <h2>Register User</h2>
+        <form action="/user/add" method="POST">
+            <div class="mb-3">
+                <label for="name" class="form-label">Full Name</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="Enter your full name" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email" required>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone</label>
+                <input type="text" id="phone" name="phone" class="form-control" placeholder="Enter your phone number" required>
+            </div>
+            <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <input type="text" id="address" name="address" class="form-control" placeholder="Enter your address" required>
+            </div>
+            <div class="mb-3 form-group">
+                <label for="pwd" class="form-label">Password</label>
+                <input type="password" id="pwd" name="pwd" class="form-control" placeholder="Enter your password" required>
+                <span id="togglePwd" class="toggle-text" onclick="togglePassword()">Show</span>
+            </div>
+            <div class="mb-3 form-group">
+                <label for="confirmPwd" class="form-label">Confirm Password</label>
+                <input type="password" id="confirmPwd" name="confirmPwd" class="form-control"
+                    placeholder="Re-enter your password" required>
+                <span id="toggleConfirmPwd" class="toggle-text" onclick="toggleConfirmPassword()">Show</span>
+            </div>
+            <div class="mb-3">
+                <label for="otp" class="form-label">OTP</label>
+                <input type="text" id="otp" name="otp" class="form-control" placeholder="Enter OTP received on email"
+                    required>
+            </div>
+            <div class="mb-3">
+                <button type="button" id="sendOtpBtn" class="btn btn-primary" onclick="sendOtp()">Send OTP</button>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </div>
+        </form>
+        <div class="additional-links">
+            <p>Already have an account? <a href="/user/login">Login here</a></p>
+        </div>
+    </div>
 
 	<script>
 	function sendOtp() {
@@ -211,27 +198,6 @@ body {
             confirmPwdField.type = "password";
             toggleConfirmPwdText.textContent = "Show";
         }
-    }
-    function startCountdown(button, duration) {
-        let remainingTime = duration;
-        button.disabled = true;
-        const originalText = button.textContent;
-        button.textContent = `Resend OTP (${remainingTime}s)`;
-
-        const interval = setInterval(() => {
-            remainingTime -= 1;
-            button.textContent = `Resend OTP (${remainingTime}s)`;
-
-            if (remainingTime <= 0) {
-                clearInterval(interval);
-                resetButton(button, originalText);
-            }
-        }, 1000);
-    }
-
-    function resetButton(button, text) {
-        button.disabled = false;
-        button.textContent = text;
     }
 	</script>
 </body>

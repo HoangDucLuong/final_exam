@@ -48,6 +48,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -78,22 +79,28 @@ public class ContractController {
     private VNPayService vnPayService;
 	@GetMapping("/contracts")
 	public String getAllContractsForUser(HttpServletRequest request, Model model) {
-		String email = (String) request.getSession().getAttribute("user");
-		if (email != null) {
-			Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByEmail(email));
-			if (userOptional.isPresent()) {
-				User user = userOptional.get();
-				List<Contract> userContracts = contractRepository.getContractsByUserId(user.getId());
-				model.addAttribute("contracts", userContracts);
+	    String email = (String) request.getSession().getAttribute("user");
+	    if (email != null) {
+	        Optional<User> userOptional = Optional.ofNullable(userRepository.findUserByEmail(email));
+	        if (userOptional.isPresent()) {
+	            User user = userOptional.get();
+	            List<Contract> userContracts = contractRepository.getContractsByUserId(user.getId());
 
-				List<Menu> menus = menuRepository.getAllMenus();
-				model.addAttribute("menus", menus);
+	            // Sắp xếp hợp đồng theo ID (mới nhất lên đầu)
+	            userContracts.sort(Comparator.comparingInt(Contract::getId).reversed());
 
-				return "user/contracts";
-			}
-		}
-		return "redirect:/user/login";
+	            model.addAttribute("contracts", userContracts);
+
+	            List<Menu> menus = menuRepository.getAllMenus();
+	            model.addAttribute("menus", menus);
+
+	            return "user/contracts";
+	        }
+	    }
+	    
+	    return "redirect:/user/login";
 	}
+
 
 	@GetMapping("/contracts/{id}")
 	public String getContractById(@PathVariable("id") int id, HttpServletRequest request, Model model) {

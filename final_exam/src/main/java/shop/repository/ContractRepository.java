@@ -40,4 +40,8 @@ public interface ContractRepository {
     List<Contract> findActiveContracts();
     Contract findById(int id);  // Thêm dòng này
     //Optional<Contract> findById(int id); 
+    List<Contract> searchContracts(String keyword, int offset, int limit);
+
+    int countContracts(String keyword);
+
 }

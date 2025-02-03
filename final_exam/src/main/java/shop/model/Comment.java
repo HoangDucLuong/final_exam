@@ -3,61 +3,71 @@ package shop.model;
 import java.sql.Date;
 
 public class Comment {
-    private int id;
-    private int userId;
-    private int newsId;
-    private String content;
-    private Date createdAt;
+	private int id;
+	private int userId;
+	private int newsId;
+	private String content;
+	private Date createdAt;
+	private String userName;
 
-    // Constructor
-    public Comment(int id, int userId, int newsId, String content, Date createdAt) {
-        this.id = id;
-        this.userId = userId;
-        this.newsId = newsId;
-        this.content = content;
-        this.createdAt = createdAt;
-    }
-    
-    public Comment() {}
+	public String getUserName() {
+		return userName;
+	}
 
-    // Getter and Setter methods
-    public int getId() {
-        return id;
-    }
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	// Constructor
+	public Comment(int id, int userId, int newsId, String content, Date createdAt) {
+		this.id = id;
+		this.userId = userId;
+		this.newsId = newsId;
+		this.content = content;
+		this.createdAt = createdAt;
+	}
 
-    public int getUserId() {
-        return userId;
-    }
+	public Comment() {
+	}
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
+	// Getter and Setter methods
+	public int getId() {
+		return id;
+	}
 
-    public int getNewsId() {
-        return newsId;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public void setNewsId(int newsId) {
-        this.newsId = newsId;
-    }
+	public int getUserId() {
+		return userId;
+	}
 
-    public String getContent() {
-        return content;
-    }
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+	public int getNewsId() {
+		return newsId;
+	}
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+	public void setNewsId(int newsId) {
+		this.newsId = newsId;
+	}
 
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
 }

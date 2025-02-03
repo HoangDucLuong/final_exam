@@ -3,7 +3,7 @@
 	layout:decorate="~{admin_layout}"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head layout:fragment="head">
-<title>Contract</title>
+<title>Contracts</title>
 <style>
 .table-warning {
 	background-color: #fff3cd;
@@ -139,7 +139,31 @@
 							</table>
 
 						</div>
-						
+						<div class="pagination-container">
+							<nav aria-label="Page navigation">
+								<ul class="pagination justify-content-center">
+									<li class="page-item"
+										th:classappend="${currentPage == 1} ? 'disabled'"><a
+										class="page-link"
+										th:href="@{/admin/contracts(page=${currentPage - 1}, search=${search})}"
+										aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+									</a></li>
+									<li class="page-item"
+										th:each="page : ${#numbers.sequence(1, totalPages)}"
+										th:classappend="${page == currentPage} ? 'active'"><a
+										class="page-link"
+										th:href="@{/admin/contracts(page=${page}, search=${search})}"
+										th:text="${page}"></a></li>
+									<li class="page-item"
+										th:classappend="${currentPage == totalPages} ? 'disabled'">
+										<a class="page-link"
+										th:href="@{/admin/contracts(page=${currentPage + 1}, search=${search})}"
+										aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+									</a>
+									</li>
+								</ul>
+							</nav>
+						</div>
 
 					</div>
 				</div>
