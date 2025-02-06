@@ -215,7 +215,7 @@ public class MealRequestRepositoryImpl implements MealRequestRepository {
 	                 "OR u.email LIKE ? " +
 	                 "OR mr.request_date LIKE ? " +
 	                 "OR mr.delivery_date LIKE ? " +
-	                 "ORDER BY mr.id " +
+	                 "ORDER BY mr.id DESC " + // Sắp xếp theo id giảm dần
 	                 "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
 	    String searchPattern = "%" + keyword + "%";

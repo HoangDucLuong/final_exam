@@ -99,9 +99,15 @@ public class MenuRepositoryImpl implements MenuRepository {
 
     @Override
     public void deleteMenu(int id) {
-        String sql = "DELETE FROM tbl_menu WHERE id = ?";
-        jdbcTemplate.update(sql, id);
+        // First delete associated meals from menu details
+        String deleteDetailsSql = "DELETE FROM tbl_menu_details WHERE menu_id = ?";
+        jdbcTemplate.update(deleteDetailsSql, id);
+
+        // Then delete the menu
+        String deleteMenuSql = "DELETE FROM tbl_menu WHERE id = ?";
+        jdbcTemplate.update(deleteMenuSql, id);
     }
+
 
     @Override
     public void save(Menu menu) {
@@ -172,5 +178,6 @@ public class MenuRepositoryImpl implements MenuRepository {
         String sql = "SELECT COALESCE(SUM(price), 0) FROM tbl_menu_details WHERE menu_id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{menuId}, BigDecimal.class);
     }
+    
 }
 

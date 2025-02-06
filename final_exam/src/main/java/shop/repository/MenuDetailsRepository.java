@@ -12,4 +12,7 @@ public interface MenuDetailsRepository {
     void deleteByMenuId(Integer menuId);
 
     List<MenuDetails> findMenuDetailsByMenuId(Integer menuId); // Thêm phương thức
+    
+    void deleteMenuDetailsByMenuId(int menuId);
+
 }

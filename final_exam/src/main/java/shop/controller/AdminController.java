@@ -47,10 +47,12 @@ public class AdminController {
 	private MealRequestDetailRepository mealRequestDetailRepository;
 	@Autowired
 	private MealRepository mealRepository;
+	
 
 	@GetMapping("/index")
 	public String viewMealRequests(@RequestParam(defaultValue = "") String search,
 			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size, Model model) {
+		 
 		int offset = (page - 1) * size;
 		List<MealRequest> mealRequests = mealRequestRepository.searchMealRequests(search, offset, size);
 		int totalRequests = mealRequestRepository.countMealRequests(search);
@@ -153,26 +155,42 @@ public class AdminController {
 
 	@PostMapping("/chklogins")
 	public String chkLogins(@RequestParam("email") String email, @RequestParam("pwd") String password,
-			HttpServletRequest request) {
-		Logger log = Logger.getGlobal();
-		log.info("Attempted login by user: " + email);
+	                        HttpServletRequest request) {
+	    // Improved logger
+	    Logger logger = Logger.getLogger(AdminController.class.getName());
+	    logger.info("Attempted login by user: " + email);
 
-		String encryptedPassword = repAuth.findPasswordByUid(email);
-		Integer role = repAuth.findUserTypeByUid(email);
+	    // Retrieve encrypted password and user role
+	    String encryptedPassword = repAuth.findPasswordByUid(email);
+	    Integer role = repAuth.findUserTypeByUid(email);
 
-		if (encryptedPassword == null || !SecurityUtility.compareBcrypt(encryptedPassword, password)) {
-			request.setAttribute("error", "Invalid email or password");
-			return "admin/login";
-		}
+	    // Check for valid credentials
+	    if (encryptedPassword == null || !SecurityUtility.compareBcrypt(encryptedPassword, password)) {
+	        request.setAttribute("error", "Invalid email or password");
+	        return "admin/login"; // Return to login page with error
+	    }
 
-		if (role == 1) {
-			request.getSession().setAttribute("usr_type", role);
-			return "redirect:/admin/index";
-		} else {
-			request.setAttribute("error", "You do not have permission to access the admin area.");
-			return "admin/login";
-		}
+	    // Check if the user is an admin
+	    if (role == 1) {
+	        // Set session attributes for admin user
+	        String fullName = repUser.findNameByUid(email); // Get full name for display
+	        Integer adminId = repUser.findUserIdByEmail(email); // Get admin ID
+	        request.getSession().setAttribute("admin", email); // Store email in session
+	        request.getSession().setAttribute("name", fullName); // Store full name
+	        request.getSession().setAttribute("usr_type", role); // Store user type
+	        request.getSession().setAttribute("adminId", adminId); // Store admin ID
+
+	        // Redirect to admin index page
+	        return "redirect:/admin/index";
+	    } else {
+	        // If the user is not an admin, return to login page with error
+	        request.setAttribute("error", "You do not have permission to access the admin area.");
+	        return "admin/login";
+	    }
 	}
+
+
+
 
 	@GetMapping("/register")
 	public String register() {
@@ -203,4 +221,14 @@ public class AdminController {
 
 		return "redirect:/admin/index";
 	}
+	
+	@GetMapping("/logout")
+	public String logout(HttpServletRequest request) {
+	    // Invalidate the session to log the user out
+	    request.getSession().invalidate();
+	    
+	    // Redirect to the homepage after logout
+	    return "redirect:/";
+	}
+
 }

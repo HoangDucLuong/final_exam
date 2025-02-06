@@ -91,9 +91,9 @@
 							<td class="text-center"
 								th:text="${#temporals.format(invoice.dueDate, 'yyyy-MM-dd')}"></td>
 							<td class="text-end"
-								th:text="${#numbers.formatDecimal(invoice.totalAmount, 1, 'DEFAULT', 2, 'COMMA')}"></td>
+								th:text="${#numbers.formatDecimal(invoice.totalAmount, 1, 'DEFAULT', 2, 'COMMA')} + ' VND'"></td>
 							<td class="text-end"
-								th:text="${#numbers.formatDecimal(invoice.paidAmount, 1, 'DEFAULT', 2, 'COMMA')}"></td>
+								th:text="${#numbers.formatDecimal(invoice.paidAmount, 1, 'DEFAULT', 2, 'COMMA')} + ' VND'"></td>
 							<td class="text-center"><span
 								th:if="${invoice.paymentStatus == 1}" class="badge bg-success">
 									Paid</span> <span th:if="${invoice.paymentStatus == 0}"

@@ -76,4 +76,10 @@ public class MenuDetailsRepositoryImpl implements MenuDetailsRepository {
             }
         });
     }
+    @Override
+    public void deleteMenuDetailsByMenuId(int menuId) {
+        String sql = "DELETE FROM tbl_menu_details WHERE menu_id = ?";
+        jdbcTemplate.update(sql, menuId);
+    }
+
 }

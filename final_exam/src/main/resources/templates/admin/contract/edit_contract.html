@@ -99,33 +99,33 @@
 				<form th:action="@{/admin/contracts/update/{id}(id=${contract.id})}"
 					method="post">
 					<div class="row">
-						<div class="col-md-6 mb-3">
+						<div class="col-md-6 mb-3" >
 							<label for="usrId" class="form-label">User ID</label> <input
 								type="number" class="form-control" id="usrId" name="usrId"
-								th:value="${contract.usrId}" required />
+								th:value="${contract.usrId}" readonly required />
 						</div>
 						<div class="col-md-6 mb-3">
 							<label for="startDate" class="form-label">Start Date</label> <input
 								type="date" class="form-control" id="startDate" name="startDate"
-								th:value="${#temporals.format(contract.startDate, 'yyyy-MM-dd')}"
+								th:value="${#temporals.format(contract.startDate, 'yyyy-MM-dd')}" readonly
 								required />
 						</div>
 						<div class="col-md-6 mb-3">
 							<label for="endDate" class="form-label">End Date</label> <input
 								type="date" class="form-control" id="endDate" name="endDate"
-								th:value="${#temporals.format(contract.endDate, 'yyyy-MM-dd')}"
+								th:value="${#temporals.format(contract.endDate, 'yyyy-MM-dd')}" readonly
 								required />
 						</div>
 						<div class="col-md-6 mb-3">
 							<label for="totalAmount" class="form-label">Total Amount</label>
 							<input type="number" class="form-control" id="totalAmount"
-								name="totalAmount" th:value="${contract.totalAmount}" required />
+								name="totalAmount" th:value="${contract.totalAmount}" readonly required />
 						</div>
 						<div class="col-md-6 mb-3">
 							<label for="depositAmount" class="form-label">Deposit
 								Amount</label> <input type="number" class="form-control"
 								id="depositAmount" name="depositAmount"
-								th:value="${contract.depositAmount}" required />
+								th:value="${contract.depositAmount}" readonly required />
 						</div>
 						<div class="col-md-6 mb-3">
 							<label for="status" class="form-label">Status</label> <select

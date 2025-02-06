@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	layout:decorate="~{admin_layout}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head layout:fragment="head">
+    <title>Edit Menu</title>
+</head>
+<body>
+
+	<div layout:fragment="content">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="card-style mb-30">
+						<div class="title d-flex flex-wrap align-items-center justify-content-between">
+							<div class="left">
+								<h6 class="text-medium mb-30">Edit Menu</h6>
+							</div>
+						</div>
+						<div class="table-responsive">
+							<form th:action="@{/admin/menu/edit/{id}(id=${menu.id})}" method="post">
+								<div class="form-group">
+									<label for="menuName">Menu Name</label> 
+									<input type="text" id="menuName" name="menuName" class="form-control"
+										th:value="${menu.menuName}" required>
+								</div>
+
+								<h5>Meal Groups and Meals</h5>
+								<div id="mealGroups" class="mb-4">
+									<div th:each="group : ${mealGroups}" class="meal-group">
+										<h6 th:text="${group.groupName}" onclick="toggleMeals(this)"
+											th:data-id="${group.id}"></h6>
+										<div class="meals-list" style="display: none;">
+											<div th:each="meal : ${group.meals}" class="meal-item">
+												<!-- Show the meal in the menu if it's part of the selected menu -->
+												<input type="checkbox" name="mealIds" th:value="${meal.id}"
+													th:checked="${menu.mealIds != null and menu.mealIds.contains(meal.id)}" />
+												<label th:for="'meal-' + ${meal.id}" th:text="${meal.mealName}"></label>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<input type="hidden" id="mealGroupId" name="mealGroupId" th:value="0" />
+								<button type="submit" class="btn btn-primary">Update Menu</button>
+								<a href="/admin/menu/list" class="btn btn-secondary">Back to Menu List</a>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		// Toggle meal visibility when clicking on group name
+		function toggleMeals(groupElement) {
+			const mealsList = groupElement.nextElementSibling;
+			if (mealsList.style.display === "block") {
+				mealsList.style.display = "none";
+			} else {
+				mealsList.style.display = "block";
+			}
+		}
+	</script>
+</body>
+</html>

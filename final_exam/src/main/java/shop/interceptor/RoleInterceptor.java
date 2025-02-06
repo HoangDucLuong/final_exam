@@ -16,40 +16,38 @@ public class RoleInterceptor implements HandlerInterceptor {
         String requestURI = request.getRequestURI();
 
         // Kiểm tra nếu người dùng chưa đăng nhập
-        if (session == null || session.getAttribute("user") == null) {
-            // Người dùng chưa đăng nhập, chỉ cho phép truy cập vào trang user (client)
-            if (requestURI.equals("/user")) {
-                return true; // Cho phép truy cập
-            } else {
-                response.sendRedirect("/user"); // Chuyển hướng đến trang user (client)
-                return false; // Chặn truy cập các trang khác
+        if (session == null || session.getAttribute("admin") == null) {
+            // Nếu chưa đăng nhập và truy cập vào bất kỳ trang /admin nào
+            if (requestURI.startsWith("/admin")) {
+                response.sendRedirect("/admin/login"); // Chuyển hướng về trang login
+                return false; // Ngừng xử lý và chuyển hướng
             }
+            return true; // Cho phép truy cập các trang khác
         }
 
         // Người dùng đã đăng nhập, lấy userType từ session
-        Integer userType = (Integer) session.getAttribute("userType");
+        Integer userType = (Integer) session.getAttribute("usr_type");
 
-        // Kiểm tra quyền truy cập dựa trên userType
+        // Kiểm tra nếu userType là 0 (không phải admin)
+        if (userType == 0) {
+            // Nếu userType là 0 (người dùng thường), không cho phép truy cập vào các trang admin
+            response.sendRedirect("/user"); // Chuyển hướng về trang người dùng
+            return false;
+        }
+
+        // Kiểm tra nếu userType là 1 (admin)
         if (userType == 1) {
-            // userType 1: Admin, cho phép truy cập trang admin
+            // Cho phép truy cập trang admin
             if (requestURI.startsWith("/admin")) {
-                return true; // Cho phép truy cập trang admin
+                return true; // Cho phép truy cập vào trang admin
             } else {
-                response.sendRedirect("/admin"); // Chuyển hướng đến trang admin
-                return false; // Chặn truy cập các trang khác
-            }
-        } else if (userType == 0) {
-            // userType 0: User, cho phép truy cập trang user (client)
-            if (requestURI.startsWith("/user")) {
-                return true; // Cho phép truy cập trang user (client)
-            } else {
-                response.sendRedirect("/user"); // Chuyển hướng đến trang user (client)
-                return false; // Chặn truy cập các trang khác
+                response.sendRedirect("/admin"); // Nếu là admin nhưng cố truy cập các trang không phải admin, chuyển hướng về trang admin
+                return false;
             }
         }
 
         // Mặc định: Chặn truy cập
-        response.sendRedirect("/user"); // Chuyển hướng đến trang user (client)
+        response.sendRedirect("/user"); // Chuyển hướng đến trang người dùng nếu không phải admin
         return false;
     }
 }

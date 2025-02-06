@@ -108,11 +108,32 @@ public class MenuController {
 	}
 
 	@PostMapping("/edit/{id}")
-	public String editMenu(@PathVariable int id, @ModelAttribute("menu") Menu menu) {
-		menu.setId(id);
-		menuRepository.updateMenu(menu);
-		return "redirect:/admin/menu/list";
+	public String editMenu(@PathVariable int id, @ModelAttribute("menu") Menu menu,
+	                       @RequestParam("mealIds") List<Integer> mealIds) {
+	    // Cập nhật thông tin menu
+	    menu.setId(id);
+	    menuRepository.updateMenu(menu);
+	    
+	    // Xóa tất cả các món ăn cũ trong menu
+	    menuDetailsRepository.deleteMenuDetailsByMenuId(id);
+	    
+	    // Thêm các món ăn mới vào menu
+	    for (Integer mealId : mealIds) {
+	        Meal meal = mealRepository.getMealById(mealId);
+	        if (meal != null) {
+	            MenuDetails menuDetails = new MenuDetails();
+	            menuDetails.setMenuId(id);
+	            menuDetails.setMealId(mealId);
+	            menuDetails.setPrice(meal.getPrice());
+
+	            menuDetailsRepository.addMenuDetail(menuDetails);
+	        }
+	    }
+	    
+	    // Điều hướng về danh sách menu sau khi chỉnh sửa thành công
+	    return "redirect:/admin/menu/list";
 	}
+
 
 	@PostMapping("/delete/{id}")
 	public String deleteMenu(@PathVariable int id) {
@@ -155,5 +176,7 @@ public class MenuController {
 
 		return "admin/menu/menu-detail";
 	}
+	
+
 
 }

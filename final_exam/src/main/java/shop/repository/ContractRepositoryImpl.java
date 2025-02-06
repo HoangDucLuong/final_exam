@@ -145,7 +145,7 @@ public class ContractRepositoryImpl implements ContractRepository {
         String sql = "SELECT * FROM tbl_contract WHERE usr_id IN " +
                      "(SELECT id FROM tbl_user WHERE name LIKE ?) " +
                      "OR start_date LIKE ? OR end_date LIKE ? " +
-                     "ORDER BY id " + // Đảm bảo có cột để sắp xếp
+                     "ORDER BY id DESC " + // Đảm bảo có cột để sắp xếp
                      "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         String searchPattern = "%" + keyword + "%";
         return jdbcTemplate.query(sql, 
