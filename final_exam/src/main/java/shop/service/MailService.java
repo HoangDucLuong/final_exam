@@ -92,24 +92,30 @@ public class MailService {
 	}
 
 	public boolean sendInvoiceNotification(String recipientEmail, Invoice invoice) {
-		try {
-			MimeMessage message = mailSender.createMimeMessage();
-			MimeMessageHelper helper = new MimeMessageHelper(message);
+	    try {
+	        MimeMessage message = mailSender.createMimeMessage();
+	        MimeMessageHelper helper = new MimeMessageHelper(message);
 
-			helper.setTo(recipientEmail);
-			helper.setSubject("Hóa đơn thanh toán #" + invoice.getId());
-			helper.setText(String.format(
-					"Kính chào, \n\nHóa đơn của bạn với tổng số tiền %s VND đã được tạo vào ngày %s. Vui lòng thanh toán trước ngày đến hạn: %s.\n\nXin cảm ơn!",
-					invoice.getTotalAmount(), invoice.getCreatedAt().toString(), invoice.getDueDate().toString()));
+	        helper.setTo(recipientEmail);
+	        helper.setSubject("Hóa đơn thanh toán #" + invoice.getId());
+	        String paymentLink = "http://localhost:8080/user/invoices/" + invoice.getId();
+	        helper.setText(String.format(
+	                "Kính chào, \n\nHóa đơn của bạn với tổng số tiền %s VND đã được tạo vào ngày %s. Vui lòng thanh toán trước ngày đến hạn: %s.\n\n"
+	                + "Bạn có thể thanh toán qua đường dẫn sau: %s\n\nXin cảm ơn!",
+	                invoice.getTotalAmount(), 
+	                invoice.getCreatedAt().toString(), 
+	                invoice.getDueDate().toString(),
+	                paymentLink));
 
-			mailSender.send(message);
-			System.out.println("Gửi thông báo hóa đơn thành công tới: " + recipientEmail);
-			return true;
-		} catch (Exception e) {
-			System.err.println("Lỗi khi gửi email thông báo hóa đơn: " + e.getMessage());
-			return false;
-		}
+	        mailSender.send(message);
+	        System.out.println("Gửi thông báo hóa đơn thành công tới: " + recipientEmail);
+	        return true;
+	    } catch (Exception e) {
+	        System.err.println("Lỗi khi gửi email thông báo hóa đơn: " + e.getMessage());
+	        return false;
+	    }
 	}
+
 
 	private boolean sendEmail(String recipientEmail, String subject, String body) {
 		try {
@@ -136,11 +142,13 @@ public class MailService {
 	        BigDecimal totalAmount = BigDecimal.ZERO;
 
 	        for (Invoice invoice : invoices) {
-	            invoiceDetails.append(String.format("#%d: %s VND, tạo ngày %s, đến hạn ngày %s\n",
+	            String invoiceLink = String.format("http://localhost:8080/user/invoices/%d", invoice.getContractId()); // Sử dụng contractId thay vì invoiceId
+	            invoiceDetails.append(String.format("#%d: %s VND, tạo ngày %s, đến hạn ngày %s, đường dẫn thanh toán: %s\n",
 	                    invoice.getId(),
 	                    invoice.getTotalAmount(),
 	                    invoice.getCreatedAt(),
-	                    invoice.getDueDate()));
+	                    invoice.getDueDate(),
+	                    invoiceLink));
 	            totalAmount = totalAmount.add(invoice.getTotalAmount().subtract(invoice.getPaidAmount()));
 	        }
 
@@ -163,5 +171,6 @@ public class MailService {
 	        return false;
 	    }
 	}
+
 
 }

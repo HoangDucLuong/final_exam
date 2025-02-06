@@ -534,7 +534,99 @@ button:active {
 
 	<!-- Template Javascript -->
 	<script src="/js/main.js"></script>
+<script>
+    function setTodayDate() {
+      const today = new Date();
+      const formattedDate = today.toISOString().split('T')[0];
+      document.getElementById("startDate").value = formattedDate;
+      document.getElementById("creationDate").value = formattedDate;
+    }
 
+    function openMenuPopup() {
+      document.getElementById("menuModal").style.display = "flex";
+    }
+
+    function closeMenuPopup() {
+      document.getElementById("menuModal").style.display = "none";
+    }
+
+    function selectMenu() {
+      let selectedMenuNames = "";
+      let selectedMenuIds = [];
+      let totalPrice = 0;
+
+      // Collect selected menus and calculate total price
+      const selectedMenus = document.querySelectorAll('.menu-checkbox:checked');
+      selectedMenus.forEach(menu => {
+        selectedMenuIds.push(menu.value);
+        selectedMenuNames += menu.nextElementSibling.innerText + ", ";
+        totalPrice += parseFloat(menu.dataset.price);
+      });
+
+      // Update form fields
+      document.getElementById("menuIds").value = selectedMenuIds.join(',');
+      document.getElementById("selectedMenuNames").value = selectedMenuNames.slice(0, -2); // Remove last comma
+      document.getElementById("contractTotalPrice").value = totalPrice.toFixed(2);
+
+      // Calculate deposit (10% of the total contract price)
+      document.getElementById("depositAmount").value = (totalPrice * 0.1).toFixed(2);
+
+      closeMenuPopup();
+    }
+
+    function updateMenuPrices() {
+        let totalPrice = 0;
+        const selectedMenus = document.querySelectorAll('.menu-checkbox:checked');
+        
+        // Lặp qua từng menu đã chọn để tính tổng giá
+        selectedMenus.forEach(menu => {
+            totalPrice += parseFloat(menu.dataset.price);
+        });
+
+        // Lấy số tháng
+        const contractDuration = document.getElementById('contractDuration').value;
+        
+        // Kiểm tra nếu contractDuration có giá trị hợp lệ
+        if (contractDuration && contractDuration > 0) {
+            totalPrice *= contractDuration *31; // Nhân với số tháng
+        }
+
+        // Cập nhật giá trị vào các ô nhập liệu
+        document.getElementById('contractTotalPrice').value = totalPrice.toFixed(2);
+        document.getElementById('depositAmount').value = (totalPrice * 0.1).toFixed(2);
+    }
+
+    // Đảm bảo hàm này cũng được gọi khi chọn menu
+    function selectMenu() {
+        let selectedMenuNames = "";
+        let selectedMenuIds = [];
+        let totalPrice = 0;
+
+        const selectedMenus = document.querySelectorAll('.menu-checkbox:checked');
+        selectedMenus.forEach(menu => {
+            selectedMenuIds.push(menu.value);
+            selectedMenuNames += menu.nextElementSibling.innerText + ", ";
+            totalPrice += parseFloat(menu.dataset.price);
+        });
+
+        document.getElementById("menuIds").value = selectedMenuIds.join(',');document.getElementById("selectedMenuNames").value = selectedMenuNames.slice(0, -2);
+        
+        // Sau khi chọn menu, gọi updateMenuPrices để cập nhật đúng số tiền
+        updateMenuPrices();
+
+        closeMenuPopup();
+    }
+
+
+    function validateForm() {
+      const totalPrice = document.getElementById('contractTotalPrice').value;
+      if (parseFloat(totalPrice) <= 0) {
+        alert("Please select at least one menu!");
+        return false;
+      }
+      return true;
+    }
+  </script>
 </body>
 
 </html>

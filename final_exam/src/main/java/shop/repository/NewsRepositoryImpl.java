@@ -85,9 +85,8 @@ public class NewsRepositoryImpl implements NewsRepository {
     }
 
     @Override
-    public int countNews(String search) {
-        String sql = "SELECT COUNT(*) FROM tbl_news WHERE title LIKE ? OR content LIKE ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{"%" + search + "%", "%" + search + "%"}, Integer.class);
-    }
+    public int countNews(String search) {String sql = "SELECT COUNT(*) FROM tbl_news WHERE title LIKE ? OR content LIKE ?";
+    return jdbcTemplate.queryForObject(sql, new Object[]{"%" + search + "%", "%" + search + "%"}, Integer.class);
+}
 
 }
