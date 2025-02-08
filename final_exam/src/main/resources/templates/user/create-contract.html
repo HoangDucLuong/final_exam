@@ -570,7 +570,7 @@ button:active {
 
       // Calculate deposit (10% of the total contract price)
       document.getElementById("depositAmount").value = (totalPrice * 0.1).toFixed(2);
-
+      updateMenuPrices();
       closeMenuPopup();
     }
 
@@ -590,10 +590,9 @@ button:active {
         if (contractDuration && contractDuration > 0) {
             totalPrice *= contractDuration *31; // Nhân với số tháng
         }
-
-        // Cập nhật giá trị vào các ô nhập liệu
-        document.getElementById('contractTotalPrice').value = totalPrice.toFixed(2);
-        document.getElementById('depositAmount').value = (totalPrice * 0.1).toFixed(2);
+        // Loại bỏ phần thập phân bằng Math.round()
+        document.getElementById('contractTotalPrice').value = Math.round(totalPrice);
+        document.getElementById('depositAmount').value = Math.round(totalPrice * 0.1);
     }
 
     // Đảm bảo hàm này cũng được gọi khi chọn menu

@@ -124,11 +124,13 @@
 							</tr>
 							<tr>
 								<th scope="row">Deposit Amount</th>
-								<td><span th:text="${contract.depositAmount}"></span></td>
+								<td><span
+									th:text="${#numbers.formatInteger(contract.depositAmount, 0, 'COMMA')}+ ' VND'"></span></td>
 							</tr>
 							<tr>
 								<th scope="row">Total Amount</th>
-								<td><span th:text="${contract.totalAmount} + ' VND'"></span></td>
+								<td><span
+									th:text="${#numbers.formatInteger(contract.totalAmount, 0, 'COMMA')} + ' VND'"></span></td>
 							</tr>
 							<tr>
 								<th scope="row">Status</th>
@@ -160,7 +162,8 @@
 							<th:block th:each="menu : ${menus}">
 								<tr>
 									<td><span th:text="${menu.menuName}"></span></td>
-									<td><span th:text="${menuPrices[menu.id]} + ' VND'"></span></td>
+									<td><span
+										th:text="${#numbers.formatInteger(menuPrices[menu.id], 0,  'COMMA')} + ' VND'"></span></td>
 								</tr>
 							</th:block>
 						</tbody>

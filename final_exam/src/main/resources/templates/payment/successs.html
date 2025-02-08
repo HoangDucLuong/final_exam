@@ -5,42 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Success</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: #f7f9fc;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .container {
             max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .success {
-            color: green;
-            font-size: 24px;
+            width: 90%;
+            margin: 20px;
+            padding: 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             text-align: center;
         }
-        .details {
-            margin-top: 20px;
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
         }
-        .details p {
-            margin: 5px 0;
+
+        .success-icon::before {
+            content: '';
+            width: 30px;
+            height: 15px;
+            border-left: 4px solid white;
+            border-bottom: 4px solid white;
+            transform: rotate(-45deg);
+            margin-top: -5px;
+        }
+
+        .success {
+            color: #2d3748;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            color: #718096;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(76, 175, 80, 0.2);
+        }
+
+        .back-button:hover {
+            background: #43a047;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(76, 175, 80, 0.3);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .success {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="success">Payment Successful</h1>
-        <div class="details">
-            <p><strong>Transaction ID:</strong> <span th:text="${vnpTransactionNo}"></span></p>
-            <p><strong>Amount Paid:</strong> <span th:text="${vnpAmount}"></span> VND</p>
-            <p><strong>Bank Code:</strong> <span th:text="${vnpBankCode}"></span></p>
-            <p><strong>Payment Date:</strong> <span th:text="${vnpPayDate}"></span></p>
-            <p><strong>Order Info:</strong> <span th:text="${vnpOrderInfo}"></span></p>
-        </div>
-        <a href="/user/contracts">Back to Contracts</a>
+        <div class="success-icon"></div>
+        <h1 class="success">Thanh toán thành công!</h1>
+        <p class="message">Cảm ơn bạn đã thanh toán. Đơn hàng của bạn đã được xác nhận.</p>
+        <a href="/user/contracts" class="back-button">Quay lại Hợp đồng</a>
     </div>
 </body>
 </html>

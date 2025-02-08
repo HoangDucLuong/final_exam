@@ -204,7 +204,7 @@
 								<tr th:each="meal : ${meals}">
 									<td th:text="${meal.mealName}"></td>
 									<td th:text="${meal.description}"></td>
-									<td th:text="${meal.price}"></td>
+									<td th:text="${#numbers.formatInteger(meal.price, 1)} + ' VND'"></td>
 								</tr>
 							</tbody>
 						</table>

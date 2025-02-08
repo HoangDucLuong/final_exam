@@ -18,7 +18,129 @@
     <!-- Template Stylesheet -->
     <link href="/css/style.css" rel="stylesheet">
 </head>
+<style>
+        :root {
+            --primary: #FEA116;
+            --dark: #0F172B;
+            --light: #F1F8FF;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--light);
+        }
 
+        .hero-header {
+            background: linear-gradient(rgba(15, 23, 43, .9), rgba(15, 23, 43, .9)), url('/api/placeholder/1920/500');
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .menu-form-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin: -50px auto 50px;
+            max-width: 800px;
+            position: relative;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(254, 161, 22, 0.2);
+        }
+
+        .meal-group {
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .meal-group h6 {
+            padding: 1rem;
+            margin: 0;
+            background: #f1f5f9;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .meal-group h6:hover {
+            background: #e2e8f0;
+        }
+
+        .meal-group h6::after {
+            content: '\f107';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            margin-left: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .meal-group h6.active::after {
+            transform: rotate(180deg);
+        }
+
+        .meals-list {
+            padding: 1rem;
+        }
+
+        .meal-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .meal-item:hover {
+            background-color: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        .meal-item input[type="checkbox"] {
+            margin-right: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-success:hover {
+            background-color: #e69014;
+            border-color: #e69014;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: #fff;
+        }
+    </style>
 <body>
 		<!-- Navbar & Hero Start -->
 		<div class="container-xxl position-relative p-0">
@@ -81,31 +203,45 @@
         </div>
 
         <!-- Hero Header End -->
+<br>
+        <div class="menu-form-container">
+        <form action="/menu/create" method="POST">
+            <div class="form-group">
+                <label for="menuName" class="form-label fw-bold mb-2">Menu Name</label>
+                <input type="text" id="menuName" name="menuName" class="form-control" 
+                       placeholder="Enter menu name" required />
+            </div>
 
-        <div class="container">
-            <form action="/menu/create" method="POST">
-                <div class="form-group">
-                    <label for="menuName">Menu Name</label>
-                    <input type="text" id="menuName" name="menuName" class="form-control" required />
-                </div>
-
-                <h5 class="mt-4">Meal Groups and Meals</h5>
-                <div id="mealGroups" class="mb-4">
-                    <div th:each="group : ${mealGroups}" class="meal-group">
-                        <h6 th:text="${group.groupName}" onclick="toggleMeals(this)" th:data-id="${group.id}"></h6>
-                        <div class="meals-list" style="display:none;">
-                            <div th:each="meal : ${group.meals}" class="meal-item">
-                                <input type="checkbox" name="mealIds" id="meal-{#meal.id}" th:value="${meal.id}" />
-                                <label th:for="'meal-' + ${meal.id}" th:text="${meal.mealName}"></label>
-                            </div>
+            <h5 class="mt-4 mb-3 fw-bold">Select Meals</h5>
+            <div id="mealGroups" class="mb-4">
+                <div th:each="group : ${mealGroups}" class="meal-group">
+                    <h6 onclick="toggleMeals(this)" th:data-id="${group.id}">
+                        <i class="fas fa-utensils me-2"></i>
+                        <span th:text="${group.groupName}"></span>
+                    </h6>
+                    <div class="meals-list" style="display:none;">
+                        <div th:each="meal : ${group.meals}" class="meal-item">
+                            <input type="checkbox" name="mealIds" 
+                                   th:id="'meal-' + ${meal.id}" 
+                                   th:value="${meal.id}" />
+                            <label th:for="'meal-' + ${meal.id}" 
+                                   th:text="${meal.mealName}"
+                                   class="mb-0 cursor-pointer"></label>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <button type="submit" class="btn btn-success">Add Menu</button>
-                <a href="/menu" class="btn btn-secondary">Back to Menu List</a>
-            </form>
-        </div>
+            <div class="d-flex gap-3">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-plus me-2"></i>Create Menu
+                </button>
+                <a href="/menu" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Menu List
+                </a>
+            </div>
+        </form>
+    </div>
        <!-- Footer Start -->
        <div
 				class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn"

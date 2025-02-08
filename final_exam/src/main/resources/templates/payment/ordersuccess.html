@@ -3,53 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <title>Thanh toán thành công</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        .success-icon {
+            width: 90px;
+            height: 90px;
+            background-color: #28a745;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            animation: scaleIn 0.5s ease-in-out;
+        }
+        .success-icon i {
+            color: white;
+            font-size: 45px;
+        }
+        .payment-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        .table {
+            margin-bottom: 2rem;
+        }
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+        .payment-details {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+    </style>
 </head>
-
 <body>
-<!-- back to top -->
-
-<!-- start body -->
-<div class="body py-5">
-    <div class="container">
-        <div class="w-50 m-auto">
-            <!-- Tiêu đề trang -->
-            <h1 class="my-3 text-success text-center">Thanh toán thành công</h1>
-            <!-- Chi tiết đơn hàng -->
-            <h2 class="my-2">Chi tiết thanh toán</h2>
-            <!-- Bảng hiển thị thông tin đơn hàng -->
-            <table class="table table-bordered">
-                <tbody>
-                    <!-- <tr>
-                        <td>Tổng tiền:</td>
-                        <td><span th:text="${totalPrice}">[total price]</span> VND</td>
-                    </tr> -->
-                    <tr>
-                        <td>Thời gian thanh toán:</td>
-                        <td><span th:text="${paymentTime}">[payment time]</span></td>
-                    </tr>
-                    <tr>
-                        <td>Mã giao dịch:</td>
-                        <td><span th:text="${transactionId}">[transaction ID]</span></td>
-                    </tr>
-                </tbody>
-            </table>
-            <!-- Nút quay lại trang chủ -->
-            <a href="/" class="btn btn-primary">Về trang chủ</a>
-            <a th:href="@{'/user/invoices/' + ${contractId} + '/payment-history'}" class="btn btn-secondary mt-3">Xem lịch sử thanh toán</a>
-            
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="payment-card">
+                    <div class="success-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    
+                    <h1 class="text-success text-center mb-4">Thanh toán thành công</h1>
+                    
+                    <div class="payment-details">
+                        <h2 class="h4 mb-3">Chi tiết thanh toán</h2>
+                        <table class="table table-hover mb-0">
+                            <tbody>
+                                <tr>
+                                    <td class="text-muted">Thời gian thanh toán:</td>
+                                    <td class="text-end"><span th:text="${paymentTime}">[payment time]</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Mã giao dịch:</td>
+                                    <td class="text-end"><span th:text="${transactionId}">[transaction ID]</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="/" class="btn btn-primary">
+                            <i class="fas fa-home me-2"></i>Về trang chủ
+                        </a>
+                        <a th:href="@{'/user/invoices/' + ${contractId} + '/payment-history'}" class="btn btn-secondary">
+                            <i class="fas fa-history me-2"></i>Xem lịch sử thanh toán
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
-<!-- end body -->
-
-<!-- start footer -->
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
-
+ 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

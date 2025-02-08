@@ -205,72 +205,58 @@
 			</div>
 
 			<!-- My Menu Section -->
-			<div id="myMenuSection" class="menu-section" style="display: none;">
-				<h3>My Menu</h3>
-				<div class="text-end mb-3">
-					<<<<<<< HEAD <a href="/menu/create" class="btn btn-success">Create
-						Menu</a>
-				</div>
-				======= <a href="/menu/create" class="btn btn-success">Create
-					Menu</a>
-			</div>
-			>>>>>>> branch 'main' of https://github.com/HoangDucLuong/final_exam
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th hidden>ID</th>
-						<th>Menu Name</th>
-						<th>Created At</th>
-						<th>Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					<!-- Hiển thị các menu của user -->
-					<tr th:each="menu : ${userMenus}">
-						<td th:text="${menu.id}" hidden></td>
-						<td><a th:href="@{/menu/details/{menuId}(menuId=${menu.id})}"
-							th:text="${menu.menuName}"></a></td>
-						<td
-							th:text="${#temporals.format(menu.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-						<td>
-							<form th:action="@{/menu/delete}" method="post">
-								<input type="hidden" name="menuId" th:value="${menu.id}" />
-								<button type="submit" class="btn btn-danger btn-sm">Delete</button>
-							</form>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+<div id="myMenuSection" class="menu-section" style="display: none;">
+    <h3>My Menu</h3>
+    <div class="text-end mb-3">
+        <a href="/menu/create" class="btn btn-success">Create Menu</a>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th hidden>ID</th>
+                <th>Menu Name</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Loop for user menus -->
+            <tr th:each="menu : ${userMenus}">
+                <td th:text="${menu.id}" hidden></td>
+                <td><a th:href="@{/menu/details/{menuId}(menuId=${menu.id})}" th:text="${menu.menuName}"></a></td>
+                <td th:text="${#temporals.format(menu.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                <td>
+                    <form th:action="@{/menu/delete}" method="post">
+                        <input type="hidden" name="menuId" th:value="${menu.id}" />
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
-		<!-- Admin Menu Section -->
-		<div id="adminMenuSection" class="menu-section"
-			th:if="${not #lists.isEmpty(allMenus)}">
-			<h3>Menus are available</h3>
-			<table class="table table-striped">
-				<thead>
-					<tr>
-						<th hidden>ID</th>
-						<th>Menu Name</th>
-						<th>Created At</th>
-					</tr>
-				</thead>
-				<tbody>
-					<!-- Hiển thị tất cả menu của admin -->
-					<tr th:each="menu : ${allMenus}">
-						<td th:text="${menu.id}" hidden></td>
-						<td><a th:href="@{/menu/details/{menuId}(menuId=${menu.id})}"
-							th:text="${menu.menuName}"></a></td>
-						<td
-							th:text="${#temporals.format(menu.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-
-					</tr>
-				</tbody>
-			</table>
-		</div>
-
-
-
+<!-- Admin Menu Section -->
+<div id="adminMenuSection" class="menu-section" style="display: none;">
+    <h3>Menus are available</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th hidden>ID</th>
+                <th>Menu Name</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Loop for all admin menus -->
+            <tr th:each="menu : ${allMenus}">
+                <td th:text="${menu.id}" hidden></td>
+                <td><a th:href="@{/menu/details/{menuId}(menuId=${menu.id})}" th:text="${menu.menuName}"></a></td>
+                <td th:text="${#temporals.format(menu.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
 		<!-- Footer Start -->
 		<div
@@ -381,17 +367,18 @@
 	<!-- Template Javascript -->
 	<script src="js/main.js"></script>
 	<script>
-		// Hàm hiển thị My Menu
-		function showMyMenu() {
-			document.getElementById("myMenuSection").style.display = "block";
-			document.getElementById("adminMenuSection").style.display = "none";
-		}
+	// Hàm hiển thị My Menu
+	function showMyMenu() {
+	    document.getElementById("myMenuSection").style.display = "block";
+	    document.getElementById("adminMenuSection").style.display = "none";
+	}
 
-		// Hàm hiển thị Admin Menu
-		function showAdminMenu() {
-			document.getElementById("myMenuSection").style.display = "none";
-			document.getElementById("adminMenuSection").style.display = "block";
-		}
+	// Hàm hiển thị Admin Menu
+	function showAdminMenu() {
+	    document.getElementById("myMenuSection").style.display = "none";
+	    document.getElementById("adminMenuSection").style.display = "block";
+	}
+
 	</script>
 </body>
 

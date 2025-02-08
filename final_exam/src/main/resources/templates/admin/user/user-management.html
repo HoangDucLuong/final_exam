@@ -151,31 +151,32 @@
 								</tbody>
 							</table>
 						</div>
-						<div class="pagination-container">
-							<nav aria-label="Page navigation">
-								<ul class="pagination justify-content-center">
-									<li class="page-item"
-										th:classappend="${currentPage == 1} ? 'disabled'"><a
-										class="page-link"
-										th:href="@{/admin/user-management(page=${currentPage - 1}, search=${search})}"
-										aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
-									</a></li>
-									<li class="page-item"
-										th:each="page : ${#numbers.sequence(1, totalPages)}"
-										th:classappend="${page == currentPage} ? 'active'"><a
-										class="page-link"
-										th:href="@{/admin/user-management(page=${page}, search=${search})}"
-										th:text="${page}"></a></li>
-									<li class="page-item"
-										th:classappend="${currentPage == totalPages} ? 'disabled'">
-										<a class="page-link"
-										th:href="@{/admin/user-management(page=${currentPage + 1}, search=${search})}"
-										aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-									</a>
-									</li>
-								</ul>
-							</nav>
-						</div>
+						<div class="pagination-container" th:if="${not #lists.isEmpty(users)}">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admin/user-management(page=${currentPage - 1}, search=${search})}"
+                   aria-label="Previous"> 
+                   <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="page-item" th:each="page : ${#numbers.sequence(1, totalPages)}"
+                th:classappend="${page == currentPage} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/admin/user-management(page=${page}, search=${search})}"
+                   th:text="${page}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admin/user-management(page=${currentPage + 1}, search=${search})}"
+                   aria-label="Next"> 
+                   <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
 					</div>
 				</div>
 			</div>

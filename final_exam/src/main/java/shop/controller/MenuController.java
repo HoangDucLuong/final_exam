@@ -97,42 +97,48 @@ public class MenuController {
 
 	@GetMapping("/edit/{id}")
 	public String showEditMenuForm(@PathVariable int id, Model model) {
-		Menu menu = menuRepository.getMenuById(id);
-		model.addAttribute("menu", menu);
-		int page = 1; 
-		String search = ""; 
-		List<MealGroup> mealGroups = mealGroupRepository.getAllMealGroups(page, search);
-		model.addAttribute("mealGroups", mealGroups);
+	    Menu menu = menuRepository.getMenuById(id);
+	    model.addAttribute("menu", menu);
 
-		return "admin/menu/edit-menu";
+	    int page = 1;
+	    String search = "";
+	    List<MealGroup> mealGroups = mealGroupRepository.getAllMealGroups(page, search);
+	    model.addAttribute("mealGroups", mealGroups);
+
+	    List<Meal> allMeals = mealRepository.getAllMeals();
+	    List<Meal> menuMeals = mealRepository.findMealsByMenuId(id); // Lấy danh sách món ăn thuộc menu
+
+	    model.addAttribute("allMeals", allMeals);
+	    model.addAttribute("menuMeals", menuMeals);
+
+	    return "admin/menu/edit-menu";
 	}
+
 
 	@PostMapping("/edit/{id}")
 	public String editMenu(@PathVariable int id, @ModelAttribute("menu") Menu menu,
-	                       @RequestParam("mealIds") List<Integer> mealIds) {
-	    // Cập nhật thông tin menu
+	                       @RequestParam(value = "mealIds", required = false) List<Integer> mealIds) {
 	    menu.setId(id);
 	    menuRepository.updateMenu(menu);
-	    
-	    // Xóa tất cả các món ăn cũ trong menu
-	    menuDetailsRepository.deleteMenuDetailsByMenuId(id);
-	    
-	    // Thêm các món ăn mới vào menu
-	    for (Integer mealId : mealIds) {
-	        Meal meal = mealRepository.getMealById(mealId);
-	        if (meal != null) {
-	            MenuDetails menuDetails = new MenuDetails();
-	            menuDetails.setMenuId(id);
-	            menuDetails.setMealId(mealId);
-	            menuDetails.setPrice(meal.getPrice());
 
-	            menuDetailsRepository.addMenuDetail(menuDetails);
+	    menuDetailsRepository.deleteMenuDetailsByMenuId(id); // Xóa món cũ
+
+	    if (mealIds != null) {
+	        for (Integer mealId : mealIds) {
+	            Meal meal = mealRepository.getMealById(mealId);
+	            if (meal != null) {
+	                MenuDetails menuDetails = new MenuDetails();
+	                menuDetails.setMenuId(id);
+	                menuDetails.setMealId(mealId);
+	                menuDetails.setPrice(meal.getPrice());
+	                menuDetailsRepository.addMenuDetail(menuDetails);
+	            }
 	        }
 	    }
-	    
-	    // Điều hướng về danh sách menu sau khi chỉnh sửa thành công
+
 	    return "redirect:/admin/menu/list";
 	}
+
 
 
 	@PostMapping("/delete/{id}")
