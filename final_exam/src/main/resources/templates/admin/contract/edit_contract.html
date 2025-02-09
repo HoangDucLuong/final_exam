@@ -202,12 +202,15 @@
 						<div class="col-md-6 mb-3">
 							
 						</div>
-						<div class="col-md-6 mb-3">
-    <label for="paymentStatus" class="form-label">Payment Status</label>
-    <span class="form-control" id="paymentStatus">
-        <span th:text="${contract.paymentStatus == 0 ? 'Unpaid' : 'Paid'}"></span>
-    </span>
-</div>
+			<div class="col-md-6 mb-3">
+							<label for="paymentStatus" class="form-label">Payment Status</label> <select class="form-select" id="paymentStatus"
+								name="paymentStatus" required>
+								<option th:value="0"
+									th:selected="${contract.paymentStatus == 0}">Unpaid</option>
+								<option th:value="1"
+									th:selected="${contract.paymentStatus == 1}">Paid</option>
+							</select>
+						</div>
 
                     <!-- Giữ nguyên các trường khác -->
                     <div class="col-md-6 mb-3">
@@ -247,8 +250,7 @@
                                 </button>
                             </div>
                             
-                            <!-- Hidden input để lưu giá trị status -->
-                            <input type="hidden" id="status" name="status" th:value="${contract.status}">
+                           
                         </div>
                     </div>
 						
